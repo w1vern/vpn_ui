@@ -1,18 +1,12 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from .models import User
+from sqlalchemy.orm import Session
+from app import models, schemas
 
-async def create_user(session: AsyncSession, name: str, email: str):
-    new_user = User(name=name, email=email)
-    session.add(new_user)
-    await session.commit()
-    await session.refresh(new_user)
-    return new_user
+def create_user(db: Session, user: schemas.UserCreate):
+    db_user = models.User(name=user.name, email=user.email)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
-async def get_user_by_email(session: AsyncSession, email: str):
-    result = await session.execute(select(User).filter(User.email == email))
-    return result.scalar_one_or_none()
-
-async def get_all_users(session: AsyncSession):
-    result = await session.execute(select(User))
-    return result.scalars().all()
+def get_users(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.User).offset(skip).limit(limit).all()

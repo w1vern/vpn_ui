@@ -1,18 +1,17 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from .db import get_session
-from .crud import create_user, get_user_by_email, get_all_users
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app import models, schemas, crud
+from app.database import engine, get_db
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-@app.post("/users/")
-async def create_new_user(name: str, email: str, session: AsyncSession = Depends(get_session)):
-    return await create_user(session, name, email)
+@app.post("/users/", response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    return crud.create_user(db=db, user=user)
 
-@app.get("/users/")
-async def list_users(session: AsyncSession = Depends(get_session)):
-    return await get_all_users(session)
-
-@app.get("/users/{email}")
-async def get_user(email: str, session: AsyncSession = Depends(get_session)):
-    return await get_user_by_email(session, email)
+@app.get("/users/", response_model=list[schemas.User])
+def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    users = crud.get_users(db, skip=skip, limit=limit)
+    return users
