@@ -1,9 +1,10 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import UUID, ForeignKey
+from sqlalchemy import UUID, func
 from app.database.database import Base
 from uuid import uuid4
 
 from datetime import datetime
+
 from app.database.enums.transaction_type import TransactionType
 
 class Transaction(Base):
@@ -11,5 +12,5 @@ class Transaction(Base):
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     amount: Mapped[float] = mapped_column()
-    date: Mapped[datetime] = mapped_column()
+    date: Mapped[datetime] = mapped_column(default=func.now())
     type: Mapped[TransactionType] = mapped_column()
