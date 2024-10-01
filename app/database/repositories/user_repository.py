@@ -33,7 +33,7 @@ class UserRepository:
         user.telegram_username = "Steel Abobus"
         self.session.flush()
 
-    def set_auto_pay(self, telegram_id: UUID) -> None:
+    def toggle_auto_pay(self, telegram_id: UUID) -> None:
        user = self.get_by_telegram_id(telegram_id)
        user.auto_pay ^= True
        self.session.flush()
