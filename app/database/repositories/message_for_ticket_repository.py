@@ -1,16 +1,17 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import UUID, select
-from app.database.models.message_for_ticket import MessageForTicket
-from app.database.enums.message_ticket_type import MessageTicketType
+from app.database.enums import *
+from app.database.models import *
+
 
 class MessageForTicketRepository:
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
-
-    def get_message_by_ticket(self, ticket_id: UUID) -> list[MessageForTicket]:
-        stmt = select(MessageForTicket).where(MessageForTicket.ticket_id == ticket_id)
-        return list(self.session.scalars(stmt).all())
     
-    def create(self, text: str, ticket_id: UUID, type: MessageTicketType) -> None:
-        self.session.add(MessageForTicket(text=text, ticket_id=ticket_id, type=type))
-        self.session.flush()
+    async def create(self, text: str, ticket: Ticket, type: MessageTicketType) -> None:
+        self.session.add(MessageForTicket(text=text, ticket_id=ticket.id, type=type))
+        await self.session.flush()
+
+    async def get_message_by_ticket(self, ticket: Ticket) -> list[MessageForTicket]:
+        stmt = select(MessageForTicket).where(MessageForTicket.ticket_id == ticket.id)
+        return list((await self.session.scalars(stmt)).all())

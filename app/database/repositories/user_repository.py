@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import UUID, select
-from app.database.models.user import User
+from app.database.models import *
 from app.database.enums.role import Role
 from typing import Optional
 from datetime import datetime, UTC
@@ -33,7 +33,7 @@ class UserRepository:
         user.telegram_username = "Steel Abobus"
         self.session.flush()
 
-    def toggle_auto_pay(self, telegram_id: UUID) -> None:
+    def toggle_auto_pay(self, telegram_id: int) -> None:
        user = self.get_by_telegram_id(telegram_id)
        user.auto_pay ^= True
        self.session.flush()
