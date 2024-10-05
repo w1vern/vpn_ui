@@ -1,10 +1,13 @@
 
-from app.database.repositories.user_repository import UserRepository
+from app.database.repositories import *
 from app.database.database import sessionmanager
-from app.bot.main import bot
+from app.bot.__main__ import bot
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.types import Message
 import functools
+
+from app.bot.main import static_messages
+from app.bot.static.messages_titles import MessageTitle
 
 def session_decorator(func):
     @functools.wraps(func)
@@ -16,6 +19,8 @@ def session_decorator(func):
 @session_decorator
 async def start_command(session: AsyncSession, message: Message):
     ur = UserRepository(session)
+    ur.create(telegram_id=message.from_user.id, telegram_username=message.from_user.username)
+    bot.reply_to(message, static_messages[MessageTitle.start_message])
     
 
 

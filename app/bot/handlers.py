@@ -1,5 +1,5 @@
 
-from app.bot.main import bot
+from app.bot.__main__ import bot
 from app.bot.commands import *
 
 from telebot.types import Message
@@ -11,15 +11,15 @@ async def start(message: Message):
 
 
 @bot.message_handler(commands=['help'])
-async def start(message):
+async def help(message):
     
 
 @bot.message_handler(commands=['info'])
-async def start(message):
+async def info(message):
     pass
 
-@bot.message_handler(commands=[''])
-async def start(message):
+@bot.message_handler(commands=['balance'])
+async def balance(message):
     pass
 
 @bot.message_handler(commands=['start'])

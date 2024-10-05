@@ -10,7 +10,7 @@ from app.database.models.ticket import Ticket
 from app.database.enums.message_ticket_type import MessageTicketType
 
 class MessageForTicket(Base):
-    __tablename__ = "messages"
+    __tablename__ = "ticket_messages"
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     text: Mapped[str] = mapped_column()
