@@ -1,4 +1,5 @@
 from telebot.async_telebot import AsyncTeleBot
+from telebot.asyncio_handler_backends import State, StatesGroup
 import os
 from dotenv import load_dotenv
 import json
@@ -9,3 +10,6 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 bot = AsyncTeleBot('BOT_TOKEN')
 
 static_messages = json.loads("./static/messages.json")
+
+class MyStates(StatesGroup):
+    installation_guide_menu = State()

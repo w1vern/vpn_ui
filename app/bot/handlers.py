@@ -11,24 +11,25 @@ async def start(message: Message):
 
 
 @bot.message_handler(commands=['help'])
-async def help(message):
-    
+async def help(message: Message):
+    pass
+
 
 @bot.message_handler(commands=['info'])
-async def info(message):
+async def info(message: Message):
     pass
+
 
 @bot.message_handler(commands=['balance'])
-async def balance(message):
+async def balance(message: Message):
     pass
+
 
 @bot.message_handler(commands=['start'])
-async def start(message):
+async def installation(message: Message):
     pass
+
 
 @bot.message_handler(commands=['start'])
-async def start(message):
+async def start(message: Message):
     pass
-
-
-    
