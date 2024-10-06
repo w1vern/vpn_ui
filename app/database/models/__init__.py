@@ -3,3 +3,4 @@ from .message_for_ticket import MessageForTicket
 from .ticket import Ticket
 from .transaction import Transaction
 from .user import User
+from .base import Base

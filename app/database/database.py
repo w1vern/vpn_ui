@@ -2,7 +2,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 import os
-from app.database.models.base import Base
+from app.database.models import *
+
+import contextlib
 
 
 from sqlalchemy.ext.asyncio import (AsyncConnection, AsyncSession,

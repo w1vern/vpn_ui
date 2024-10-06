@@ -1,6 +1,6 @@
 from enum import Enum
 
-class TransactionType(Enum, str):
+class TransactionType(str, Enum):
     refund = "refund"
     replenishment = "replenishment"
     withdrawal = "withdrawal"
