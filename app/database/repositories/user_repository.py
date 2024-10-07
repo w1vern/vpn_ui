@@ -26,14 +26,14 @@ class UserRepository:
         user = User(telegram_id=telegram_id, telegram_username=telegram_username,
                     balance=balance, role=role, active=active, auto_pay=auto_pay, created_date=created_date)
         self.session.add(user)
-        self.session.flush()
+        await self.session.flush()
 
-    async def set_telegram_username(self, id: UUID) -> None:
-        user = self.get_by_id(id)
+    async def update_telegram_username(self, id: UUID) -> None:
+        user = await self.get_by_id(id)
         user.telegram_username = "Steel Abobus"
-        self.session.flush()
+        await self.session.flush()
 
     async def toggle_auto_pay(self, telegram_id: int) -> None:
-        user = self.get_by_telegram_id(telegram_id)
+        user = await self.get_by_telegram_id(telegram_id)
         user.auto_pay ^= True
-        self.session.flush()
+        await self.session.flush()
