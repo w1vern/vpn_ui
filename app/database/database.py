@@ -10,13 +10,12 @@ import contextlib
 from sqlalchemy.ext.asyncio import (AsyncConnection, AsyncSession,
                                     async_sessionmaker, create_async_engine)
 
-from typing import Any, AsyncIterator
+from typing import Any, AsyncGenerator, AsyncIterator
 
 # Загружаем переменные окружения из файла .env
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-
 
 
 class DatabaseSessionManager:

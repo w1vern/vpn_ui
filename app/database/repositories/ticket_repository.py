@@ -12,7 +12,7 @@ class TicketRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, title: str, holder: User, opening_date: datetime = datetime.now(UTC), closing_date: datetime = datetime.now(UTC), is_open: bool = True):
+    async def create(self, title: str, holder: User, opening_date: datetime = datetime.now(UTC).replace(tzinfo=None), closing_date: datetime = datetime.now(UTC).replace(tzinfo=None), is_open: bool = True):
         ticket = Ticket(title=title, holder_id=holder.id,
                         opening_date=opening_date, closing_date=closing_date, is_open=is_open)
         self.session.add(ticket)

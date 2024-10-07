@@ -11,7 +11,7 @@ class TransactionRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    async def create(self, user: User, amount: float = 4, date: datetime = datetime.now(UTC), type: TransactionType = TransactionType.withdrawal) -> None:
+    async def create(self, user: User, amount: float = 4, date: datetime = datetime.now(UTC).replace(tzinfo=None), type: TransactionType = TransactionType.withdrawal) -> None:
         transaction = Transaction(
             user_id=user.id, amount=amount, date=date, type=type)
         self.session.add(transaction)
