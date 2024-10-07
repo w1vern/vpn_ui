@@ -1,8 +1,8 @@
-"""first migration
+"""initial
 
-Revision ID: 06b70fb9784d
+Revision ID: 64b65df25441
 Revises: 
-Create Date: 2024-10-06 20:01:10.077260
+Create Date: 2024-10-07 04:23:18.319659
 
 """
 from typing import Sequence, Union
@@ -16,9 +16,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime, UTC
 
 
-
 # revision identifiers, used by Alembic.
-revision: str = '06b70fb9784d'
+revision: str = '64b65df25441'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -38,6 +37,16 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_users_telegram_id'), 'users', ['telegram_id'], unique=True)
+    op.create_table('telegram_messages',
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('text', sa.String(), nullable=False),
+    sa.Column('date', sa.DateTime(), nullable=False),
+    sa.Column('sender_id', sa.Uuid(), nullable=False),
+    sa.Column('recipient_id', sa.Uuid(), nullable=False),
+    sa.ForeignKeyConstraint(['recipient_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['sender_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('tickets',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
@@ -52,7 +61,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('amount', sa.Float(), nullable=False),
     sa.Column('date', sa.DateTime(), nullable=False),
-    sa.Column('type', sa.Enum('refund', 'replenishment', 'withdrawal', name='transactiontype'), nullable=False),
+    sa.Column('type', sa.Enum('refund', 'replenishment', 'withdrawal', name='transaction_type'), nullable=False),
     sa.Column('user_id', sa.Uuid(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -71,12 +80,12 @@ def upgrade() -> None:
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('text', sa.String(), nullable=False),
     sa.Column('date', sa.DateTime(), nullable=False),
-    sa.Column('type', sa.Enum('from_admin', 'from_user', name='messagetickettype'), nullable=False),
+    sa.Column('type', sa.Enum('from_admin', 'from_user', name='message_ticket_type'), nullable=False),
     sa.Column('ticket_id', sa.Uuid(), nullable=False),
     sa.ForeignKeyConstraint(['ticket_id'], ['tickets.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    
+
     bind = op.get_bind()
     session = Session(bind=bind)
 
@@ -86,9 +95,7 @@ def upgrade() -> None:
 
     session.add_all(default_users)
     session.commit()
-
-    
-    ### end Alembic commands ###
+    # ### end Alembic commands ###
 
 
 def downgrade() -> None:
@@ -97,6 +104,11 @@ def downgrade() -> None:
     op.drop_table('active_periods')
     op.drop_table('transactions')
     op.drop_table('tickets')
+    op.drop_table('telegram_messages')
     op.drop_index(op.f('ix_users_telegram_id'), table_name='users')
     op.drop_table('users')
+
+    op.execute('DROP TYPE role')
+    op.execute('DROP TYPE message_ticket_type')
+    op.execute('DROP TYPE transaction_type')
     # ### end Alembic commands ###

@@ -5,7 +5,6 @@ from uuid import uuid4
 import uuid
 from datetime import datetime
 
-from app.database.models.user import User
 from app.database.models.ticket import Ticket
 from app.database.enums.message_ticket_type import MessageTicketType
 
