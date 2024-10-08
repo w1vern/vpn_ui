@@ -15,16 +15,16 @@ class TransactionRepository:
         transaction = Transaction(
             user_id=user.id, amount=amount, date=date, type=type)
         self.session.add(transaction)
-        self.session.flush()
+        await self.session.flush()
 
     async def get_by_id(self, id: UUID) -> Optional[Transaction]:
         stmt = select(Transaction).where(Transaction.id == id).limit(1)
-        return self.session.scalar(stmt)
+        return await self.session.scalar(stmt)
 
     async def get_all(self) -> list[Transaction]:
         stmt = select(Transaction)
-        return list(self.session.scalars(stmt).all)
+        return list(await (self.session.scalars(stmt)).all)
     
     async def get_by_user(self, user: User) -> list[Transaction]:
         stmt = select(Transaction).where(Transaction.user_id==user.id)
-        return list(self.session.scalars(stmt).all())
+        return list(await (self.session.scalars(stmt)).all())
