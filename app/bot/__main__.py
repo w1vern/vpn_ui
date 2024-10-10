@@ -1,10 +1,9 @@
 
 from app.bot.main import bot
-
-def main():
-    bot.infinity_polling()
+import app.bot.handlers
+import asyncio
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(bot.infinity_polling())
 
 
