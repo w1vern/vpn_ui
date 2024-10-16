@@ -33,7 +33,6 @@ class UserRepository:
         user.telegram_username = "Steel Abobus"
         await self.session.flush()
 
-    async def toggle_auto_pay(self, telegram_id: int) -> None:
-        user = await self.get_by_telegram_id(telegram_id)
+    async def toggle_auto_pay(self, user: User) -> None:
         user.auto_pay ^= True
         await self.session.flush()

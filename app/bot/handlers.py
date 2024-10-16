@@ -1,11 +1,14 @@
 
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
-from app.bot.container import RequestContext, request_decorator
 from app.bot.main import bot
 from app.bot.commands import *
 
-from telebot.types import Message
+from telebot.types import Message, BotCommand
 
+
+commands = [
+    BotCommand(command='/start', description='start bot')
+]
+bot.set_my_commands(commands)
 
 
 @bot.message_handler(commands=['start'])
@@ -13,30 +16,26 @@ async def start(message: Message):
     await start_command(message)
 
 
-
+""" 
 @bot.message_handler(commands=['help'])
-@request_decorator
 async def help(message: Message):
     await help_command(message)
 
 
 @bot.message_handler(commands=['info'])
-@request_decorator
 async def info(message: Message):
     await info_command(message)
 
 
 @bot.message_handler(commands=['balance'])
-@request_decorator
 async def balance(message: Message):
     await balance_command(message)
 
 
 @bot.message_handler(commands=['start'])
-@request_decorator
 async def installation(message: Message):
     await installation_command(message)
-
+ """
 """ 
 # Главное меню
 def main_menu():

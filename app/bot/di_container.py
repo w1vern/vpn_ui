@@ -1,11 +1,5 @@
 import functools
 import inspect
-from telebot.types import Message
-from app.database.database import get_db_session
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.database.models import *
-from app.database.repositories import *
 
 
 
@@ -16,14 +10,6 @@ class RequestContext:
 
     def set_depend(self, annotation, depend):
         self.dependencies[annotation] = depend
-
-def request_decorator(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        rq = RequestContext()
-        rq.set_depend(Message, args[0])
-        return func(rq)
-    return wrapper
 
 
 class Container:
@@ -74,23 +60,3 @@ class Container:
             return res
         wrapper.__annotations__["rq_context"] = RequestContext
         return wrapper
-    
-def inject(di):
-     def decorator(func):
-            return request_decorator(di.inject(func))
-     return decorator
-
-di = Container()
-
-@di.inject
-async def get_user(session: AsyncSession, message: Message):
-    ur = UserRepository(session)
-    user = await ur.get_by_telegram_id(message.from_user.id)
-    if user is None:
-        user = await ur.create(telegram_id=message.from_user.id,
-              telegram_username=message.from_user.username)
-        await session.commit()
-    return user
-
-di.set_depend(AsyncSession, get_db_session)
-di.set_depend(User, get_user)
