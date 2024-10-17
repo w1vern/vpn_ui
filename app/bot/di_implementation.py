@@ -49,6 +49,3 @@ async def get_bot():
 di.set_depend(AsyncSession, get_db_session)
 di.set_depend(User, get_user)
 di.set_depend(AsyncTeleBot, get_bot)
-di.set_depend(RuMessages, get_ru_messages)
-di.set_depend(EnMessages, get_en_messages)
-di.set_depend(Templates, get_templates)
