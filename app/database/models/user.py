@@ -18,3 +18,4 @@ class User(Base):
     active: Mapped[bool] = mapped_column()
     auto_pay: Mapped[bool] = mapped_column()
     created_date: Mapped[datetime] = mapped_column()
+    secret: Mapped[str] = mapped_column()
