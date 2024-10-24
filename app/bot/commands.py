@@ -10,12 +10,10 @@ from app.bot.static.template_title import TemplateTitle
 from telebot.async_telebot import AsyncTeleBot
 from string import Template
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
-
-
 from app.bot.main import ru_messages, en_messages, templates
-@inject(di)
-def string_builder(template_title: TemplateTitle, language_code: str, **kwargs) -> str:
-    template = Template(templates[template_title])
+
+async def string_builder(template_title: TemplateTitle, language_code: str, **kwargs) -> str:
+    template = Template(templates[template_title.value])
     if language_code == 'ru':
         return template.substitute(ru_messages, **kwargs)
     return template.substitute(en_messages, **kwargs)
@@ -23,8 +21,9 @@ def string_builder(template_title: TemplateTitle, language_code: str, **kwargs) 
 
 @inject(di)
 async def start_command(message: Message, user: User, bot: AsyncTeleBot):
-    text = string_builder(TemplateTitle.start_template, message.from_user.language_code)
+    text = await string_builder(template_title=TemplateTitle.start_template, language_code=message.from_user.language_code)
     await bot.send_message(message.from_user.id, text)
+    print(message.chat.id)
 
 
 @inject(di)
@@ -34,7 +33,7 @@ async def toggle_auto_pay_command(message: Message, user: User, session: AsyncSe
     await session.commit()
     text = string_builder(TemplateTitle.toggle_auto_pay_template, message.from_user.language_code)
     bot.send_message(message.from_user.id, text)
-
+""" 
 @inject
 async def info_command(message: Message, user: User, bot: AsyncTeleBot):
     text = string_builder(TemplateTitle.info_template, message.from_user.language_code)
@@ -60,3 +59,4 @@ async def _command(message: Message, user: User, bot: AsyncTeleBot):
     pass
 
 
+ """

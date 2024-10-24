@@ -9,7 +9,6 @@ from app.database.database import get_db_session
 from app.database.repositories import *
 from app.database.models import *
 from app.bot.main import bot, ru_messages, en_messages, templates
-from app.bot.static.types import *
 
 
 di = Container()

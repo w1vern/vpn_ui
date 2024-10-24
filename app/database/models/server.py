@@ -12,7 +12,6 @@ class Server(Base):
     __tablename__ = "servers"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=UUID4)
-    
     url: Mapped[str] = mapped_column()
     country_code: Mapped[str] = mapped_column()
     is_available: Mapped[bool] = mapped_column()

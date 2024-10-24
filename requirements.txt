@@ -14,6 +14,7 @@ click==8.1.7
 colorama==0.4.6
 fast-depends==2.4.11
 fastapi==0.115.0
+fastapi-controllers==0.3.0
 fastapi-login==1.10.2
 faststream==0.5.25
 frozenlist==1.4.1

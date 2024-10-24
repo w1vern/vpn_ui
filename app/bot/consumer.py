@@ -1,22 +1,16 @@
 import json
-import pika
 
-from app.bot.di_implementation import inject, di
+from faststream import FastStream, Depends
+from faststream.rabbit import RabbitBroker
+
+from app.bot.di_implementation import get_bot, inject, di
 from telebot.async_telebot import AsyncTeleBot
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-channel = connection.channel()
+broker = RabbitBroker("amqp://guest:guest@localhost:5672/")
 
-queue_name='message_queue'
+app = FastStream(broker)
 
-channel.queue_declare(queue=queue_name)
-
-@inject(di)
-def message_consumer(ch, method, properties, body, bot: AsyncTeleBot):
-    message = body.decode()
-    dict = json.loads(message)
-    bot.send_message(chat_id=dict['tg_id'], text=dict['text'])
-
-
-channel.basic_consume(queue=queue_name, on_message_callback=message_consumer, auto_ack=True)
-channel.start_consuming()
+@broker.subscriber('message')
+async def message_consumer(body: dict, bot: AsyncTeleBot = Depends(get_bot)):
+    print(body)
+    await bot.send_message(chat_id=body["tg_id"]["tg_id"], text=body['text'])
