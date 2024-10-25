@@ -18,5 +18,6 @@ class Server(Base):
     is_available: Mapped[bool] = mapped_column()
     display_name: Mapped[str] = mapped_column()
     created_date: Mapped[datetime] = mapped_column()
+    closing_date: Mapped[datetime] = mapped_column()
     login: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()

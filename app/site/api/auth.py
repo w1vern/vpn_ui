@@ -1,18 +1,14 @@
 
 from datetime import UTC, datetime
-from re import S
 from fastapi import Cookie, Depends, HTTPException, Response
 from fastapi_controllers import Controller, get, post
-import jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.database import get_db_session
-from app.database.models.user import User
 from app.database.repositories.user_repository import UserRepository
-from app.database.schemes.tg import TgAuth, TgId
-from app.site.config import config
+from app.site.schemes.tg_scheme import TgAuth, TgId
+from app.site.config import Config
 from app.site.broker import get_broker, send_message
-from app.site.config import SECRET
 from app.site.token import AccessToken, RefreshToken, TgCode
 
 
@@ -43,7 +39,7 @@ class AuthController(Controller):
                 status_code=401, detail='incorrect refresh token')
         access = AccessToken(user.id)
         response.set_cookie(key='access_token', value=access.to_token(
-        ), max_age=config['access_token_lifetime'])
+        ), max_age=Config.access_token_lifetime)
         print(refresh.created_date + refresh.lifetime)
         print(access.created_date + access.lifetime)
 
@@ -64,9 +60,9 @@ class AuthController(Controller):
         refresh = RefreshToken(user_id=user.id, secret=user.secret)
         access = AccessToken(user.id)
         response.set_cookie(key='refresh_token', value=refresh.to_token(
-        ), max_age=config['refresh_token_lifetime'])
+        ), max_age=Config.refresh_token_lifetime)
         response.set_cookie(key='access_token', value=access.to_token(
-        ), max_age=config['access_token_lifetime'])
+        ), max_age=Config.access_token_lifetime)
 
     @post("/tg_code")
     async def tg_code(self, response: Response, tg_id: TgId, broker=Depends(get_broker)):
@@ -76,5 +72,5 @@ class AuthController(Controller):
             raise HTTPException(status_code=401, detail='user not found')
         tg_code = TgCode(user.id)
         response.set_cookie(
-            key='tg_code', value=tg_code.to_token(), max_age=config['tg_code_lifetime'])
+            key='tg_code', value=tg_code.to_token(), max_age=Config.tg_code_lifetime)
         await send_message({'tg_id': tg_id.tg_id, 'text': 'your code to login: ' + tg_code.code}, broker)

@@ -9,5 +9,8 @@ load_dotenv()
 
 SECRET = os.getenv('SECRET')
 
-with open ('app/site/config.json', encoding='utf-8') as file:
-    config = json.load(file)
+class Config:
+    tg_code_lifetime = 120
+    access_token_lifetime = 600
+    refresh_token_lifetime = 2592000
+    algorithm = 'HS256'

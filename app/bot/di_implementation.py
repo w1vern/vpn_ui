@@ -34,9 +34,15 @@ def inject(di):
 async def get_user(session: AsyncSession, message: Message):
     ur = UserRepository(session)
     user = await ur.get_by_telegram_id(message.from_user.id)
+    username = message.from_user.username
+    if username is None:
+        username = 'Default ABOBA'
     if user is None:
         user = await ur.create(telegram_id=message.from_user.id,
-                               telegram_username=message.from_user.username)
+                               telegram_username=username)
+        await session.commit()
+    if user.telegram_username != message.from_user.username:
+        await ur.update_telegram_username(id=user.id, new_tg_username=username)
         await session.commit()
     return user
 

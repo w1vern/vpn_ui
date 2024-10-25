@@ -6,11 +6,11 @@ import uuid
 
 import jwt
 
-from app.site.config import SECRET, config
+from app.site.config import SECRET, Config
 
 
 class AccessToken:
-    def __init__(self, user_id: uuid.UUID | str, created_date: datetime | str = datetime.now(UTC), lifetime: timedelta | float = timedelta(seconds=config['access_token_lifetime'])) -> None:
+    def __init__(self, user_id: uuid.UUID | str, created_date: datetime | str = datetime.now(UTC), lifetime: timedelta | float = timedelta(seconds=Config.access_token_lifetime)) -> None:
         if type(created_date) == str:
             self.created_date = datetime.fromisoformat(created_date)
         else:
@@ -26,7 +26,7 @@ class AccessToken:
 
     @classmethod
     def from_token(cls, token: str) -> 'AccessToken':
-        return AccessToken(**jwt.decode(jwt=token, key=SECRET, algorithms='HS256'))
+        return AccessToken(**jwt.decode(jwt=token, key=SECRET, algorithms=Config.algorithm))
 
     def to_token(self) -> str:
         return jwt.encode(payload={
@@ -37,7 +37,7 @@ class AccessToken:
 
 
 class RefreshToken:
-    def __init__(self, user_id: uuid.UUID | str, secret: str, created_date: datetime | str = datetime.now(UTC), lifetime: timedelta | float = timedelta(seconds=config['refresh_token_lifetime'])) -> None:
+    def __init__(self, user_id: uuid.UUID | str, secret: str, created_date: datetime | str = datetime.now(UTC), lifetime: timedelta | float = timedelta(seconds=Config.refresh_token_lifetime)) -> None:
         self.secret = secret
         if type(created_date) == str:
             self.created_date = datetime.fromisoformat(created_date)
@@ -54,7 +54,7 @@ class RefreshToken:
 
     @classmethod
     def from_token(cls, token: str) -> 'RefreshToken':
-        return RefreshToken(**jwt.decode(jwt=token, key=SECRET, algorithms='HS256'))
+        return RefreshToken(**jwt.decode(jwt=token, key=SECRET, algorithms=Config.algorithm))
 
     def to_token(self) -> str:
         return jwt.encode(payload={
@@ -66,7 +66,7 @@ class RefreshToken:
 
 
 class TgCode:
-    def __init__(self, user_id: uuid.UUID | str, code: str = None, created_date: datetime | str = datetime.now(UTC), lifetime: timedelta | float = timedelta(seconds=config['tg_code_lifetime'])) -> None:
+    def __init__(self, user_id: uuid.UUID | str, code: str = None, created_date: datetime | str = datetime.now(UTC), lifetime: timedelta | float = timedelta(seconds=Config.tg_code_lifetime)) -> None:
         if code is None:
             tmp_code = str(random.randrange(start=0, stop=1000000))
             self.code = '0'*(6-len(tmp_code)) + tmp_code
@@ -87,7 +87,7 @@ class TgCode:
 
     @classmethod
     def from_token(cls, token: str) -> 'TgCode':
-        return TgCode(**jwt.decode(jwt=token, key=SECRET, algorithms='HS256'))
+        return TgCode(**jwt.decode(jwt=token, key=SECRET, algorithms=Config.algorithm))
 
     def to_token(self) -> str:
         return jwt.encode(payload={

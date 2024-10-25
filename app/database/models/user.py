@@ -1,5 +1,5 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import UUID
+from sqlalchemy import BigInteger
 from app.database.models.base import Base
 from uuid import uuid4
 import uuid
@@ -11,7 +11,7 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid4)
-    telegram_id: Mapped[int] = mapped_column(unique=True, index=True)
+    telegram_id: Mapped[int] = mapped_column(type_=BigInteger, unique=True, index=True)
     telegram_username: Mapped[str] = mapped_column()
     balance: Mapped[float] = mapped_column()
     role: Mapped[Role] = mapped_column()

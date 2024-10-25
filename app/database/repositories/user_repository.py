@@ -25,15 +25,15 @@ class UserRepository:
         stmt = select(User)
         return list((await self.session.scalars(stmt)).all())
 
-    async def create(self, telegram_id: int, telegram_username: str = "Abobus", balance: float = 0, role: Role = Role.guest, active: bool = False, auto_pay: bool = True, created_date: datetime = datetime.now(UTC).replace(tzinfo=None), secret=token_urlsafe()) -> None:
+    async def create(self, telegram_id: int, telegram_username: str, balance: float = 0, role: Role = Role.guest, active: bool = False, auto_pay: bool = True, created_date: datetime = datetime.now(UTC).replace(tzinfo=None), secret=token_urlsafe()) -> None:
         user = User(telegram_id=telegram_id, telegram_username=telegram_username,
                     balance=balance, role=role, active=active, auto_pay=auto_pay, created_date=created_date, secret=secret)
         self.session.add(user)
         await self.session.flush()
 
-    async def update_telegram_username(self, id: UUID) -> None:
+    async def update_telegram_username(self, id: UUID, new_tg_username: str) -> None:
         user = await self.get_by_id(id)
-        user.telegram_username = "Steel Abobus"
+        user.telegram_username = new_tg_username
         await self.session.flush()
 
     async def toggle_auto_pay(self, user: User) -> None:

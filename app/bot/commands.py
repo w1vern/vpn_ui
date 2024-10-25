@@ -21,9 +21,9 @@ async def string_builder(template_title: TemplateTitle, language_code: str, **kw
 
 @inject(di)
 async def start_command(message: Message, user: User, bot: AsyncTeleBot):
+    print(f"user: {user}")
     text = await string_builder(template_title=TemplateTitle.start_template, language_code=message.from_user.language_code)
     await bot.send_message(message.from_user.id, text)
-    print(message.chat.id)
 
 
 @inject(di)

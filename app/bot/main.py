@@ -8,7 +8,7 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 class ExceptionHandler(telebot.ExceptionHandler):
-    def handle(self, exception):
+    def handle(self, exception = None):
         print(exception)
 
 bot = AsyncTeleBot(BOT_TOKEN, exception_handler=ExceptionHandler)
