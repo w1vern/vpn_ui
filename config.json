@@ -1,5 +1,0 @@
-{
-    "tg_code_lifetime": 1,
-    "access_token_lifetime": 10,
-    "refresh_token_lifetime": 43200
-}

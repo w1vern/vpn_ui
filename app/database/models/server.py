@@ -12,8 +12,11 @@ class Server(Base):
     __tablename__ = "servers"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=UUID4)
-    url: Mapped[str] = mapped_column()
+    ip: Mapped[str] = mapped_column()
+    panel_path: Mapped[str] = mapped_column()
     country_code: Mapped[str] = mapped_column()
     is_available: Mapped[bool] = mapped_column()
     display_name: Mapped[str] = mapped_column()
     created_date: Mapped[datetime] = mapped_column()
+    login: Mapped[str] = mapped_column()
+    password: Mapped[str] = mapped_column()

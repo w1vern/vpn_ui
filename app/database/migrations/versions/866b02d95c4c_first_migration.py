@@ -93,6 +93,18 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['ticket_id'], ['tickets.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('servers',
+                    sa.Column('id', sa.Uuid(), nullable=False),
+                    sa.Column('ip', sa.String(), nullable=False),
+                    sa.Column('panel_path', sa.String(), nullable=False),
+                    sa.Column('country_code', sa.String(), nullable=False),
+                    sa.Column('is_available', sa.Boolean(), nullable=False),
+                    sa.Column('display_name', sa.String(), nullable=False),
+                    sa.Column('created_date', sa.DateTime(), nullable=False),
+                    sa.Column('login', sa.String(), nullable=False),
+                    sa.Column('password', sa.String(), nullable=False),
+                    sa.PrimaryKeyConstraint('id')
+                    )
     bind = op.get_bind()
     session = Session(bind=bind)
 
@@ -115,6 +127,7 @@ def downgrade() -> None:
     op.drop_table('telegram_messages')
     op.drop_index(op.f('ix_users_telegram_id'), table_name='users')
     op.drop_table('users')
+    op.drop_table('servers')
 
     op.execute('DROP TYPE role')
     op.execute('DROP TYPE message_ticket_type')

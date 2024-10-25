@@ -5,3 +5,4 @@ from .ticket import Ticket
 from .transaction import Transaction
 from .user import User
 from .base import Base
+from .server import Server

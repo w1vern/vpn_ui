@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import UUID, select
+from sqlalchemy import select
+from uuid import UUID
 from app.database.enums import *
 from app.database.models import *
 
