@@ -2,8 +2,8 @@ import secrets
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from uuid import UUID
-from app.database.models import *
-from app.database.enums.role import Role
+from database.models import *
+from database.enums.role import Role
 from typing import Optional
 from datetime import datetime, UTC
 from secrets import token_urlsafe

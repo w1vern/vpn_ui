@@ -9,5 +9,5 @@ def get_broker() -> RabbitBroker:
     return router.broker
 
 async def send_message(data: dict, broker: RabbitBroker):
-    await broker.publish(data, 'message')
+    await broker.publish(data, "message")
     

@@ -4,11 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 
 
-from app.bot.di_container import Container, RequestContext
-from app.database.database import get_db_session
-from app.database.repositories import *
-from app.database.models import *
-from app.bot.main import bot, ru_messages, en_messages, templates
+from bot.di_container import Container, RequestContext
+from database.database import get_db_session
+from database.repositories import *
+from database.models import *
+from bot.main import bot, ru_messages, en_messages, templates
 
 
 di = Container()
@@ -36,7 +36,7 @@ async def get_user(session: AsyncSession, message: Message):
     user = await ur.get_by_telegram_id(message.from_user.id)
     username = message.from_user.username
     if username is None:
-        username = 'Default ABOBA'
+        username = "Default ABOBA"
     if user is None:
         await ur.create(telegram_id=message.from_user.id,
                                telegram_username=username)

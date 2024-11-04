@@ -1,6 +1,6 @@
 
-from app.bot.consumer import app
-from app.bot.main import bot
+from bot.consumer import app
+from bot.main import bot
 import asyncio
 
 async def main():

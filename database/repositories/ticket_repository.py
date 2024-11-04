@@ -6,7 +6,7 @@ from datetime import datetime, UTC
 from typing import Optional
 
 
-from app.database.models import *
+from database.models import *
 
 
 class TicketRepository:

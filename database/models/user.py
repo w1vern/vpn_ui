@@ -1,10 +1,10 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import BigInteger
-from app.database.models.base import Base
+from database.models.base import Base
 from uuid import uuid4
 import uuid
 
-from app.database.enums.role import Role
+from database.enums.role import Role
 from datetime import datetime
 
 class User(Base):

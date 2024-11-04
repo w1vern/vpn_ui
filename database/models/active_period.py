@@ -1,12 +1,12 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import UUID, ForeignKey
-from app.database.models.base import Base
+from database.models.base import Base
 from uuid import uuid4
 import uuid
 from datetime import datetime
 
-from app.database.models.user import User
-from app.database.models.transaction import Transaction
+from database.models.user import User
+from database.models.transaction import Transaction
 
 class ActivePeriod(Base):
     __tablename__ = "active_periods"

@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from uuid import UUID
-from app.database.enums import *
-from app.database.models import *
+from database.enums import *
+from database.models import *
 
 
 class MessageForTicketRepository:

@@ -2,8 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from uuid import UUID
 
-from app.database.models import *
-from app.database.enums.transaction_type import TransactionType
+from database.models import *
+from database.enums.transaction_type import TransactionType
 from typing import Optional
 from datetime import datetime, UTC
 

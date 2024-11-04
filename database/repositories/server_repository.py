@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from uuid import UUID
-from app.database.models import *
+from database.models import *
 from typing import Optional
 from datetime import datetime, UTC, timedelta
 
