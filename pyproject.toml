@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "vpn-ui-back"
+name = "vpn-ui"
 version = "0.1.0"
 description = ""
 authors = ["w1vern <bndvvl@gmail.com>"]
