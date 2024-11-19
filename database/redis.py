@@ -1,6 +1,8 @@
 from enum import Enum
+
 import redis
 import redis.client
+
 
 class RedisType(str, Enum):
     tg_code = "tg_code"

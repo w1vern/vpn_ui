@@ -2,7 +2,6 @@ import functools
 import inspect
 
 
-
 class RequestContext:
     def __init__(self) -> None:
         self.dependencies = {}

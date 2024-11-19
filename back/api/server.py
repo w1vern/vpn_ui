@@ -5,10 +5,10 @@ from fastapi_controllers import Controller, get, post
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.get_auth import get_user
+from back.schemas.server_scheme import ServerToCreate
 from database.database import get_db_session
 from database.models.user import User
 from database.repositories.server_repository import ServerRepository
-from back.schemas.server_scheme import ServerToCreate
 
 
 class ServerController(Controller):

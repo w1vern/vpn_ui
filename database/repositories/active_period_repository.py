@@ -1,10 +1,11 @@
-from sqlalchemy import select
-from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
-from database.models import *
-
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Optional
+from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.models import *
 
 
 class ActivePeriodRepository:

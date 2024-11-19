@@ -1,15 +1,14 @@
 import functools
-from telebot.types import Message
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
-
+from telebot.types import Message
 
 from bot.di_container import Container, RequestContext
+from bot.main import bot, en_messages, ru_messages, templates
 from database.database import get_db_session
-from database.repositories import *
 from database.models import *
-from bot.main import bot, ru_messages, en_messages, templates
-
+from database.repositories import *
 
 di = Container()
 

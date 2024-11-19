@@ -1,7 +1,8 @@
 
-from datetime import datetime, UTC
-from fastapi import Cookie, Depends, HTTPException
+from datetime import UTC, datetime
+
 import redis
+from fastapi import Cookie, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.token import AccessToken

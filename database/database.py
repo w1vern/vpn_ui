@@ -1,16 +1,14 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from dotenv import load_dotenv
-import os
-from database.models import *
-
 import contextlib
+import os
+from typing import Any, AsyncGenerator, AsyncIterator
 
-
+from dotenv import load_dotenv
+from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import (AsyncConnection, AsyncSession,
                                     async_sessionmaker, create_async_engine)
+from sqlalchemy.ext.declarative import declarative_base
 
-from typing import Any, AsyncGenerator, AsyncIterator
+from database.models import *
 
 load_dotenv()
 
@@ -57,15 +55,15 @@ class DatabaseSessionManager:
         finally:
             await session.close()
 
-sessionmanager = DatabaseSessionManager(DATABASE_URL, {"echo": False})
+session_manager = DatabaseSessionManager(DATABASE_URL, {"echo": False})
 
 
 async def get_db_session():
-    async with sessionmanager.session() as session:
+    async with session_manager.session() as session:
         yield session
 
 
 async def create_db_and_tables():
-    async with sessionmanager.connect() as conn:
+    async with session_manager.connect() as conn:
         await conn.run_sync(Base.metadata.create_all)
 

@@ -1,12 +1,14 @@
 import secrets
-from sqlalchemy.orm import Session
-from sqlalchemy import select
-from uuid import UUID
-from database.models import *
-from database.enums.role import Role
-from typing import Optional
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from secrets import token_urlsafe
+from typing import Optional
+from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from database.enums.role import Role
+from database.models import *
 
 
 class UserRepository:

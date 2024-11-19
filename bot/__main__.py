@@ -1,7 +1,9 @@
 
+import asyncio
+
 from bot.consumer import app
 from bot.main import bot
-import asyncio
+
 
 async def main():
     bot_task = asyncio.create_task(bot.infinity_polling())

@@ -1,17 +1,19 @@
 
-from datetime import UTC, datetime
 import random
+from datetime import UTC, datetime
+
 from fastapi import Cookie, Depends, HTTPException, Response
 from fastapi_controllers import Controller, get, post
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from back.broker import get_broker, send_message
+from back.config import Config
+from back.schemas.tg_scheme import TgAuth, TgId
+from back.token import AccessToken, RefreshToken
 from database.database import get_db_session
 from database.redis import RedisType, get_redis_client
 from database.repositories.user_repository import UserRepository
-from back.schemas.tg_scheme import TgAuth, TgId
-from back.config import Config
-from back.broker import get_broker, send_message
-from back.token import AccessToken, RefreshToken
+
 
 def create_code() -> str:
 	tmp_code = str(random.randrange(start=0, stop=1000000))

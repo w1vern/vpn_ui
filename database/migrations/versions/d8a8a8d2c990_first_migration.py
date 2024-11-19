@@ -5,24 +5,13 @@ Revises:
 Create Date: 2024-10-25 04:50:19.812326
 
 """
+import secrets
+from datetime import UTC, datetime
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
-
-import os
-import secrets
-from dotenv import load_dotenv
+from alembic import op
 from sqlalchemy.orm import Session
-from datetime import datetime, UTC
-
-from app.database.enums.role import Role
-from app.database.models.user import User
-
-load_dotenv()
-SUPERUSER_TELEGRAM_ID = os.getenv("SUPERUSER_TELEGRAM_ID")
-
 
 # revision identifiers, used by Alembic.
 revision: str = "d8a8a8d2c990"
@@ -108,16 +97,6 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint("id")
     )
 
-    bind = op.get_bind()
-    session = Session(bind=bind)
-
-    default_users = [
-        User(telegram_id=int(SUPERUSER_TELEGRAM_ID), telegram_username="Admin", balance=0, role=Role.admin,
-             active=True, auto_pay=False, created_date=datetime.now(UTC).replace(tzinfo=None), secret=secrets.token_urlsafe())
-    ]
-
-    session.add_all(default_users)
-    session.commit()
     # ### end Alembic commands ###
 
 

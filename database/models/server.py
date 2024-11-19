@@ -1,11 +1,12 @@
-from pydantic import UUID4
-from sqlalchemy.orm import mapped_column, Mapped, relationship
-from database.models.base import Base
-from uuid import uuid4
 import uuid
+from datetime import datetime
+from uuid import uuid4
+
+from pydantic import UUID4
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.enums.role import Role
-from datetime import datetime
+from database.models.base import Base
 
 
 class Server(Base):

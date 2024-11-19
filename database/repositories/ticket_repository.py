@@ -1,10 +1,9 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from datetime import UTC, datetime
+from typing import Optional
 from uuid import UUID
 
-from datetime import datetime, UTC
-from typing import Optional
-
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import *
 

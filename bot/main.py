@@ -1,8 +1,9 @@
-from telebot.async_telebot import AsyncTeleBot
-from telebot import telebot
-import os
-from dotenv import load_dotenv
 import json
+import os
+
+from dotenv import load_dotenv
+from telebot import telebot
+from telebot.async_telebot import AsyncTeleBot
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")

@@ -1,16 +1,18 @@
 
-from database.repositories import *
-from database.enums import *
-from database.models import *
+from string import Template
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from telebot.types import Message
-from bot.di_implementation import inject, di
+from telebot.async_telebot import AsyncTeleBot
+from telebot.types import KeyboardButton, Message, ReplyKeyboardMarkup
+
+from bot.di_implementation import di, inject
+from bot.main import en_messages, ru_messages, templates
 from bot.static.message_title import MessageTitle
 from bot.static.template_title import TemplateTitle
-from telebot.async_telebot import AsyncTeleBot
-from string import Template
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
-from bot.main import ru_messages, en_messages, templates
+from database.enums import *
+from database.models import *
+from database.repositories import *
+
 
 async def string_builder(template_title: TemplateTitle, language_code: str, **kwargs) -> str:
     template = Template(templates[template_title.value])

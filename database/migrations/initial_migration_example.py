@@ -5,17 +5,15 @@ Revises:
 Create Date: 2024-10-25 04:50:19.812326
 
 """
-from typing import Sequence, Union
-
-from alembic import op
-import sqlalchemy as sa
-
-
 import os
 import secrets
+from datetime import UTC, datetime
+from typing import Sequence, Union
+
+import sqlalchemy as sa
+from alembic import op
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-from datetime import datetime, UTC
 
 from database.enums.role import Role
 from database.models.user import User

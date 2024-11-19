@@ -1,9 +1,8 @@
 
-from bot.main import bot
+from telebot.types import BotCommand, Message
+
 from bot.commands import *
-
-from telebot.types import Message, BotCommand
-
+from bot.main import bot
 
 commands = [
     BotCommand(command="/start", description="start bot")

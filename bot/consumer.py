@@ -1,9 +1,9 @@
 
-from faststream import FastStream, Depends
+from faststream import Depends, FastStream
 from faststream.rabbit import RabbitBroker
+from telebot.async_telebot import AsyncTeleBot
 
 from bot.di_implementation import get_bot
-from telebot.async_telebot import AsyncTeleBot
 
 broker = RabbitBroker("amqp://guest:guest@localhost:5672/")
 
