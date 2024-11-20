@@ -3,5 +3,5 @@
 from database.models.server import Server
 
 
-async def get_all(server: Server) -> list[None]:
+async def create_all_for_user(server: Server) -> list[None]:
     pass
