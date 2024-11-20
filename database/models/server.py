@@ -22,3 +22,8 @@ class Server(Base):
     closing_date: Mapped[datetime] = mapped_column()
     login: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()
+
+
+    @property
+    def connection_string(self):
+        return 'http://' + self.ip + '/' + self.panel_path + '/'
