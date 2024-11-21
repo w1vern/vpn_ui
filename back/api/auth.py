@@ -27,7 +27,24 @@ class AuthController(Controller):
 	def __init__(self, session: AsyncSession = Depends(get_db_session)):
 		self.session = session
 
-	@post("/refresh")
+	@post("/refresh",
+    summary="Refresh the access token",
+    description=(
+        "This endpoint refreshes the access token (`access_token`) using the provided "
+        "`refresh_token`. If the `refresh_token` is missing, expired, or invalid, "
+        "it returns a 401 Unauthorized error."
+    ),
+    responses={
+        200: {
+            "description": "Access token successfully refreshed",
+            "content": {
+                "application/json": {
+                    "example": {"message": "OK"}
+                }
+            },
+        },
+        401: {"description": "Invalid or expired refresh token"},
+    },)
 	async def refresh(self, response: Response, refresh_token: str = Cookie(None)):
 		if refresh_token is None:
 			raise HTTPException(
@@ -50,7 +67,30 @@ class AuthController(Controller):
 		), max_age=Config.access_token_lifetime, httponly=True)
 		return {"message": "OK"}
 
-	@post("/login")
+	@post("/login",
+    summary="Login using Telegram authentication",
+    description=(
+        "This endpoint authenticates the user using their Telegram credentials. "
+        "It verifies the provided Telegram code (`tg_code`) and generates both "
+        "`access_token` and `refresh_token`. These tokens are set as HTTP-only cookies."
+    ),
+    responses={
+        200: {
+            "description": "User successfully authenticated",
+            "content": {
+                "application/json": {
+                    "example": {"message": "OK"}
+                }
+            },
+        },
+        401: {
+            "description": (
+                "Authentication failed due to incorrect Telegram code, missing user, "
+                "or invalid credentials"
+            ),
+        },
+    },
+)
 	async def login(self, response: Response, tg_auth: TgAuth, redis=Depends(get_redis_client)):
 		tg_code = redis.get(f"{RedisType.tg_code}:{tg_auth.tg_id}")
 		if tg_code is None:
@@ -70,14 +110,35 @@ class AuthController(Controller):
 		), max_age=Config.access_token_lifetime, httponly=True)
 		return {"message": "OK"}
 
-	@post("/logout")
+	@post(
+    "/logout",
+    summary="Logout the user",
+    description=(
+        "This endpoint logs out the user by deleting the `refresh_token` and `access_token` cookies. "
+        "No authentication is required to call this endpoint."
+    ),
+    responses={
+        200: {"description": "User successfully logged out"},
+    },
+)
 	async def logout(self, response: Response):
 		response.delete_cookie(key="refresh_token")
 		response.delete_cookie(key="access_token")
 		return {"message": "OK"}
 
 
-	@post("/tg_code")
+	@post(
+    "/tg_code",
+    summary="Send a Telegram login code",
+    description=(
+        "This endpoint generates a login code for the user associated with the provided Telegram ID. "
+        "The code is stored in Redis with a time-to-live (TTL) and sent to the user's Telegram account."
+    ),
+    responses={
+        200: {"description": "Code successfully generated and sent"},
+        401: {"description": "User with the provided Telegram ID not found"},
+    },
+)
 	async def tg_code(self, tg_id: TgId, broker=Depends(get_broker), redis=Depends(get_redis_client)):
 		ur = UserRepository(self.session)
 		user = await ur.get_by_telegram_id(tg_id.tg_id)

@@ -23,9 +23,9 @@ default_users = [
 
 async def main():
     async with session_manager.session() as session:
-        pr = UserRepository(session)
+        ur = UserRepository(session)
         for user in default_users:
-            await pr.session.add(user)
+            ur.session.add(user)
         await session.commit()
 
 
