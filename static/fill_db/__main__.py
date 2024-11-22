@@ -15,17 +15,17 @@ load_dotenv()
 
 SUPERUSER_TELEGRAM_ID = os.getenv("SUPERUSER_TELEGRAM_ID")
 
-default_users = [
-    User(telegram_id=int(SUPERUSER_TELEGRAM_ID), telegram_username="Admin", balance=0, role=Role.admin,
-         active=True, auto_pay=False, created_date=datetime.now(UTC).replace(tzinfo=None), secret=secrets.token_urlsafe())
-]
+default_users = [{
+    "telegram_id": int(SUPERUSER_TELEGRAM_ID), "telegram_username": "Admin", "balance": 0, "role": Role.admin,
+    "active": True, "auto_pay": False, "created_date": datetime.now(UTC).replace(tzinfo=None), "secret": secrets.token_urlsafe()
+}]
 
 
 async def main():
     async with session_manager.session() as session:
         ur = UserRepository(session)
         for user in default_users:
-            ur.session.add(user)
+            await ur.create(**user)
         await session.commit()
 
 
