@@ -14,7 +14,7 @@ from database.models import *
 from database.repositories import *
 
 
-async def string_builder(template_title: TemplateTitle, language_code: str, **kwargs) -> str:
+async def string_builder(template_title: TemplateTitle, language_code: str | None, **kwargs) -> str:
     template = Template(templates[template_title.value])
     if language_code == "ru":
         return template.substitute(ru_messages, **kwargs)
@@ -23,18 +23,21 @@ async def string_builder(template_title: TemplateTitle, language_code: str, **kw
 
 @inject(di)
 async def start_command(message: Message, user: User, bot: AsyncTeleBot):
-    print(f"user: {user}")
+    if message.from_user is None:
+        return
     text = await string_builder(template_title=TemplateTitle.start_template, language_code=message.from_user.language_code)
     await bot.send_message(message.from_user.id, text)
 
 
 @inject(di)
 async def toggle_auto_pay_command(message: Message, user: User, session: AsyncSession, bot: AsyncTeleBot):
+    if message.from_user is None:
+        return
     ur = UserRepository(session)
     await ur.toggle_auto_pay(user)
     await session.commit()
-    text = string_builder(TemplateTitle.toggle_auto_pay_template, message.from_user.language_code)
-    bot.send_message(message.from_user.id, text)
+    text = await string_builder(TemplateTitle.toggle_auto_pay_template, message.from_user.language_code)
+    await bot.send_message(message.from_user.id, text)
 """ 
 @inject
 async def info_command(message: Message, user: User, bot: AsyncTeleBot):

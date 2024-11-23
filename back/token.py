@@ -1,8 +1,7 @@
 
 
-import random
 import uuid
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import jwt
 
@@ -10,23 +9,27 @@ from back.config import SECRET, Config
 
 
 class AccessToken:
-    def __init__(self, user_id: uuid.UUID | str, created_date: datetime | str = datetime.now(UTC), lifetime: timedelta | float = timedelta(seconds=Config.access_token_lifetime)) -> None:
-        if type(created_date) == str:
+    def __init__(self, user_id: uuid.UUID | str, created_date: datetime | str | None = None, lifetime: timedelta | float | None = None) -> None:
+        if created_date is None:
+            created_date = datetime.now(UTC).replace(tzinfo=None)
+        elif isinstance(created_date, str):
             self.created_date = datetime.fromisoformat(created_date)
         else:
             self.created_date = created_date
-        if type(lifetime) == float:
+        if lifetime is None:
+            lifetime = timedelta(seconds=Config.access_token_lifetime)
+        elif isinstance(lifetime, (float, int)):
             self.lifetime = timedelta(seconds=lifetime)
         else:
             self.lifetime = lifetime
-        if type(user_id) == str:
+        if isinstance(user_id, str):
             self.user_id = uuid.UUID(user_id)
         else:
             self.user_id = user_id
 
     @classmethod
     def from_token(cls, token: str) -> "AccessToken":
-        return AccessToken(**jwt.decode(jwt=token, key=SECRET, algorithms=Config.algorithm))
+        return AccessToken(**jwt.decode(jwt=token, key=SECRET, algorithms=[Config.algorithm]))
 
     def to_token(self) -> str:
         return jwt.encode(payload={
@@ -37,24 +40,28 @@ class AccessToken:
 
 
 class RefreshToken:
-    def __init__(self, user_id: uuid.UUID | str, secret: str, created_date: datetime | str = datetime.now(UTC), lifetime: timedelta | float = timedelta(seconds=Config.refresh_token_lifetime)) -> None:
+    def __init__(self, user_id: uuid.UUID | str, secret: str, created_date: datetime | str | None = None, lifetime: timedelta | float | None = None) -> None:
         self.secret = secret
-        if type(created_date) == str:
+        if created_date is None:
+            created_date = datetime.now(UTC).replace(tzinfo=None)
+        elif isinstance(created_date, str):
             self.created_date = datetime.fromisoformat(created_date)
         else:
             self.created_date = created_date
-        if type(lifetime) == float:
+        if lifetime is None:
+            lifetime = timedelta(seconds=Config.refresh_token_lifetime)
+        elif isinstance(lifetime, (float, int)):
             self.lifetime = timedelta(seconds=lifetime)
         else:
             self.lifetime = lifetime
-        if type(user_id) == str:
+        if isinstance(user_id, str):
             self.user_id = uuid.UUID(user_id)
         else:
             self.user_id = user_id
 
     @classmethod
     def from_token(cls, token: str) -> "RefreshToken":
-        return RefreshToken(**jwt.decode(jwt=token, key=SECRET, algorithms=Config.algorithm))
+        return RefreshToken(**jwt.decode(jwt=token, key=SECRET, algorithms=[Config.algorithm]))
 
     def to_token(self) -> str:
         return jwt.encode(payload={

@@ -1,5 +1,7 @@
 import functools
+from typing import Optional
 
+from click import Option
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot
 from telebot.types import Message
@@ -30,7 +32,9 @@ def inject(di):
 
 @di.inject
 #@inject(di)
-async def get_user(session: AsyncSession, message: Message):
+async def get_user(session: AsyncSession, message: Message) -> Optional[User]:
+    if message.from_user is None:
+        return None
     ur = UserRepository(session)
     user = await ur.get_by_telegram_id(message.from_user.id)
     username = message.from_user.username
@@ -42,7 +46,7 @@ async def get_user(session: AsyncSession, message: Message):
         await session.commit()
         user = await ur.get_by_telegram_id(message.from_user.id)
     elif user.telegram_username != message.from_user.username:
-        await ur.update_telegram_username(id=user.id, new_tg_username=username)
+        await ur.update_telegram_username(user=user, new_tg_username=username)
         await session.commit()
     return user
 

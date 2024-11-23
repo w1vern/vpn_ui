@@ -5,15 +5,26 @@ from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.enums.role import Role
 from database.models import *
 
 
 class UserRepository:
-    def __init__(self, session: Session) -> None:
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
+
+    async def create(self, telegram_id: int, telegram_username: str, balance: float = 0, role: Role = Role.guest, active: bool = False, auto_pay: bool = True, created_date: Optional[datetime] = None, secret: Optional[str] = None) -> Optional[User]:
+        if created_date is None:
+            created_date = datetime.now(UTC).replace(tzinfo=None)
+        if secret is None:
+            secret = secrets.token_urlsafe()
+        user = User(telegram_id=telegram_id, telegram_username=telegram_username,
+                    balance=balance, role=role, active=active, auto_pay=auto_pay, created_date=created_date, secret=secret)
+        self.session.add(user)
+        await self.session.flush()
+        return await self.get_by_id(user.id)
 
     async def get_by_id(self, id: UUID) -> Optional[User]:
         stmt = select(User).where(User.id == id).limit(1)
@@ -27,14 +38,7 @@ class UserRepository:
         stmt = select(User)
         return list((await self.session.scalars(stmt)).all())
 
-    async def create(self, telegram_id: int, telegram_username: str, balance: float = 0, role: Role = Role.guest, active: bool = False, auto_pay: bool = True, created_date: datetime = datetime.now(UTC).replace(tzinfo=None), secret=token_urlsafe()) -> None:
-        user = User(telegram_id=telegram_id, telegram_username=telegram_username,
-                    balance=balance, role=role, active=active, auto_pay=auto_pay, created_date=created_date, secret=secret)
-        self.session.add(user)
-        await self.session.flush()
-
-    async def update_telegram_username(self, id: UUID, new_tg_username: str) -> None:
-        user = await self.get_by_id(id)
+    async def update_telegram_username(self, user: User, new_tg_username: str) -> None:
         user.telegram_username = new_tg_username
         await self.session.flush()
 

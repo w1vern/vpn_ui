@@ -12,11 +12,16 @@ class TicketRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, title: str, holder: User, opening_date: datetime = datetime.now(UTC).replace(tzinfo=None), closing_date: datetime = datetime.now(UTC).replace(tzinfo=None), is_open: bool = True):
+    async def create(self, title: str, holder: User, opening_date: Optional[datetime] = None, closing_date: Optional[datetime] = None, is_open: bool = True) -> Optional[Ticket]:
+        if opening_date is None:
+            opening_date= datetime.now(UTC).replace(tzinfo=None)
+        if closing_date is None:
+            closing_date = datetime.now(UTC).replace(tzinfo=None)
         ticket = Ticket(title=title, holder_id=holder.id,
                         opening_date=opening_date, closing_date=closing_date, is_open=is_open)
         self.session.add(ticket)
         await self.session.flush()
+        return await self.get_by_id(ticket.id)
 
     async def get_by_id(self, id: UUID) -> Optional[Ticket]:
         stmt = select(Ticket).where(Ticket.id == id).limit(1)

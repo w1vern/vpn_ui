@@ -31,7 +31,7 @@ migration:
 down_migration:
 	alembic downgrade -1
 
-fill_data:
+fill_db:
 	python -m static.fill_db
 
 create_postgres:
