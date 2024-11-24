@@ -3,6 +3,7 @@
 import contextlib
 import json
 from typing import Any, AsyncIterator, Optional
+from urllib import response
 import uuid
 import httpx
 
@@ -32,7 +33,6 @@ class ServerSession():
     async def __make_request(self, path: str, method: str, body: Optional[dict[str, Any]] = None) -> httpx.Response:
         if not await self.__is_auth():
             await self.__auth()
-        print(json.dumps(body, indent=4))
         return await self.client.request(method=method,
                                          url=self.__get_api_path(path),
                                          headers={
@@ -54,15 +54,20 @@ class ServerSession():
             json={"username": self.server.login, "password": self.server.password})
         resp.raise_for_status()
 
+    async def __get_dict(self, response: httpx.Response) -> dict[str, Any]:
+        return json.loads(response.text.replace('\\n', '').replace('\\"', '"').replace('"{', '{').replace('}"', '}'))
+
     async def post(self, path: str, body: dict[str, Any]) -> httpx.Response:
         return await self.__make_request(path, "POST", body)
 
     async def get(self, path: str) -> httpx.Response:
         return await self.__make_request(path, "GET")
-
+    
+    async def post_dict(self, path: str, body: dict[str, Any]) -> dict[str, Any]:
+        return await self.__get_dict(await self.post(path, body))
+    
     async def get_dict(self, path: str) -> dict[str, Any]:
-        resp = await self.get(path)
-        return json.loads(resp.text.replace('\\n', '').replace('\\"', '"').replace('"{', '{').replace('}"', '}'))
+        return await self.__get_dict(await self.get(path))
 
     async def get_free_port(self) -> int:
         resp = await self.client.get(url=f"http://{self.server.ip}:9101/api/")
@@ -76,8 +81,8 @@ class ServerSessionManager:
     @contextlib.asynccontextmanager
     async def get_session(self, server: Server) -> AsyncIterator[ServerSession]:
         async with httpx.AsyncClient() as client:
-            #client.cookies = self.cookies.get(server.id, httpx.Cookies())
-            client.cookies = self.cookies[server.id]
+            client.cookies = self.cookies.get(server.id, httpx.Cookies())
+            # client.cookies = self.cookies[server.id]
             yield ServerSession(server, client)
             self.cookies[server.id] = client.cookies
 

@@ -10,10 +10,13 @@ class ProxyType(str, Enum):
     SOCKS5 = "socks5"
 
 class ProxyInbound:
-    ip: str
-    port: int
-    login: str
-    password: str
+    def __init__(self, ip: str, port: int, login: str, password: str):
+        self.ip = ip
+        self.port = port
+        self.login = login
+        self.password = password
+
+    
 
 
 class Security:
