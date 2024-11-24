@@ -19,4 +19,4 @@ class Ticket(Base):
     closing_date: Mapped[datetime] = mapped_column()
     is_open: Mapped[bool] = mapped_column()
 
-    holder: Mapped[User] = relationship(lazy="selectin")
+    holder: Mapped[User] = relationship(lazy="selectin", foreign_keys=[holder_id])

@@ -19,5 +19,5 @@ class MessageForTicket(Base):
     type: Mapped[MessageTicketType] = mapped_column()
     ticket_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tickets.id"))
     
-    ticket: Mapped[Ticket] = relationship(lazy="selectin")
+    ticket: Mapped[Ticket] = relationship(lazy="selectin", foreign_keys=[ticket_id])
 

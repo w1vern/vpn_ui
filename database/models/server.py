@@ -23,7 +23,11 @@ class Server(Base):
     login: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()
 
+    vless_id: Mapped[int] = mapped_column()
+    vless_reality_id: Mapped[int] = mapped_column()
+    vmess_id: Mapped[int] = mapped_column()
+
 
     @property
     def connection_string(self):
-        return 'http://' + self.ip + '/' + self.panel_path + '/'
+        return 'https://' + self.ip + '/' + self.panel_path + ''

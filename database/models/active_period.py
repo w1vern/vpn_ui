@@ -19,6 +19,6 @@ class ActivePeriod(Base):
     start_date: Mapped[datetime] = mapped_column()
     end_date: Mapped[datetime] = mapped_column()
 
-    user: Mapped[User] = relationship(lazy="selectin")
-    transaction: Mapped[Transaction] = relationship(lazy="selectin")
+    user: Mapped[User] = relationship(lazy="selectin", foreign_keys=[user_id])
+    transaction: Mapped[Transaction] = relationship(lazy="selectin", foreign_keys=[transaction_id])
 

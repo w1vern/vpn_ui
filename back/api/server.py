@@ -1,8 +1,9 @@
 
 
 import uuid
+
 from fastapi import Depends, HTTPException
-from fastapi_controllers import Controller, get, post, delete
+from fastapi_controllers import Controller, delete, get, post
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.get_auth import get_user

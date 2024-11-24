@@ -1,19 +1,24 @@
 
 
+import json
+import random
 import secrets
+import string
+import uuid
 from typing import Any, Optional
 from urllib import response
-import uuid
+
+from httpx import get
+
 from _3x_ui_.models import ProxyInbound, ProxyType, VpnInbound
+from _3x_ui_.session_manager import server_session_manager
 from database.models.server import Server
 from database.models.user import User
-from _3x_ui_.session_manager import server_session_manager
-import json
 
 
 class GlobalSettings:
     sniffing = {
-        "enabled": True,
+        "enabled": False,
         "destOverride": [
             "http",
             "tls",
@@ -46,6 +51,18 @@ class GlobalSettings:
         "expiryTime": 0,
         "listen": ""
     }
+
+
+def generate_sub_id(length: int = 16) -> str:
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+
+
+def generate_short_ids(count: int = 8) -> list[str]:
+    res = []
+    for i in range(count):
+        length = random.randint(2, 16)
+        res.append(hex(random.randint(0b1 << 4 * (length-1), 0b1 << 4 * length))[2:])
+    return res
 
 
 async def create_proxy(server: Server, user: User, login: str | None = None, password: str | None = None, proxy_type: ProxyType = ProxyType.HTTP) -> Optional[ProxyInbound]:
@@ -85,6 +102,7 @@ async def create_proxy(server: Server, user: User, login: str | None = None, pas
                             response['obj']['settings']['accounts'][0]['user'],
                             response['obj']['settings']['accounts'][0]['pass'])
 
+
 async def create_vless(server: Server, user: User) -> bool:
     async with server_session_manager.get_session(server) as session:
         port = await session.get_free_port()
@@ -99,7 +117,7 @@ async def create_vless(server: Server, user: User) -> bool:
                     "expiryTime": 0,
                     "enable": True,
                     "tgId": str(user.telegram_id),
-                    #"subId": "z34paw6akvter1p4",
+                    "subId": generate_sub_id(),
                     "reset": 0
                 }
             ],
@@ -122,16 +140,7 @@ async def create_vless(server: Server, user: User) -> bool:
                     "minClient": "",
                     "maxClient": "",
                     "maxTimediff": 0,
-                    # "shortIds": [
-                    #     "72cc863870",
-                    #     "051007e8c5b0",
-                    #     "24f0965625b1e0",
-                    #     "31d8b34ed4bf563d",
-                    #     "a16c84f7",
-                    #     "11ab",
-                    #     "63",
-                    #     "71db02"
-                    # ],
+                    "shortIds": generate_short_ids(),
                     "settings": {
                         "publicKey": "",
                         "fingerprint": "random",
@@ -179,7 +188,8 @@ async def create_vless(server: Server, user: User) -> bool:
         if response['success'] is False:
             return False
         return True
-    
+
+
 async def create_vless_user(server: Server, user: User):
     async with server_session_manager.get_session(server) as session:
         pass

@@ -19,4 +19,4 @@ class Transaction(Base):
     type: Mapped[TransactionType] = mapped_column()
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
 
-    user: Mapped[User] = relationship(lazy="selectin")
+    user: Mapped[User] = relationship(lazy="selectin", foreign_keys=[user_id])

@@ -2,8 +2,9 @@
 
 import contextlib
 import json
-from typing import Any, AsyncIterator, Optional
 import uuid
+from typing import Any, AsyncIterator, Optional
+
 import httpx
 
 from database.models import Server
