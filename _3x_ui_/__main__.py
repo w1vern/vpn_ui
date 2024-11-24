@@ -15,8 +15,8 @@ from __test.test import server, user
 
 
 async def main():
-    
-    await create_vless(server, user)    
+    await create_proxy(server, user)
+    await create_proxy(server, user, login="test", password="test", proxy_type=ProxyType.SOCKS5)    
 
 
 

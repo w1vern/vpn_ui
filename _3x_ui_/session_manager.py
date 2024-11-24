@@ -3,7 +3,6 @@
 import contextlib
 import json
 from typing import Any, AsyncIterator, Optional
-from urllib import response
 import uuid
 import httpx
 
@@ -62,10 +61,10 @@ class ServerSession():
 
     async def get(self, path: str) -> httpx.Response:
         return await self.__make_request(path, "GET")
-    
+
     async def post_dict(self, path: str, body: dict[str, Any]) -> dict[str, Any]:
         return await self.__get_dict(await self.post(path, body))
-    
+
     async def get_dict(self, path: str) -> dict[str, Any]:
         return await self.__get_dict(await self.get(path))
 
@@ -76,13 +75,13 @@ class ServerSession():
 
 class ServerSessionManager:
     def __init__(self):
-        self.cookies: dict[uuid.UUID, httpx.Cookies] = {}
+        self.cookies: dict[uuid.UUID, Any] = {}
 
     @contextlib.asynccontextmanager
     async def get_session(self, server: Server) -> AsyncIterator[ServerSession]:
         async with httpx.AsyncClient() as client:
-            client.cookies = self.cookies.get(server.id, httpx.Cookies())
-            # client.cookies = self.cookies[server.id]
+            client.cookies = self.cookies.get(
+                server.id, {})
             yield ServerSession(server, client)
             self.cookies[server.id] = client.cookies
 
