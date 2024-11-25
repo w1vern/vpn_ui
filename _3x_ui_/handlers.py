@@ -14,6 +14,7 @@ from _3x_ui_.models import ProxyInbound, ProxyType, VpnInbound
 from _3x_ui_.session_manager import server_session_manager
 from database.models.server import Server
 from database.models.user import User
+from database.database import session_manager
 
 
 class GlobalSettings:
@@ -104,8 +105,8 @@ async def create_proxy(server: Server, user: User, login: str | None = None, pas
 
 
 async def create_vless(server: Server, user: User) -> bool:
-    async with server_session_manager.get_session(server) as session:
-        port = await session.get_free_port()
+    async with server_session_manager.get_session(server) as server_session, session_manager.session() as db_session:
+        port = await server_session.get_free_port()
         settings = {**GlobalSettings.settings, **{
             "clients": [
                 {
@@ -182,7 +183,7 @@ async def create_vless(server: Server, user: User) -> bool:
             "sniffing": json.dumps(sniffing),
             "allocate": json.dumps(allocate)
         }}
-        response = await session.post_dict("add", body=data)
+        response = await server_session.post_dict("add", body=data)
         with open("__test/vless_create_response.json", "w") as f:
             json.dump(response, f, indent=4)
         if response['success'] is False:
@@ -191,5 +192,6 @@ async def create_vless(server: Server, user: User) -> bool:
 
 
 async def create_vless_user(server: Server, user: User):
-    async with server_session_manager.get_session(server) as session:
+    async with server_session_manager.get_session(server) as server_session, session_manager.session() as db_session:
         pass
+    
