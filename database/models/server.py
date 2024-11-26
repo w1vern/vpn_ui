@@ -12,7 +12,7 @@ from database.models.base import Base
 class Server(Base):
     __tablename__ = "servers"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=UUID4)
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid4)
     ip: Mapped[str] = mapped_column()
     panel_path: Mapped[str] = mapped_column()
     country_code: Mapped[str] = mapped_column()

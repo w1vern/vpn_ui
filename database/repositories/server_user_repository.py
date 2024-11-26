@@ -33,7 +33,7 @@ class ServerUserRepository:
         return await self.get_by_id(server_user.server_id, server_user.user_id)
 
     async def get_by_id(self, server_id: uuid.UUID, user_id: uuid.UUID) -> Optional[ServerUser]:
-        stmt = select(ServerUser).where(ServerUser.server_id == server_id and ServerUser.user_id == user_id).limit(1)
+        stmt = select(ServerUser).where(ServerUser.server_id == server_id, ServerUser.user_id == user_id).limit(1)
         return await self.session.scalar(stmt)
     
     async def update_ids(self, server: Server, user: User, vless_id: uuid.UUID = uuid.UUID(int=0), 

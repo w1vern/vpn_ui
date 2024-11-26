@@ -2,15 +2,19 @@
 
 import json
 import random
+import re
 import secrets
 import string
 import uuid
 from typing import Any, Optional
 from urllib import response
 
+from click import Option
+from fastapi import params
 from httpx import get
+import sniffio
 
-from _3x_ui_.models import ProxyInbound, ProxyType, VpnInbound, VpnType
+from _3x_ui_.models import ProxyInbound, ProxyType, RealityOptions, VpnInbound, VpnType
 from _3x_ui_.session_manager import server_session_manager
 from database.models.server import Server
 from database.models.user import User
@@ -55,7 +59,6 @@ class GlobalSettings:
         "listen": ""
     }
 
-
 def generate_sub_id(length: int = 16) -> str:
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
 
@@ -69,7 +72,12 @@ def generate_short_ids(count: int = 8) -> list[str]:
     return res
 
 
-async def create_proxy(server: Server, user: User, login: str | None = None, password: str | None = None, proxy_type: ProxyType = ProxyType.HTTP) -> Optional[ProxyInbound]:
+async def create_proxy(server: Server,
+                       user: User,
+                       login: str | None = None,
+                       password: str | None = None,
+                       proxy_type: ProxyType = ProxyType.HTTP
+                       ) -> Optional[ProxyInbound]:
     if login is None:
         login = secrets.token_urlsafe(8)
     if password is None:
@@ -122,22 +130,23 @@ async def create_proxy(server: Server, user: User, login: str | None = None, pas
 
 
 async def create_vpn(server: Server, user: User, vpn_type: VpnType) -> bool:
-    async with server_session_manager.get_session(server) as server_session, session_manager.session() as db_session:
+    async with server_session_manager.get_session(server) as server_session, \
+            session_manager.session() as db_session:
         port = await server_session.get_free_port()
         settings = {**GlobalSettings.settings, **{
             "clients": [
-                # {
-                #     "id": str(uuid.uuid4()),
-                #     "flow": "",
-                #     "email": f"{user.telegram_username}-vless",
-                #     "limitIp": 0,
-                #     "totalGB": 0,
-                #     "expiryTime": 0,
-                #     "enable": True,
-                #     "tgId": str(user.telegram_id),
-                #     "subId": generate_sub_id(),
-                #     "reset": 0
-                # }
+                {
+                    "id": str(uuid.uuid4()),
+                    "flow": "",
+                    "email": f"{user.telegram_username}-vless",
+                    "limitIp": 0,
+                    "totalGB": 0,
+                    "expiryTime": 0,
+                    "enable": True,
+                    "tgId": str(user.telegram_id),
+                    "subId": generate_sub_id(),
+                    "reset": 0
+                }
             ],
             "decryption": "none",
             "fallbacks": []
@@ -217,6 +226,55 @@ async def create_vpn(server: Server, user: User, vpn_type: VpnType) -> bool:
         return True
 
 
-async def create_vpn_user(server: Server, user: User, vpn_type: VpnType):
-    async with server_session_manager.get_session(server) as server_session, session_manager.session() as db_session:
+async def create_vpn_user(server: Server, user: User, vpn_type: VpnType) -> Optional[VpnInbound]:
+    async with server_session_manager.get_session(server) as server_session, \
+            session_manager.session() as db_session:
+        sur = ServerUserRepository(db_session)
+        sr = ServerRepository(db_session)
+        if getattr(server, vpn_type.value) == 0:
+            await create_vpn(server, user, vpn_type)
+            tmp_server = await sr.get_by_id(server.id)
+            if tmp_server is None:
+                return
+            server = tmp_server
+        uuid4 = uuid.uuid4()
+        connections = await sur.get_by_id(server.id, user.id)
+        if connections is None:
+            connections = await sur.create(server, user)
+            if connections is None:
+                return None
+            await db_session.commit()
+        response = await server_session.post_dict(path='addClient', body={
+            "id": getattr(server, vpn_type.value),
+            "settings": json.dumps({
+                "clients": [{
+                    "id": str(uuid4),
+                    "flow": "",
+                    "email": f"{server.country_code}-{user.telegram_username}-{vpn_type.value}",
+                    "limitIp": 0,
+                    "totalGB": 0,
+                    "expiryTime": 0,
+                    "enable": True,
+                    "tgId": str(user.telegram_id),
+                    "subId": generate_sub_id(),
+                    "reset": 0
+                }],
+            "decryption": "none",
+            "fallbacks": []
+            })
+        })
+        if response['success'] is False:
+            print(response['msg'])
+            return None
+        params = dict()
+        params[VpnType.VLESS.value] = connections.vless_id
+        params[VpnType.VLESS_REALITY.value] = connections.vless_reality_id
+        params[VpnType.VMESS.value] = connections.vmess_id
+        params[vpn_type.value] = uuid4
+        await sur.update_ids(server, user, **params, http_id=connections.http_id, socks_id=connections.socks_id)
+        await db_session.commit()
+        inbound = await server_session.get(path=f'get/{uuid4}')
+        print(inbound.text)
         pass
+        
+
