@@ -6,8 +6,15 @@ from typing import Optional
 
 
 class ProxyType(str, Enum):
-    HTTP = "http"
-    SOCKS5 = "socks5"
+    HTTP = "http_id"
+    SOCKS = "socks_id"
+
+class VpnType(str, Enum):
+    VLESS = "vless_id"
+    VLESS_REALITY = "vless_reality_id"
+    VMESS = "vmess_id"
+
+
 
 class ProxyInbound:
     def __init__(self, ip: str, port: int, login: str, password: str):

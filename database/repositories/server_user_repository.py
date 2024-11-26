@@ -36,5 +36,19 @@ class ServerUserRepository:
         stmt = select(ServerUser).where(ServerUser.server_id == server_id and ServerUser.user_id == user_id).limit(1)
         return await self.session.scalar(stmt)
     
+    async def update_ids(self, server: Server, user: User, vless_id: uuid.UUID = uuid.UUID(int=0), 
+                         vless_reality_id: uuid.UUID = uuid.UUID(int=0), vmess_id: uuid.UUID = uuid.UUID(int=0), 
+                         http_id: int = 0, socks_id: int = 0
+                         ) -> None:
+        server_user = await self.get_by_id(server.id, user.id)
+        if server_user is None:
+            return
+        server_user.vless_id = vless_id
+        server_user.vless_reality_id = vless_reality_id
+        server_user.vmess_id = vmess_id
+        server_user.http_id = http_id
+        server_user.socks_id = socks_id
+        await self.session.flush()
+    
     
 
