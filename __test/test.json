@@ -1,0 +1,44 @@
+{
+    "success": true,
+    "msg": "Create Successfully",
+    "obj": {
+        "id": 20,
+        "up": 0,
+        "down": 0,
+        "total": 0,
+        "remark": "nl-nl-http-aboba",
+        "enable": true,
+        "expiryTime": 0,
+        "clientStats": null,
+        "listen": "",
+        "port": 37929,
+        "protocol": "http",
+        "settings": {
+            "accounts": [
+                {
+                    "user": "3ihtLbgvqyk",
+                    "pass": "mwgQZis_ecQ"
+                }
+            ],
+            "allowTransparent": false
+        },
+        "streamSettings": {},
+        "tag": "inbound-37929",
+        "sniffing": {
+            "enabled": true,
+            "destOverride": [
+                "http",
+                "tls",
+                "quic",
+                "fakedns"
+            ],
+            "metadataOnly": false,
+            "routeOnly": false
+        },
+        "allocate": {
+            "strategy": "always",
+            "refresh": 5,
+            "concurrency": 3
+        }
+    }
+}

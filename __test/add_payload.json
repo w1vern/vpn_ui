@@ -1,0 +1,89 @@
+{
+  "up": 0,
+  "down": 0,
+  "total": 0,
+  "remark": "",
+  "enable": true,
+  "expiryTime": 0,
+  "listen": "",
+  "port": 22436,
+  "protocol": "vless",
+  "settings": {
+    "clients": [
+      {
+        "id": "05a7e976-119d-476d-8a1d-88f9c8fa0f9c",
+        "flow": "",
+        "email": "aboba228",
+        "limitIp": 0,
+        "totalGB": 0,
+        "expiryTime": 0,
+        "enable": true,
+        "tgId": "",
+        "subId": "z34paw6akvter1p4",
+        "reset": 0
+      }
+    ],
+    "decryption": "none",
+    "fallbacks": []
+  },
+  "streamSettings": {
+    "network": "tcp",
+    "security": "reality",
+    "externalProxy": [],
+    "realitySettings": {
+      "show": false,
+      "xver": 0,
+      "dest": "yahoo.com:443",
+      "serverNames": ["yahoo.com", "www.yahoo.com"],
+      "privateKey": "",
+      "minClient": "",
+      "maxClient": "",
+      "maxTimediff": 0,
+      "shortIds": [
+        "72cc863870",
+        "051007e8c5b0",
+        "24f0965625b1e0",
+        "31d8b34ed4bf563d",
+        "a16c84f7",
+        "11ab",
+        "63",
+        "71db02"
+      ],
+      "settings": {
+        "publicKey": "",
+        "fingerprint": "random",
+        "serverName": "",
+        "spiderX": "/"
+      }
+    },
+    "tcpSettings": {
+      "acceptProxyProtocol": false,
+      "header": {
+        "type": "http",
+        "request": {
+          "version": "1.1",
+          "method": "GET",
+          "path": ["/"],
+          "headers": {}
+        },
+        "response": {
+          "version": "1.1",
+          "status": "200",
+          "reason": "OK",
+          "headers": {}
+        }
+      }
+    }
+  },
+  "sniffing": {
+    "enabled": true,
+    "destOverride": ["http", "tls", "quic", "fakedns"],
+    "metadataOnly": false,
+    "routeOnly": false
+  },
+  "allocate": {
+    "strategy": "always",
+    "refresh": 5,
+    "concurrency": 3
+  }
+}

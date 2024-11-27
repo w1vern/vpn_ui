@@ -20,7 +20,8 @@ async def main():
         server = (await sr.get_all())[0]
         user = (await ur.get_all())[0]
     await create_vpn(server, user, VpnType.VLESS)
-    #await create_vpn_user(server, user, VpnType.VLESS)
+    #await create_vpn(server, user, VpnType.VLESS_REALITY)
+    #await create_vpn(server, user, VpnType.VMESS)
 
 
 

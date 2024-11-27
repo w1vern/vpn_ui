@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+import json
 from typing import Optional
 from uuid import UUID
 
@@ -37,7 +38,16 @@ class ServerRepository:
         return list((await self.session.scalars(stmt)).all())
     
     async def update_vpn_ids(self, server: Server, vless_id: int, vless_reality_id: int, vmess_id: int) -> None:
+        server_tmp = await self.get_by_id(server.id)
+        if server_tmp is None:
+            return
+        print('\n')
+        print(server.__dict__)
+        print('\n')
+        print(server_tmp.__dict__)
+        server = server_tmp
         server.vless_id = vless_id
         server.vless_reality_id = vless_reality_id
         server.vmess_id = vmess_id
+        print(vless_id, vless_reality_id, vmess_id)
         await self.session.flush()

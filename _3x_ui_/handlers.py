@@ -133,12 +133,19 @@ async def create_vpn(server: Server, user: User, vpn_type: VpnType) -> bool:
     async with server_session_manager.get_session(server) as server_session, \
             session_manager.session() as db_session:
         port = await server_session.get_free_port()
+        uuid4 = uuid.uuid4()
+        security = "none"
+        protocol = "vless"
+        if vpn_type == VpnType.VMESS:
+            protocol = "vmess"
+        if vpn_type == VpnType.VLESS_REALITY:
+            security = "reality"
         settings = {**GlobalSettings.settings, **{
             "clients": [
                 {
                     "id": str(uuid.uuid4()),
                     "flow": "",
-                    "email": f"{user.telegram_username}-vless",
+                    "email": f"{user.telegram_username}-{vpn_type.value[:-3]}-{uuid.uuid4()}",
                     "limitIp": 0,
                     "totalGB": 0,
                     "expiryTime": 0,
@@ -156,7 +163,7 @@ async def create_vpn(server: Server, user: User, vpn_type: VpnType) -> bool:
             **GlobalSettings.streamSettings,
             **{
                 "network": "tcp",
-                "security": "reality",
+                "security": security,
                 "externalProxy": [],
                 "realitySettings": {
                     "show": False,
@@ -201,7 +208,7 @@ async def create_vpn(server: Server, user: User, vpn_type: VpnType) -> bool:
         sniffing = {**GlobalSettings.sniffing, **{}}
         allocate = {**GlobalSettings.allocate, **{}}
         data = {**GlobalSettings.data, **{
-            "remark": f"{server.country_code}-{server.display_name}-vless",
+            "remark": f"{server.country_code}-{server.display_name}-{vpn_type.value[:-3]}-{user.telegram_username}",
             "port": port,
             "protocol": "vless",
             "settings": json.dumps(settings),
@@ -221,6 +228,8 @@ async def create_vpn(server: Server, user: User, vpn_type: VpnType) -> bool:
         params[VpnType.VLESS_REALITY.value] = server.vless_reality_id
         params[VpnType.VMESS.value] = server.vmess_id
         params[vpn_type.value] = response['obj']['id']
+        print(response['obj']['id'])
+        print(params)
         await sr.update_vpn_ids(server, **params)
         await db_session.commit()
         return True

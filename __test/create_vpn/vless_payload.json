@@ -1,0 +1,51 @@
+{
+  "up": 0,
+  "down": 0,
+  "total": 0,
+  "remark": "",
+  "enable": true,
+  "expiryTime": 0,
+  "listen": 0,
+  "port": 29663,
+  "protocol": "vless",
+  "settings": {
+    "clients": [
+      {
+        "id": "61b69387-e598-48a9-93c2-62a2bb811695",
+        "flow": "",
+        "email": "0b6777vr",
+        "limitIp": 0,
+        "totalGB": 0,
+        "expiryTime": 0,
+        "enable": true,
+        "tgId": "",
+        "subId": "par0txzj7agtdisi",
+        "reset": 0
+      }
+    ],
+    "decryption": "none",
+    "fallbacks": []
+  },
+  "streamSettings": {
+    "network": "tcp",
+    "security": "none",
+    "externalProxy": [],
+    "tcpSettings": {
+      "acceptProxyProtocol": false,
+      "header": {
+        "type": "none"
+      }
+    }
+  },
+  "sniffing": {
+    "enabled": false,
+    "destOverride": ["http", "tls", "quic", "fakedns"],
+    "metadataOnly": false,
+    "routeOnly": false
+  },
+  "allocate": {
+    "strategy": "always",
+    "refresh": 5,
+    "concurrency": 3
+  }
+}
