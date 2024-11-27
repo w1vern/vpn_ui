@@ -69,10 +69,6 @@ class ServerSession():
     async def get_dict(self, path: str) -> dict[str, Any]:
         return await self.__get_dict(await self.get(path))
 
-    async def get_free_port(self) -> int:
-        resp = await self.client.get(url=f"http://{self.server.ip}:9101/api/")
-        return int(resp.text)
-
 
 class ServerSessionManager:
     def __init__(self):

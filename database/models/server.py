@@ -14,20 +14,8 @@ class Server(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid4)
     ip: Mapped[str] = mapped_column()
-    panel_path: Mapped[str] = mapped_column()
     country_code: Mapped[str] = mapped_column()
     is_available: Mapped[bool] = mapped_column()
     display_name: Mapped[str] = mapped_column()
     created_date: Mapped[datetime] = mapped_column()
     closing_date: Mapped[datetime] = mapped_column()
-    login: Mapped[str] = mapped_column()
-    password: Mapped[str] = mapped_column()
-
-    vless_id: Mapped[int] = mapped_column()
-    vless_reality_id: Mapped[int] = mapped_column()
-    vmess_id: Mapped[int] = mapped_column()
-
-
-    @property
-    def connection_string(self):
-        return 'https://' + self.ip + '/' + self.panel_path + ''

@@ -1,8 +1,8 @@
 """first migration
 
-Revision ID: 4878a96968e2
+Revision ID: 5ca6300f634b
 Revises: 
-Create Date: 2024-11-26 23:05:59.480391
+Create Date: 2024-11-27 23:20:45.535099
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '4878a96968e2'
+revision: str = '5ca6300f634b'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,17 +23,11 @@ def upgrade() -> None:
     op.create_table('servers',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('ip', sa.String(), nullable=False),
-    sa.Column('panel_path', sa.String(), nullable=False),
     sa.Column('country_code', sa.String(), nullable=False),
     sa.Column('is_available', sa.Boolean(), nullable=False),
     sa.Column('display_name', sa.String(), nullable=False),
     sa.Column('created_date', sa.DateTime(), nullable=False),
     sa.Column('closing_date', sa.DateTime(), nullable=False),
-    sa.Column('login', sa.String(), nullable=False),
-    sa.Column('password', sa.String(), nullable=False),
-    sa.Column('vless_id', sa.Integer(), nullable=False),
-    sa.Column('vless_reality_id', sa.Integer(), nullable=False),
-    sa.Column('vmess_id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
@@ -60,6 +54,18 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['server_id'], ['servers.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('server_id', 'user_id')
+    )
+    op.create_table('servers_panel',
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('server_id', sa.Uuid(), nullable=False),
+    sa.Column('panel_path', sa.String(), nullable=False),
+    sa.Column('login', sa.String(), nullable=False),
+    sa.Column('password', sa.String(), nullable=False),
+    sa.Column('vless_id', sa.Integer(), nullable=False),
+    sa.Column('vless_reality_id', sa.Integer(), nullable=False),
+    sa.Column('vmess_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['server_id'], ['servers.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('telegram_messages',
     sa.Column('id', sa.Uuid(), nullable=False),
@@ -127,8 +133,13 @@ def downgrade() -> None:
     op.drop_table('tickets')
     op.drop_table('tg_bot_tokens')
     op.drop_table('telegram_messages')
+    op.drop_table('servers_panel')
     op.drop_table('servers_and_users')
     op.drop_index(op.f('ix_users_telegram_id'), table_name='users')
     op.drop_table('users')
     op.drop_table('servers')
+
+    op.execute("DROP TYPE transactiontype")
+    op.execute("DROP TYPE messagetickettype")
+    op.execute("DROP TYPE role")
     # ### end Alembic commands ###

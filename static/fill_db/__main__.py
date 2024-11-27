@@ -26,7 +26,6 @@ async def main():
         ur = UserRepository(session)
         for user in default_users:
             await ur.create(**user)
-        await session.commit()
 
 
 if __name__ == "__main__":

@@ -35,7 +35,6 @@ async def toggle_auto_pay_command(message: Message, user: User, session: AsyncSe
         return
     ur = UserRepository(session)
     await ur.toggle_auto_pay(user)
-    await session.commit()
     text = await string_builder(TemplateTitle.toggle_auto_pay_template, message.from_user.language_code)
     await bot.send_message(message.from_user.id, text)
 """ 

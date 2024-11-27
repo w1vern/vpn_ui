@@ -43,11 +43,9 @@ async def get_user(session: AsyncSession, message: Message) -> Optional[User]:
     if user is None:
         await ur.create(telegram_id=message.from_user.id,
                                telegram_username=username)
-        await session.commit()
         user = await ur.get_by_telegram_id(message.from_user.id)
     elif user.telegram_username != message.from_user.username:
         await ur.update_telegram_username(user=user, new_tg_username=username)
-        await session.commit()
     return user
 
 
