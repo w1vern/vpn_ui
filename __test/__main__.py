@@ -23,7 +23,5 @@ async def main():
             service = Service(db_session, server_session)
             await service.create_proxy(user, "test", "test", ProxyType.SOCKS)
 
-
-
 if __name__ == "__main__":
     asyncio.run(main())

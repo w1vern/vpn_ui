@@ -3,7 +3,7 @@ from .base import Base
 from .message_for_ticket import MessageForTicket
 from .server_user import ServerUser
 from .server import Server
-from .server_panel import ServerPanel
+from .panel_server import PanelServer
 from .telegram_message import TelegramMessage
 from .tg_bot_token import TgBotToken
 from .ticket import Ticket

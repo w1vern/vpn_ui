@@ -10,8 +10,8 @@ from datetime import datetime
 from database.models.server import Server
 
 
-class ServerPanel(Server):
-    __tablename__ = 'servers_panel'
+class PanelServer(Server):
+    __tablename__ = 'panel_servers'
 
     id: Mapped[uuid.UUID] = mapped_column(ForeignKey('servers.id'), primary_key=True)
 
