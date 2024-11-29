@@ -1,0 +1,92 @@
+{
+  "success": true,
+  "msg": "Create Successfully",
+  "obj": {
+    "id": 78,
+    "up": 0,
+    "down": 0,
+    "total": 0,
+    "remark": "test_vless_reality",
+    "enable": true,
+    "expiryTime": 0,
+    "clientStats": true,
+    "listen": "",
+    "port": 27222,
+    "protocol": "vless",
+    "settings": {
+      "clients": [
+        {
+          "id": "60f0d14c-99d3-4e0a-a716-82438f3f90c2",
+          "flow": "",
+          "email": "this_is_email",
+          "limitIp": 0,
+          "totalGB": 0,
+          "expiryTime": 0,
+          "enable": true,
+          "tgId": "",
+          "subId": "iv0e3zbdfba6vbpu",
+          "reset": 0
+        }
+      ],
+      "decryption": "none",
+      "fallbacks": []
+    },
+    "streamSettings": {
+      "network": "tcp",
+      "security": "reality",
+      "externalProxy": [],
+      "realitySettings": {
+        "show": false,
+        "xver": 0,
+        "dest": "yahoo.com:443",
+        "serverNames": ["yahoo.com", "www.yahoo.com"],
+        "privateKey": "",
+        "minClient": "",
+        "maxClient": "",
+        "maxTimediff": 0,
+        "shortIds": [
+          "eff76f",
+          "58",
+          "a242",
+          "20baee5004d58ca8",
+          "e8517423c5c358",
+          "226b2063660c",
+          "6264c19396",
+          "4e43ed5b"
+        ],
+        "settings": {
+          "publicKey": "",
+          "fingerprint": "random",
+          "serverName": "",
+          "spiderX": "/"
+        }
+      },
+      "tcpSettings": {
+        "acceptProxyProtocol": false,
+        "header": {
+          "type": "http",
+          "request": {
+            "version": "1.1",
+            "method": "GET",
+            "path": ["/"],
+            "headers": {}
+          },
+          "response": {
+            "version": "1.1",
+            "status": "200",
+            "reason": "OK",
+            "headers": {}
+          }
+        }
+      }
+    },
+    "tag": "inbound-27222",
+    "sniffing": {
+      "enabled": false,
+      "destOverride": ["http", "tls", "quic", "fakedns"],
+      "metadataOnly": false,
+      "routeOnly": false
+    },
+    "allocate": { "strategy": "always", "refresh": 5, "concurrency": 3 }
+  }
+}

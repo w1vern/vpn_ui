@@ -1,0 +1,351 @@
+{
+    "success": true,
+    "msg": "",
+    "obj": [
+        {
+            "id": 36,
+            "up": 0,
+            "down": 0,
+            "total": 0,
+            "remark": "vless",
+            "enable": true,
+            "expiryTime": 0,
+            "clientStats": [
+                {
+                    "id": 10,
+                    "inboundId": 36,
+                    "enable": true,
+                    "email": "7uasrebw",
+                    "up": 0,
+                    "down": 0,
+                    "expiryTime": 0,
+                    "total": 0,
+                    "reset": 0
+                }
+            ],
+            "listen": "",
+            "port": 56777,
+            "protocol": "vless",
+            "settings": {
+                "clients": [
+                    {
+                        "id": "61c1e56d-7204-4770-b34f-48f725d5c3ee",
+                        "flow": "",
+                        "email": "7uasrebw",
+                        "limitIp": 0,
+                        "totalGB": 0,
+                        "expiryTime": 0,
+                        "enable": true,
+                        "tgId": "",
+                        "subId": "wqxiphl006otd6pa",
+                        "reset": 0
+                    }
+                ],
+                "decryption": "none",
+                "fallbacks": []
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "security": "none",
+                "externalProxy": [],
+                "tcpSettings": {
+                    "acceptProxyProtocol": false,
+                    "header": {
+                        "type": "none"
+                    }
+                }
+            },
+            "tag": "inbound-56777",
+            "sniffing": {
+                "enabled": false,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic",
+                    "fakedns"
+                ],
+                "metadataOnly": false,
+                "routeOnly": false
+            },
+            "allocate": {
+                "strategy": "always",
+                "refresh": 5,
+                "concurrency": 3
+            }
+        },
+        {
+            "id": 77,
+            "up": 0,
+            "down": 0,
+            "total": 0,
+            "remark": "ru-1-vless-aboba1",
+            "enable": true,
+            "expiryTime": 0,
+            "clientStats": [
+                {
+                    "id": 35,
+                    "inboundId": 77,
+                    "enable": true,
+                    "email": "ru-aboba1-vless_id-97972238-dde0-4853-99c1-973c95f6c9f7",
+                    "up": 0,
+                    "down": 0,
+                    "expiryTime": 0,
+                    "total": 0,
+                    "reset": 0
+                },
+                {
+                    "id": 36,
+                    "inboundId": 77,
+                    "enable": true,
+                    "email": "ru-aboba1-vless_id-279d721b-4236-4ae7-b35f-f9482f5fa40e",
+                    "up": 0,
+                    "down": 0,
+                    "expiryTime": 0,
+                    "total": 0,
+                    "reset": 0
+                }
+            ],
+            "listen": "",
+            "port": 62733,
+            "protocol": "vless",
+            "settings": {
+                "clients": [
+                    {
+                        "email": "ru-aboba1-vless_id-97972238-dde0-4853-99c1-973c95f6c9f7",
+                        "enable": true,
+                        "expiryTime": 0,
+                        "flow": "",
+                        "id": "f663c7e1-8207-4138-8503-32128b5ab9e4",
+                        "limitIp": 0,
+                        "reset": 0,
+                        "subId": "5BOG1TSYLM0Q8F0Z",
+                        "tgId": "101",
+                        "totalGB": 0
+                    },
+                    {
+                        "email": "ru-aboba1-vless_id-279d721b-4236-4ae7-b35f-f9482f5fa40e",
+                        "enable": true,
+                        "expiryTime": 0,
+                        "flow": "",
+                        "id": "3c36cbf9-d3bf-4d6e-a01c-0957b33f7891",
+                        "limitIp": 0,
+                        "reset": 0,
+                        "subId": "IZL7CFGWXFH17XLW",
+                        "tgId": "101",
+                        "totalGB": 0
+                    }
+                ],
+                "decryption": "none",
+                "fallbacks": []
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "security": "none",
+                "externalProxy": [],
+                "realitySettings": {
+                    "show": false,
+                    "xver": 0,
+                    "dest": "yahoo.com:443",
+                    "serverNames": [
+                        "yahoo.com",
+                        "www.yahoo.com"
+                    ],
+                    "privateKey": "",
+                    "minClient": "",
+                    "maxClient": "",
+                    "maxTimediff": 0,
+                    "shortIds": [
+                        "e3910a",
+                        "d3082a01ea",
+                        "c21192f",
+                        "d31d72e",
+                        "c91d",
+                        "ad652c0615",
+                        "703",
+                        "e9b4fafe1"
+                    ],
+                    "settings": {
+                        "publicKey": "",
+                        "fingerprint": "random",
+                        "serverName": "",
+                        "spiderX": "/"
+                    }
+                },
+                "tcpSettings": {
+                    "acceptProxyProtocol": false,
+                    "header": {
+                        "type": "http",
+                        "request": {
+                            "version": "1.1",
+                            "method": "GET",
+                            "path": [
+                                "/"
+                            ],
+                            "headers": {}
+                        },
+                        "response": {
+                            "version": "1.1",
+                            "status": "200",
+                            "reason": "OK",
+                            "headers": {}
+                        }
+                    }
+                }
+            },
+            "tag": "inbound-62733",
+            "sniffing": {
+                "enabled": false,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic",
+                    "fakedns"
+                ],
+                "metadataOnly": false,
+                "routeOnly": false
+            },
+            "allocate": {
+                "strategy": "always",
+                "refresh": 5,
+                "concurrency": 3
+            }
+        },
+        {
+            "id": 78,
+            "up": 0,
+            "down": 0,
+            "total": 0,
+            "remark": "test_vless_reality",
+            "enable": true,
+            "expiryTime": 0,
+            "clientStats": [
+                {
+                    "id": 37,
+                    "inboundId": 78,
+                    "enable": true,
+                    "email": "this_is_email",
+                    "up": 0,
+                    "down": 0,
+                    "expiryTime": 0,
+                    "total": 0,
+                    "reset": 0
+                },
+                {
+                    "id": 38,
+                    "inboundId": 78,
+                    "enable": true,
+                    "email": "this_is_email_2",
+                    "up": 0,
+                    "down": 0,
+                    "expiryTime": 0,
+                    "total": 0,
+                    "reset": 0
+                }
+            ],
+            "listen": "",
+            "port": 27222,
+            "protocol": "vless",
+            "settings": {
+                "clients": [
+                    {
+                        "email": "this_is_email",
+                        "enable": true,
+                        "expiryTime": 0,
+                        "flow": "",
+                        "id": "60f0d14c-99d3-4e0a-a716-82438f3f90c2",
+                        "limitIp": 0,
+                        "reset": 0,
+                        "subId": "iv0e3zbdfba6vbpu",
+                        "tgId": "",
+                        "totalGB": 0
+                    },
+                    {
+                        "email": "this_is_email_2",
+                        "enable": true,
+                        "expiryTime": 0,
+                        "flow": "",
+                        "id": "bf6bb29f-6397-47f8-bb1f-8d587e106754",
+                        "limitIp": 0,
+                        "reset": 0,
+                        "subId": "1afxmwx61gqabdx3",
+                        "tgId": "",
+                        "totalGB": 0
+                    }
+                ],
+                "decryption": "none",
+                "fallbacks": []
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "security": "reality",
+                "externalProxy": [],
+                "realitySettings": {
+                    "show": false,
+                    "xver": 0,
+                    "dest": "yahoo.com:443",
+                    "serverNames": [
+                        "yahoo.com",
+                        "www.yahoo.com"
+                    ],
+                    "privateKey": "",
+                    "minClient": "",
+                    "maxClient": "",
+                    "maxTimediff": 0,
+                    "shortIds": [
+                        "eff76f",
+                        "58",
+                        "a242",
+                        "20baee5004d58ca8",
+                        "e8517423c5c358",
+                        "226b2063660c",
+                        "6264c19396",
+                        "4e43ed5b"
+                    ],
+                    "settings": {
+                        "publicKey": "",
+                        "fingerprint": "random",
+                        "serverName": "",
+                        "spiderX": "/"
+                    }
+                },
+                "tcpSettings": {
+                    "acceptProxyProtocol": false,
+                    "header": {
+                        "type": "http",
+                        "request": {
+                            "version": "1.1",
+                            "method": "GET",
+                            "path": [
+                                "/"
+                            ],
+                            "headers": {}
+                        },
+                        "response": {
+                            "version": "1.1",
+                            "status": "200",
+                            "reason": "OK",
+                            "headers": {}
+                        }
+                    }
+                }
+            },
+            "tag": "inbound-27222",
+            "sniffing": {
+                "enabled": false,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic",
+                    "fakedns"
+                ],
+                "metadataOnly": false,
+                "routeOnly": false
+            },
+            "allocate": {
+                "strategy": "always",
+                "refresh": 5,
+                "concurrency": 3
+            }
+        }
+    ]
+}

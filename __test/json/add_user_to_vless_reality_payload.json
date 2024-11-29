@@ -1,0 +1,19 @@
+{
+  "id": 78,
+  "settings": {
+    "clients": [
+      {
+        "id": "bf6bb29f-6397-47f8-bb1f-8d587e106754",
+        "flow": "",
+        "email": "this_is_email_2",
+        "limitIp": 0,
+        "totalGB": 0,
+        "expiryTime": 0,
+        "enable": true,
+        "tgId": "",
+        "subId": "1afxmwx61gqabdx3",
+        "reset": 0
+      }
+    ]
+  }
+}
