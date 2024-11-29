@@ -2,6 +2,7 @@
 
 import contextlib
 import json
+from urllib import response
 import uuid
 from typing import Any, AsyncIterator, Optional
 
@@ -33,11 +34,13 @@ class ServerSession():
     async def __make_request(self, path: str, method: str, body: Optional[dict[str, Any]] = None) -> httpx.Response:
         if not await self.__is_auth():
             await self.__auth()
-        return await self.client.request(method=method,
-                                         url=self.__get_api_path(path),
-                                         headers={
-                                             "Content-Type": "application/json"},
-                                         json=body)
+        response = await self.client.request(method=method,
+                                             url=self.__get_api_path(path),
+                                             headers={
+                                                 "Content-Type": "application/json"},
+                                             json=body)
+        # print(response.status_code, response.text)
+        return response
 
     def __get_api_path(self, endpoint: str):
         return self.server.connection_string + "panel/api/inbounds/" + endpoint

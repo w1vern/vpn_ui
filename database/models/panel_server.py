@@ -19,8 +19,17 @@ class PanelServer(Server):
     login: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()
     vless_id: Mapped[int] = mapped_column()
+    vless_port: Mapped[int] = mapped_column()
+    vless_domain_short_id: Mapped[str] = mapped_column()
     vless_reality_id: Mapped[int] = mapped_column()
+    vless_reality_port: Mapped[int] = mapped_column()
+    vless_reality_domain_short_id: Mapped[str] = mapped_column()
+    vless_reality_public_key: Mapped[str] = mapped_column()
+    vless_reality_private_key: Mapped[str] = mapped_column()
     vmess_id: Mapped[int] = mapped_column()
+    vmess_port: Mapped[int] = mapped_column()
+    vmess_domain_short_id: Mapped[str] = mapped_column()
+
     __mapper_args__ = {
         "polymorphic_identity": "manager",
     }

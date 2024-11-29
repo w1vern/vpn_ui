@@ -48,6 +48,14 @@ def generate_proxy_remark(server: PanelServer, user: User, proxy_type: ProxyType
     return f"{proxy_type.value[:-3]}-{user.telegram_username}"
 
 
+def generate_user_remark(server: PanelServer, user: User, vpn_type: VpnType) -> str:
+    return f"{server.country_code}-{server.display_name}-{user.telegram_username}-{vpn_type.value[:-3]}"
+
+
+def generate_key(length: int = 43) -> str:
+    return ''.join(random.choices(string.ascii_letters + string.digits + "-_", k=length))
+
+
 class Service(ProxyInterface):
     def __init__(self, db_session: AsyncSession, server_session: ServerSession) -> None:
         self.db_session = db_session
@@ -90,22 +98,17 @@ class Service(ProxyInterface):
         email = generate_email(self.server_session.server, user, vpn_type)
         protocol = vpn_type.value[:-3]
         remark = generate_vpn_remark(self.server_session.server, vpn_type)
-        server_exists = True
         if vpn_type == VpnType.VLESS_REALITY:
             protocol = "vless"
         if getattr(self.server_session.server, vpn_type.value) == 0:
-            server_exists = False
             short_ids = generate_short_ids()
             port = await self.pr.get_free_port()
-            response = await self.pr.create_vpn(remark=remark, protocol=protocol, user=user, sub_id=sub_id, short_ids=short_ids, vpn_type=vpn_type, uuid4=uuid4, port=port, email=email)
+            public_key = generate_key()
+            private_key = generate_key()
+            response = await self.pr.create_vpn(remark=remark, protocol=protocol, user=user, sub_id=sub_id, short_ids=short_ids, vpn_type=vpn_type, uuid4=uuid4, port=port, email=email, public_key=public_key, private_key=private_key)
             if response['success'] is False:
                 return None
-            params = dict()
-            params[VpnType.VLESS.value] = self.server_session.server.vless_id
-            params[VpnType.VLESS_REALITY.value] = self.server_session.server.vless_reality_id
-            params[VpnType.VMESS.value] = self.server_session.server.vmess_id
-            params[vpn_type.value] = response['obj']['id']
-            await self.psr.update_vpn_ids(self.server_session.server, **params)
+            await self.psr.update_vpn(self.server_session.server, response['obj']['id'], port, short_ids[0], vpn_type, public_key, private_key)
         else:
             response = await self.pr.create_vpn_user(user=user, vpn_type=vpn_type, uuid4=uuid4, sub_id=sub_id, email=email)
             if response['success'] is False:
@@ -125,20 +128,11 @@ class Service(ProxyInterface):
         await self.sur.update_ids(self.server_session.server, user, **params)
         security = Security()
         if vpn_type == VpnType.VLESS_REALITY:
-            if server_exists is False:
-                domain_short_id = sub_id[0]
-            else:
-                list = await self.server_session.get_dict(path='list')
-                id = self.server_session.server.id
-                for connection in list['obj']:
-                    if connection['id'] == id:
-                        port = connection['port']
-                        domain_short_id = connection['streamSettings']['realitySettings']['shortIds'][0]
-                        break
-            security = RealityOptions(public_key="",
+            security = RealityOptions(public_key=self.server_session.server.vless_reality_public_key,
                                       fp="random",
                                       server_name_indication="yahoo.com",
-                                      sid=domain_short_id,  # type: ignore
+                                      sid=self.server_session.server.__dict__[
+                                          f"{vpn_type.value[:-3]}_domain_short_id"],
                                       spx="/", )
         return VpnInbound(uuid=str(uuid4),
                           ip=self.server_session.server.ip,
@@ -147,4 +141,4 @@ class Service(ProxyInterface):
                           path="",
                           header_type="http",
                           security=security,
-                          remark=remark + '-' + email)
+                          remark=generate_user_remark(self.server_session.server, user, vpn_type))

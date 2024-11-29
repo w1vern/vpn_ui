@@ -22,8 +22,8 @@ async def main():
         user = (await ur.get_all())[0]
         async with server_session_manager.get_session(server) as server_session:
             service = Service(db_session, server_session)
-            vpn_inbound = await service.create_vpn(user, VpnType.VLESS)
-            print(vpn_inbound.create_string()) # type: ignore
+            vpn_inbound = await service.create_vpn(user, VpnType.VLESS_REALITY)
+            print(vpn_inbound.create_string())#type: ignore
 
 if __name__ == "__main__":
     asyncio.run(main())

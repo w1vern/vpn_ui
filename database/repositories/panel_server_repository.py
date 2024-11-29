@@ -12,6 +12,8 @@ from database.repositories.server_repository import ServerRepository
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from services.proxy_models import VpnType
+
 
 class PanelServerRepository(ServerRepository):
 
@@ -30,7 +32,15 @@ class PanelServerRepository(ServerRepository):
                      password: str = "",
                      vless_id: int = 0,
                      vless_reality_id: int = 0,
-                     vmess_id: int = 0
+                     vmess_id: int = 0,
+                     vless_port: int = 0,
+                     vless_domain_short_id: str = "",
+                     vless_reality_port: int = 0,
+                     vless_reality_domain_short_id: str = "",
+                     vless_reality_public_key: str = "",
+                     vless_reality_private_key: str = "",
+                     vmess_port: int = 0,
+                     vmess_domain_short_id: str = ""
                      ) -> Optional[PanelServer]:
         panel_server = PanelServer(
             ip=ip,
@@ -44,7 +54,15 @@ class PanelServerRepository(ServerRepository):
             password=password,
             vless_id=vless_id,
             vless_reality_id=vless_reality_id,
-            vmess_id=vmess_id
+            vmess_id=vmess_id,
+            vless_port=vless_port,
+            vless_domain_short_id=vless_domain_short_id,
+            vless_reality_port=vless_reality_port,
+            vless_reality_domain_short_id=vless_reality_domain_short_id,
+            vless_reality_public_key=vless_reality_public_key,
+            vless_reality_private_key=vless_reality_private_key,
+            vmess_port=vmess_port,
+            vmess_domain_short_id=vmess_domain_short_id
         )
         self.session.add(panel_server)
         await self.session.flush()
@@ -57,13 +75,20 @@ class PanelServerRepository(ServerRepository):
         stmt = select(PanelServer)
         return list((await self.session.scalars(stmt)).all())
 
-    async def update_vpn_ids(self,
-                             server: PanelServer,
-                             vless_id: int,
-                             vless_reality_id: int,
-                             vmess_id: int
-                             ) -> None:
-        server.vless_id = vless_id
-        server.vless_reality_id = vless_reality_id
-        server.vmess_id = vmess_id
+    async def update_vpn(self,
+                         server: PanelServer,
+                         id: int,
+                         port: int,
+                         domain_short_id: str,
+                         vpn_type: VpnType,
+                         public_key: str = "",
+                         private_key: str = ""
+                         ) -> None:
+        server.__dict__[vpn_type.value] = id
+        server.__dict__[f"{vpn_type.value[:-3]}_port"] = port
+        server.__dict__[
+            f"{vpn_type.value[:-3]}_domain_short_id"] = domain_short_id
+        if vpn_type == VpnType.VLESS_REALITY:
+            server.__dict__[f"{vpn_type.value[:-3]}_public_key"] = public_key
+            server.__dict__[f"{vpn_type.value[:-3]}_private_key"] = private_key
         await self.session.flush()

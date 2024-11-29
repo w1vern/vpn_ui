@@ -99,7 +99,7 @@ class PanelRepository:
         }}
         return await self.server_session.post_dict("add", body=data)
 
-    async def create_vpn(self, user: User, uuid4: uuid.UUID, sub_id: str, short_ids: list[str], port: int, vpn_type: VpnType, email: str, protocol: str, remark: str) -> dict[str, Any]:
+    async def create_vpn(self, user: User, uuid4: uuid.UUID, sub_id: str, short_ids: list[str], port: int, vpn_type: VpnType, email: str, protocol: str, remark: str, public_key: str, private_key: str) -> dict[str, Any]:
         security = "none"
         if vpn_type == VpnType.VLESS_REALITY:
             security = "reality"
@@ -134,13 +134,13 @@ class PanelRepository:
                     "xver": 0,
                     "dest": "yahoo.com:443",
                     "serverNames": ["yahoo.com", "www.yahoo.com"],
-                    "privateKey": "",
+                    "privateKey": private_key,
                     "minClient": "",
                     "maxClient": "",
                     "maxTimediff": 0,
                     "shortIds": short_ids,
                     "settings": {
-                        "publicKey": "",
+                        "publicKey": public_key,
                         "fingerprint": "random",
                         "serverName": "",
                         "spiderX": "/"
