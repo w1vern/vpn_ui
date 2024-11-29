@@ -19,3 +19,11 @@ class Server(Base):
     display_name: Mapped[str] = mapped_column()
     created_date: Mapped[datetime] = mapped_column()
     closing_date: Mapped[datetime] = mapped_column()
+
+    type: Mapped[str] = mapped_column()
+
+
+    __mapper_args__ = {
+        "polymorphic_identity": "employee",
+        "polymorphic_on": "type",
+    }

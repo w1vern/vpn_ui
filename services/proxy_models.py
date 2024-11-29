@@ -1,8 +1,6 @@
 
 
 from enum import Enum
-from tkinter import E
-from typing import Optional
 
 
 class ProxyType(str, Enum):

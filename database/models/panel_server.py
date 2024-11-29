@@ -21,6 +21,9 @@ class PanelServer(Server):
     vless_id: Mapped[int] = mapped_column()
     vless_reality_id: Mapped[int] = mapped_column()
     vmess_id: Mapped[int] = mapped_column()
+    __mapper_args__ = {
+        "polymorphic_identity": "manager",
+    }
 
     @property
     def connection_string(self):

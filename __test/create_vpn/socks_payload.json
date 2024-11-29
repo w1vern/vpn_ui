@@ -1,0 +1,33 @@
+{
+  "up": 0,
+  "down": 0,
+  "total": 0,
+  "remark": "",
+  "enable": true,
+  "expiryTime": 0,
+  "listen": "",
+  "port": 55184,
+  "protocol": "socks",
+  "settings": {
+    "auth": "password",
+    "accounts": [
+      {
+        "user": "Ym7ylmVX2M",
+        "pass": "CXtXDPVNlx"
+      }
+    ],
+    "udp": true,
+    "ip": "127.0.0.1"
+  },
+  "sniffing": {
+    "enabled": false,
+    "destOverride": ["http", "tls", "quic", "fakedns"],
+    "metadataOnly": false,
+    "routeOnly": false
+  },
+  "allocate": {
+    "strategy": "always",
+    "refresh": 5,
+    "concurrency": 3
+  }
+}

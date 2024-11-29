@@ -1,6 +1,7 @@
 
 
 from asyncio import Server
+from turtle import update
 from typing import Optional, Sequence
 import uuid
 
@@ -31,12 +32,22 @@ class PanelServerRepository(ServerRepository):
                      vless_reality_id: int = 0,
                      vmess_id: int = 0
                      ) -> Optional[PanelServer]:
-        server = await super().create(ip,
-                                      country_code,
-                                      display_name,
-                                      created_date,
-                                      closing_date,
-                                      is_available)
+        panel_server = PanelServer(
+            ip=ip,
+            country_code=country_code,
+            display_name=display_name,
+            created_date=created_date,
+            closing_date=closing_date,
+            is_available=is_available,
+            panel_path=panel_path,
+            login=login,
+            password=password,
+            vless_id=vless_id,
+            vless_reality_id=vless_reality_id,
+            vmess_id=vmess_id
+        )
+        self.session.add(panel_server)
+        await self.session.flush()
 
     async def get_by_id(self, id: uuid.UUID) -> Optional[PanelServer]:
         stmt = select(PanelServer).where(PanelServer.id == id).limit(1)

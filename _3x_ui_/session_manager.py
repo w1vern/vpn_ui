@@ -7,7 +7,7 @@ from typing import Any, AsyncIterator, Optional
 
 import httpx
 
-from database.models import Server
+from database.models.panel_server import PanelServer
 
 
 def parse_nested_json(obj):
@@ -26,7 +26,7 @@ def parse_nested_json(obj):
 
 
 class ServerSession():
-    def __init__(self, server: Server, client: httpx.AsyncClient) -> None:
+    def __init__(self, server: PanelServer, client: httpx.AsyncClient) -> None:
         self.server = server
         self.client = client
 
@@ -75,7 +75,7 @@ class ServerSessionManager:
         self.cookies: dict[uuid.UUID, Any] = {}
 
     @contextlib.asynccontextmanager
-    async def get_session(self, server: Server) -> AsyncIterator[ServerSession]:
+    async def get_session(self, server: PanelServer) -> AsyncIterator[ServerSession]:
         async with httpx.AsyncClient() as client:
             client.cookies = self.cookies.get(
                 server.id, {})
