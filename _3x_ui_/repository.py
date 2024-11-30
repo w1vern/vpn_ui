@@ -1,21 +1,12 @@
 
 
 import json
-import random
-import re
-import secrets
-import string
 from time import process_time
 import uuid
 from typing import Any, Optional
-from urllib import response
 
-from click import Option
-from fastapi import params, security
-from httpx import get
-import sniffio
 
-from services.proxy_models import ProxyInbound, ProxyType, RealityOptions, VpnInbound, VpnType
+from interface.proxy.models import ProxyConfig, ProxyType, RealityOptions, VpnConfig, VpnType
 from _3x_ui_.session_manager import ServerSession, server_session_manager
 from database.models.server import Server
 from database.models.user import User

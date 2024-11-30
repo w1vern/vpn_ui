@@ -7,21 +7,19 @@ import uuid
 
 from database.models.server import Server
 from database.models.user import User
+from interface.proxy.models import AccessConfig, AccessType, VpnConfig
 
 
-class ServerUser(Base):
-    __tablename__ = "servers_and_users"
+class ServerUserInbound(Base):
+    __tablename__ = "user_server_inbounds"
 
     server_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("servers.id"), primary_key=True)
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id"), primary_key=True)
 
-    vless_id: Mapped[uuid.UUID] = mapped_column()
-    vless_reality_id: Mapped[uuid.UUID] = mapped_column()
-    vmess_id: Mapped[uuid.UUID] = mapped_column()
-    http_id: Mapped[int] = mapped_column()
-    socks_id: Mapped[int] = mapped_column()
+    config: Mapped[AccessConfig] = mapped_column()
+    type: Mapped[AccessType] = mapped_column()
 
     server: Mapped[Server] = relationship(
         lazy="selectin", foreign_keys=[server_id])

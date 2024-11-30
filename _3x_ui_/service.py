@@ -1,19 +1,17 @@
 
-from math import e, log
+
 import random
-from re import sub
-import re
+
 import secrets
 import string
 from typing import Optional
-from urllib import response
 import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models.panel_server import PanelServer
 from database.repositories.panel_server_repository import PanelServerRepository
-from services.proxy_interface import ProxyInterface
-from services.proxy_models import ProxyInbound, ProxyType, RealityOptions, VpnInbound, VpnType, Security
+from interface.proxy.interface import ProxyInterface
+from interface.proxy.models import AccessType, ProxyConfig, ProxyType, RealityOptions, VpnConfig, VpnType, Security
 from _3x_ui_.repository import PanelRepository
 from _3x_ui_.session_manager import ServerSession
 from database.models.user import User
@@ -27,20 +25,20 @@ def generate_sub_id(length: int = 16) -> str:
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
 
 
-def generate_short_ids(count: int = 8) -> list[str]:
+def generate_short_ids(count: int = 1) -> list[str]:
     res = []
     for i in range(count):
-        length = random.randint(2, 16)
+        length = random.randint(16, 16)
         res.append(
             hex(random.randint(0b1 << 4 * (length-1), 0b1 << 4 * length))[2:])
     return res
 
 
-def generate_email(server: PanelServer, user: User, vpn_type: VpnType) -> str:
+def generate_email(user: User, vpn_type: VpnType) -> str:
     return f"{user.telegram_username}-{vpn_type.value[:-3]}-{uuid.uuid4()}"
 
 
-def generate_vpn_remark(server: PanelServer, vpn_type: VpnType) -> str:
+def generate_vpn_remark(vpn_type: VpnType) -> str:
     return f"{vpn_type.value[:-3]}"
 
 
@@ -61,15 +59,16 @@ class Service(ProxyInterface):
         self.db_session = db_session
         self.server_session = server_session
         self.pr = PanelRepository(server_session)
-        self.ur = UserRepository(db_session)
         self.psr = PanelServerRepository(db_session)
         self.sur = ServerUserRepository(db_session)
 
-    async def create_proxy(self,
-                           user: User,
-                           login: str = "",
-                           password: str = "",
-                           proxy_type: ProxyType = ProxyType.HTTP) -> Optional[ProxyInbound]:
+    async def get_proxy(self,
+                        user: User,
+                        login: str = "",
+                        password: str = "",
+                        proxy_type: ProxyType = ProxyType.HTTP,
+                        create_if_not_exists: bool = True
+                        ) -> Optional[ProxyConfig]:
         if login == "":
             login = secrets.token_urlsafe(8)
         if password == "":
@@ -88,16 +87,24 @@ class Service(ProxyInterface):
             params[ProxyType.SOCKS.value] = connections.socks_id
             params[proxy_type.value] = response['obj']['id']
             await self.sur.update_ids(self.server_session.server, user, **params, vless_id=connections.vless_id, vless_reality_id=connections.vless_reality_id, vmess_id=connections.vmess_id)
-        return ProxyInbound(self.server_session.server.ip, response['obj']['port'],
-                            response['obj']['settings']['accounts'][0]['user'],
-                            response['obj']['settings']['accounts'][0]['pass'])
+        return ProxyConfig(self.server_session.server.ip, response['obj']['port'],
+                           response['obj']['settings']['accounts'][0]['user'],
+                           response['obj']['settings']['accounts'][0]['pass'])
 
-    async def create_vpn(self, user: User, vpn_type: VpnType) -> Optional[VpnInbound]:
+    async def get_vpn(self, user: User, vpn_type: VpnType = VpnType.VLESS_REALITY, create_if_not_exists: bool = True) -> Optional[VpnConfig]:
+        connections = self.sur.get_by_id(
+            self.server_session.server.id, user.id)
+        if not connections is None:
+            id = getattr(connections, vpn_type.value)
+            if id != 0:
+                protocol_id = getattr(
+                    self.server_session.server, vpn_type.value)
+
         uuid4 = uuid.uuid4()
         sub_id = generate_sub_id()
-        email = generate_email(self.server_session.server, user, vpn_type)
+        email = generate_email(user, vpn_type)
         protocol = vpn_type.value[:-3]
-        remark = generate_vpn_remark(self.server_session.server, vpn_type)
+        remark = generate_vpn_remark(vpn_type)
         if vpn_type == VpnType.VLESS_REALITY:
             protocol = "vless"
         if getattr(self.server_session.server, vpn_type.value) == 0:
@@ -131,14 +138,26 @@ class Service(ProxyInterface):
             security = RealityOptions(public_key=self.server_session.server.vless_reality_public_key,
                                       fp="random",
                                       server_name_indication="yahoo.com",
-                                      sid=self.server_session.server.__dict__[
-                                          f"{vpn_type.value[:-3]}_domain_short_id"],
+                                      sid=getattr(self.server_session.server,
+                                                  f"{vpn_type.value[:-3]}_domain_short_id"),
                                       spx="/", )
-        return VpnInbound(uuid=str(uuid4),
-                          ip=self.server_session.server.ip,
-                          port=port,  # type: ignore
-                          protocol=protocol,
-                          path="",
-                          header_type="http",
-                          security=security,
-                          remark=generate_user_remark(self.server_session.server, user, vpn_type))
+        return VpnConfig(uuid=str(uuid4),
+                         ip=self.server_session.server.ip,
+                         port=getattr(self.server_session.server,
+                                      f"{vpn_type.value[:-3]}_port"),
+                         protocol=protocol,
+                         path="",
+                         header_type="http",
+                         security=security,
+                         remark=generate_user_remark(self.server_session.server, user, vpn_type))
+
+    async def toggle_active(self, user: User, access_type: AccessType, delete: bool = False) -> bool:
+        if type(access_type) is VpnType:
+            pass
+        elif type(access_type) is ProxyType:
+            pass
+        else:
+            return False
+
+    async def get_info(self, user: User) -> dict:
+        return {}

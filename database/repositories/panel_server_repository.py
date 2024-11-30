@@ -12,7 +12,7 @@ from database.repositories.server_repository import ServerRepository
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.proxy_models import VpnType
+from interface.proxy.models import VpnType
 
 
 class PanelServerRepository(ServerRepository):
@@ -84,11 +84,11 @@ class PanelServerRepository(ServerRepository):
                          public_key: str = "",
                          private_key: str = ""
                          ) -> None:
-        server.__dict__[vpn_type.value] = id
-        server.__dict__[f"{vpn_type.value[:-3]}_port"] = port
-        server.__dict__[
-            f"{vpn_type.value[:-3]}_domain_short_id"] = domain_short_id
+        setattr(server, vpn_type.value, id)
+        setattr(server, f"{vpn_type.value[:-3]}_port", port)
+        setattr(server,
+                f"{vpn_type.value[:-3]}_domain_short_id", domain_short_id)
         if vpn_type == VpnType.VLESS_REALITY:
-            server.__dict__[f"{vpn_type.value[:-3]}_public_key"] = public_key
-            server.__dict__[f"{vpn_type.value[:-3]}_private_key"] = private_key
+            setattr(server, f"{vpn_type.value[:-3]}_public_key", public_key)
+            setattr(server, f"{vpn_type.value[:-3]}_private_key", private_key)
         await self.session.flush()
