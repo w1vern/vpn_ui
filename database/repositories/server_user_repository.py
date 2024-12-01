@@ -18,8 +18,8 @@ class ServerUserRepository:
     async def create(self, server: Server, user: User, vless_id: uuid.UUID = uuid.UUID(int=0), 
                      vless_reality_id: uuid.UUID = uuid.UUID(int=0), vmess_id: uuid.UUID = uuid.UUID(int=0), 
                      http_id: int = 0, socks_id: int = 0
-                     ) -> Optional[ServerUser]:
-        server_user = ServerUser(
+                     ) -> Optional[ServerUserInbound]:
+        server_user = ServerUserInbound(
             server=server,
             user=user,
             vless_id=vless_id,
@@ -32,8 +32,8 @@ class ServerUserRepository:
         await self.session.flush()
         return await self.get_by_id(server_user.server_id, server_user.user_id)
 
-    async def get_by_id(self, server_id: uuid.UUID, user_id: uuid.UUID) -> Optional[ServerUser]:
-        stmt = select(ServerUser).where(ServerUser.server_id == server_id, ServerUser.user_id == user_id).limit(1)
+    async def get_by_id(self, server_id: uuid.UUID, user_id: uuid.UUID) -> Optional[ServerUserInbound]:
+        stmt = select(ServerUserInbound).where(ServerUserInbound.server_id == server_id, ServerUserInbound.user_id == user_id).limit(1)
         return await self.session.scalar(stmt)
     
     async def update_ids(self, server: Server, user: User, vless_id: uuid.UUID = uuid.UUID(int=0), 
