@@ -5,6 +5,8 @@ from time import process_time
 import uuid
 from typing import Any, Optional
 
+from httpx import delete
+
 
 from interface.proxy.models import ProxyConfig, ProxyType, RealityOptions, VpnConfig, VpnType
 from _3x_ui_.session_manager import ServerSession, server_session_manager
@@ -12,7 +14,7 @@ from database.models.server import Server
 from database.models.user import User
 from database.database import session_manager
 from database.repositories.server_repository import ServerRepository
-from database.repositories.server_user_repository import ServerUserRepository
+from database.repositories.server_user_inbound_repository import ServerUserInboundRepository
 
 
 class GlobalSettings:
@@ -193,3 +195,27 @@ class PanelRepository:
                 "fallbacks": []
             })
         })
+    
+    async def toggle_proxy(self, user: User, proxy_type: ProxyType) -> dict[str, Any]:
+        return {}
+
+    async def toggle_vpn_user(self, user: User, vpn_type: VpnType) -> dict[str, Any]:
+        return {}
+
+    async def delete_proxy(self, user: User, proxy_type: ProxyType) -> dict[str, Any]:
+        return {}
+
+    async def delete_vpn_user(self, user: User, vpn_type: VpnType) -> dict[str, Any]:
+        return {}
+    
+    async def get_proxy_traffic(self, user: User, proxy_type: ProxyType) -> dict[str, Any]:
+        return {}
+    
+    async def get_vpn_user_traffic(self, user: User, vpn_type: VpnType) -> dict[str, Any]:
+        return {}
+    
+    async def reset_proxy_traffic(self, user: User, proxy_type: ProxyType) -> dict[str, Any]:
+        return {}
+    
+    async def reset_vpn_user_traffic(self, user: User, vpn_type: VpnType) -> dict[str, Any]:
+        return {}

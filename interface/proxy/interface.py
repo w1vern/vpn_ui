@@ -10,34 +10,26 @@ from .models import ProxyConfig, ProxyType, VpnConfig, VpnType, AccessConfig, Ac
 class ProxyInterface(abc.ABC):
 
     @abc.abstractmethod
-    async def get_proxy(self,
-                        user: User,
-                        login: str = "",
-                        password: str = "",
-                        proxy_type: ProxyType = ProxyType.HTTP,
-                        create_if_not_exists: bool = True
-                        ) -> Optional[ProxyConfig]: ...
-
-    @abc.abstractmethod
-    async def get_vpn(self,
-                      user: User,
-                      vpn_type: VpnType = VpnType.VLESS,
-                      create_if_not_exists: bool = True
-                      ) -> Optional[VpnConfig]: ...
+    async def get_config(self,
+                          user: User,
+                          access_type: AccessType = AccessType.HTTP,
+                          create_if_not_exists: bool = True,
+                          login: str = "",
+                          password: str = ""
+                          ) -> Optional[AccessConfig]: ...
 
     @abc.abstractmethod
     async def toggle_active(self,
                             user: User,
+                            access_type: Optional[AccessType] = None,
                             delete: bool = False
-                            ) -> bool: ...
+                            ) -> None: ...
 
     @abc.abstractmethod
-    async def get_inbounds(self,
-                       user: User
-                       ) -> list[AccessConfig]: ...
-    
+    async def get_configs(self, user: User) -> list[AccessConfig]: ...
+
     @abc.abstractmethod
     async def get_traffic(self, user: User) -> int: ...
 
     @abc.abstractmethod
-    async def reset_traffic(self, user: User) -> bool: ...
+    async def reset_traffic(self, user: User) -> None: ...

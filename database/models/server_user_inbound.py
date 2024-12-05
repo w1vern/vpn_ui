@@ -7,20 +7,30 @@ import uuid
 
 from database.models.server import Server
 from database.models.user import User
-from interface.proxy.models import AccessConfig, AccessType, VpnConfig
+from interface.proxy.models import AccessConfig, AccessConfigFactory, AccessType, VpnConfig
 
 
 class ServerUserInbound(Base):
-    __tablename__ = "user_server_inbounds"
+    __tablename__ = "server_user_inbounds"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
 
     server_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("servers.id"), primary_key=True)
+        ForeignKey("servers.id"))
     user_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("users.id"), primary_key=True)
+        ForeignKey("users.id"))
 
-    config: Mapped[AccessConfig] = mapped_column()
-    type: Mapped[AccessType] = mapped_column()
+    config_str: Mapped[str] = mapped_column()
 
     server: Mapped[Server] = relationship(
         lazy="selectin", foreign_keys=[server_id])
     user: Mapped[User] = relationship(lazy="selectin", foreign_keys=[user_id])
+
+    @property
+    def config(self):
+        return AccessConfigFactory.from_string(self.config_str)
+    
+    @property
+    def access_type(self):
+        return self.config.access_type
+

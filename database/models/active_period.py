@@ -21,6 +21,7 @@ class ActivePeriod(Base):
     tariff_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tariffs.id"))
     start_date: Mapped[datetime] = mapped_column()
     end_date: Mapped[datetime] = mapped_column()
+    result_traffic: Mapped[int] = mapped_column()
 
     user: Mapped[User] = relationship(
         lazy="selectin", foreign_keys=[user_id])
