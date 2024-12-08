@@ -29,6 +29,7 @@ class VpnType(str, Enum):
 
 
 class AccessConfig(abc.ABC):
+    id: int
     class_name: str
     ip: str
     port: int
@@ -69,7 +70,8 @@ class AccessConfigFactory:
      
 @AccessConfigFactory.register_with_decorator()
 class ProxyConfig(AccessConfig):
-    def __init__(self, access_type: AccessType, ip: str, port: int, login: str, password: str, is_active: bool = True):
+    def __init__(self, id: int, access_type: AccessType, ip: str, port: int, login: str, password: str, is_active: bool = True):
+        self.id = id
         self.access_type = access_type
         self.ip = ip
         self.port = port
@@ -165,7 +167,8 @@ class RealityOptions(Security):
 
 @AccessConfigFactory.register_with_decorator()
 class VpnConfig(AccessConfig):
-    def __init__(self, access_type: AccessType, uuid: str, ip: str, port: int, protocol: str, path: str, header_type: str = "", security: Security = NoneSecurity(), remark: str = "", is_active: bool = True):
+    def __init__(self, id:int, access_type: AccessType, uuid: str, ip: str, port: int, protocol: str, path: str, header_type: str = "", security: Security = NoneSecurity(), remark: str = "", is_active: bool = True):
+        self.id = id
         self.access_type = access_type
         self.uuid = uuid
         self.ip = ip

@@ -1,22 +1,12 @@
 
 
 import json
-from math import e
-from time import process_time
-from urllib import response
 import uuid
-from typing import Any, Optional
+from typing import Any
 
-from httpx import delete
-
-
-from interface.proxy.models import ProxyConfig, ProxyType, RealityOptions, VpnConfig, VpnType
-from _3x_ui_.session_manager import ServerSession, server_session_manager
-from database.models.server import Server
+from interface.proxy.models import ProxyType, VpnType
+from _3x_ui_.session_manager import ServerSession
 from database.models.user import User
-from database.database import session_manager
-from database.repositories.server_repository import ServerRepository
-from database.repositories.server_user_inbound_repository import ServerUserInboundRepository
 
 
 class GlobalSettings:
@@ -198,7 +188,7 @@ class PanelRepository:
             })
         })
 
-    async def set_proxy_enabled(self, id: int, enable: bool) -> dict[str, Any]:
+    async def set_inbound_enabled(self, id: int, enable: bool) -> dict[str, Any]:
         info = await self.server_session.get(path=f"get/{id}")
         info = json.loads(info.text)
         info = info["obj"]
@@ -224,7 +214,7 @@ class PanelRepository:
                 "clients": [data]})})
         return response
 
-    async def delete_proxy(self, id: int) -> dict[str, Any]:
+    async def delete_inbound(self, id: int) -> dict[str, Any]:
         response = await self.server_session.post_dict(path=f"del/{id}")
         return response
 

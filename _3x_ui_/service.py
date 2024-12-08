@@ -1,13 +1,12 @@
 
 
-from enum import Enum
 import random
 
 import secrets
 import string
-from typing import Optional, Type
+from typing import Optional
 import uuid
-from httpx import Proxy
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models.panel_server import PanelServer
@@ -17,11 +16,7 @@ from interface.proxy.models import AccessConfig, AccessType, NoneSecurity, Proxy
 from _3x_ui_.repository import PanelRepository
 from _3x_ui_.session_manager import ServerSession
 from database.models.user import User
-from database.repositories.server_repository import ServerRepository
 from database.repositories.server_user_inbound_repository import ServerUserInboundRepository
-from database.repositories.user_repository import UserRepository
-from database.models.server import Server
-
 
 
 def generate_sub_id(length: int = 16) -> str:
@@ -59,11 +54,11 @@ def generate_key(length: int = 43) -> str:
 
 class Service(ProxyInterface):
     def __init__(self, db_session: AsyncSession, server_session: ServerSession) -> None:
-        self.db_session = db_session
-        self.server_session = server_session
-        self.pr = PanelRepository(server_session)
-        self.psr = PanelServerRepository(db_session)
-        self.suir = ServerUserInboundRepository(db_session)
+        self.__db_session = db_session
+        self.__server_session = server_session
+        self.__pr = PanelRepository(server_session)
+        self.__psr = PanelServerRepository(db_session)
+        self.__suir = ServerUserInboundRepository(db_session)
 
     async def get_config(self,
                          user: User,
@@ -72,7 +67,7 @@ class Service(ProxyInterface):
                          login: str = "",
                          password: str = ""
                          ) -> Optional[AccessConfig]:
-        inbounds = await self.suir.get_by_server_and_user(self.server_session.server, user)
+        inbounds = await self.__suir.get_by_server_and_user(self.__server_session.server, user)
         for inbound in inbounds:
             if inbound.access_type == access_type:
                 if await self.config_is_valid(user, inbound.config) is True:
@@ -83,12 +78,12 @@ class Service(ProxyInterface):
         if access_type in ProxyType:
             response = await self.__create_proxy(user, login, password, ProxyType(access_type))
         elif access_type in VpnType:
-            response = await self.__create_vpn(user, VpnType(access_type))
+            response = await self.__create_vpn_user(user, VpnType(access_type))
         else:
             return None
         if response is None:
             return None
-        await self.suir.create(self.server_session.server, user, response)
+        await self.__suir.create(self.__server_session.server, user, response)
         return response
 
     async def config_is_valid(self, user: User, config: AccessConfig) -> bool:
@@ -104,32 +99,39 @@ class Service(ProxyInterface):
             login = secrets.token_urlsafe(8)
         if password == "":
             password = secrets.token_urlsafe(8)
-        response = await self.pr.create_proxy(remark=generate_proxy_remark(self.server_session.server, user, proxy_type), login=login, password=password, port=await self.pr.get_free_port(), user=user, proxy_type=proxy_type)
+        response = await self.__pr.create_proxy(
+            remark=generate_proxy_remark(
+                self.__server_session.server, user, proxy_type),
+            login=login,
+            password=password,
+            port=await self.__pr.get_free_port(),
+            proxy_type=proxy_type)
         if response['success'] is False:
             return None
-        return ProxyConfig(access_type=AccessType(proxy_type.value),
-                           ip=self.server_session.server.ip,
+        return ProxyConfig(id=response['obj']['id'],
+                           access_type=AccessType(proxy_type.value),
+                           ip=self.__server_session.server.ip,
                            port=response['obj']['port'],
                            login=response['obj']['settings']['accounts'][0]['user'],
                            password=response['obj']['settings']['accounts'][0]['pass'])
 
-    async def __create_vpn(self,
-                           user: User,
-                           vpn_type: VpnType = VpnType.VLESS_REALITY,
-                           ) -> Optional[VpnConfig]:
+    async def __create_vpn_user(self,
+                                user: User,
+                                vpn_type: VpnType = VpnType.VLESS_REALITY,
+                                ) -> Optional[VpnConfig]:
         uuid4 = uuid.uuid4()
         sub_id = generate_sub_id()
         email = generate_email(user, vpn_type)
         protocol = vpn_type.value[:-3]
         if vpn_type == VpnType.VLESS_REALITY:
             protocol = "vless"
-        if getattr(self.server_session.server, vpn_type.value) == 0:
+        if getattr(self.__server_session.server, vpn_type.value) == 0:
             remark = generate_vpn_remark(vpn_type)
             short_ids = generate_short_ids()
-            port = await self.pr.get_free_port()
+            port = await self.__pr.get_free_port()
             public_key = generate_key()
             private_key = generate_key()
-            response = await self.pr.create_vpn(remark=remark,
+            response = await self.__pr.create_vpn(remark=remark,
                                                 protocol=protocol,
                                                 user=user, sub_id=sub_id,
                                                 short_ids=short_ids,
@@ -141,7 +143,7 @@ class Service(ProxyInterface):
                                                 private_key=private_key)
             if response['success'] is False:
                 return None
-            await self.psr.update_vpn(server=self.server_session.server,
+            await self.__psr.update_vpn(server=self.__server_session.server,
                                       id=response['obj']['id'],
                                       port=port,
                                       domain_short_id=short_ids[0],
@@ -149,52 +151,134 @@ class Service(ProxyInterface):
                                       public_key=public_key,
                                       private_key=private_key)
         else:
-            response = await self.pr.create_vpn_user(user=user, vpn_type=vpn_type, uuid4=uuid4, sub_id=sub_id, email=email)
+            response = await self.__pr.create_vpn_user(user=user, vpn_type=vpn_type, uuid4=uuid4, sub_id=sub_id, email=email)
             if response['success'] is False:
                 return None
         security = NoneSecurity()
         if vpn_type == VpnType.VLESS_REALITY:
-            security = RealityOptions(public_key=self.server_session.server.vless_reality_public_key,
+            security = RealityOptions(public_key=self.__server_session.server.vless_reality_public_key,
                                       fp="random",
                                       server_name_indication="yahoo.com",
-                                      sid=getattr(self.server_session.server,
+                                      sid=getattr(self.__server_session.server,
                                                   f"{vpn_type.value[:-3]}_domain_short_id"),
                                       spx="/", )
-        return VpnConfig(access_type=AccessType(vpn_type.value),
+        return VpnConfig(id=response['obj']['id'],
+                         access_type=AccessType(vpn_type.value),
                          uuid=str(uuid4),
-                         ip=self.server_session.server.ip,
-                         port=getattr(self.server_session.server,
+                         ip=self.__server_session.server.ip,
+                         port=getattr(self.__server_session.server,
                          f"{vpn_type.value[:-3]}_port"),
                          protocol=protocol,
                          path="",
                          header_type="http",
                          security=security,
-                         remark=generate_user_remark(self.server_session.server, user, vpn_type))
+                         remark=generate_user_remark(self.__server_session.server, user, vpn_type))
 
-    async def toggle_active(self,
-                            user: User,
-                            access_type: Optional[AccessType] = None,
-                            delete: bool = False
-                            ) -> None:
-        if access_type in VpnType:
+    async def set_enable(self,
+                         user: User,
+                         enable: bool,
+                         access_type: Optional[AccessType] = None,
+                         ) -> None:
+        if access_type is None:
+            for proxy_type in ProxyType:
+                await self.__set_proxy_enable(user, proxy_type, enable)
+            for vpn_type in VpnType:
+                await self.__set_vpn_user_enable(user, vpn_type, enable)
             return
         elif access_type in ProxyType:
-            return
+            return await self.__set_proxy_enable(user, ProxyType(access_type), enable)
+        elif access_type in VpnType:
+            return await self.__set_vpn_user_enable(user, VpnType(access_type), enable)
         else:
             return
 
+    async def __set_proxy_enable(self, user: User, proxy_type: ProxyType, enable: bool) -> None:
+        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server, user, AccessType(proxy_type))
+        if connection is None:
+            raise Exception()
+        response = await self.__pr.set_inbound_enabled(connection.config.id, enable)
+        if response['success'] is False:
+            raise Exception()
+        return
+
+    async def __set_vpn_user_enable(self, user: User, vpn_type: VpnType, enable: bool) -> None:
+
+        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server,
+                                                                    user,
+                                                                    AccessType(vpn_type))
+        if connection is None:
+            raise Exception()
+        response = await self.__pr.set_vpn_user_enabled(getattr(self.__server_session.server,
+                                                              vpn_type.value),
+                                                      connection.config.uuid,  # type: ignore
+                                                      enable)
+        if response['success'] is False:
+            raise Exception()
+        return
+
+    async def delete(self, user: User, access_type: Optional[AccessType]) -> None:
+        if access_type is None:
+            for proxy_type in ProxyType:
+                await self.__delete_proxy(user, proxy_type)
+            for vpn_type in VpnType:
+                await self.__delete_vpn_user(user, vpn_type)
+            return
+        elif access_type in ProxyType:
+            return await self.__delete_proxy(user, ProxyType(access_type))
+        elif access_type in VpnType:
+            return await self.__delete_vpn_user(user, VpnType(access_type))
+        else:
+            return
+
+    async def __delete_proxy(self, user: User, proxy_type: ProxyType) -> None:
+        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server, user, AccessType(proxy_type))
+        if connection is None:
+            raise Exception()
+        response = await self.__pr.delete_inbound(connection.config.id)
+        if response['success'] is False:
+            raise Exception()
+        return
+
+    async def __delete_vpn_user(self, user: User, vpn_type: VpnType) -> None:
+        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server, user, AccessType(vpn_type))
+        if connection is None:
+            raise Exception()
+        response = await self.__pr.delete_vpn_user(connection.config.id,
+                                                 connection.config.uuid)  # type: ignore
+        if response['success'] is False:
+            raise Exception()
+        return
+
     async def get_configs(self, user: User) -> list[AccessConfig]:
-        suis = await self.suir.get_by_server_and_user(self.server_session.server, user)
+        connections = await self.__suir.get_by_server_and_user(self.__server_session.server, user)
         configs = []
-        for sui in suis:
-            if not self.config_is_valid(user, sui.config):
-                del (suis[suis.index(sui)])
+        for connection in connections:
+            if not self.config_is_valid(user, connection.config):
+                del (connections[connections.index(connection)])
             else:
-                configs.append(sui.config)
+                configs.append(connection.config)
         return configs
 
     async def get_traffic(self, user: User) -> int:
-        return 0
+        connections = await self.__suir.get_by_server_and_user(self.__server_session.server, user)
+        traffic = 0
+        for connection in connections:
+            if connection.access_type in ProxyType:
+                response = await self.__pr.get_inbound_info(connection.config.id)
+                traffic += response['obj']['up']
+                traffic += response['obj']['down']
+            elif connection.access_type in VpnType:
+                response = await self.__pr.get_vpn_user_traffic(connection.config.id,
+                                                              connection.config.uuid)  # type: ignore
+
+                traffic += response['obj']['up']
+                traffic += response['obj']['down']
+        return traffic
 
     async def reset_traffic(self, user: User) -> None:
-        return
+        connections = await self.__suir.get_by_server_and_user(self.__server_session.server, user)
+        for connection in connections:
+            if connection.access_type in ProxyType:
+                await self.__pr.reset_proxy_traffic(connection.config.id)
+            elif connection.access_type in VpnType:
+                await self.__pr.reset_vpn_user_traffic(generate_email(user, VpnType(connection.access_type)))
