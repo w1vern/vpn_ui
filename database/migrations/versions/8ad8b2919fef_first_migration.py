@@ -1,8 +1,8 @@
 """first migration
 
-Revision ID: 9d33282af21c
+Revision ID: 8ad8b2919fef
 Revises: 
-Create Date: 2024-11-30 03:56:08.953140
+Create Date: 2024-12-07 20:41:12.410669
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9d33282af21c'
+revision: str = '8ad8b2919fef'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -29,6 +29,14 @@ def upgrade() -> None:
     sa.Column('created_date', sa.DateTime(), nullable=False),
     sa.Column('closing_date', sa.DateTime(), nullable=False),
     sa.Column('type', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('tariffs',
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('duration', sa.Interval(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('all_traffic', sa.Integer(), nullable=False),
+    sa.Column('traffic_by_server', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
@@ -63,17 +71,14 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['id'], ['servers.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('servers_and_users',
+    op.create_table('server_user_inbounds',
+    sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('server_id', sa.Uuid(), nullable=False),
     sa.Column('user_id', sa.Uuid(), nullable=False),
-    sa.Column('vless_id', sa.Uuid(), nullable=False),
-    sa.Column('vless_reality_id', sa.Uuid(), nullable=False),
-    sa.Column('vmess_id', sa.Uuid(), nullable=False),
-    sa.Column('http_id', sa.Integer(), nullable=False),
-    sa.Column('socks_id', sa.Integer(), nullable=False),
+    sa.Column('config_str', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['server_id'], ['servers.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('server_id', 'user_id')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('telegram_messages',
     sa.Column('id', sa.Uuid(), nullable=False),
@@ -115,8 +120,11 @@ def upgrade() -> None:
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('user_id', sa.Uuid(), nullable=False),
     sa.Column('transaction_id', sa.Uuid(), nullable=False),
+    sa.Column('tariff_id', sa.Uuid(), nullable=False),
     sa.Column('start_date', sa.DateTime(), nullable=False),
     sa.Column('end_date', sa.DateTime(), nullable=False),
+    sa.Column('result_traffic', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['tariff_id'], ['tariffs.id'], ),
     sa.ForeignKeyConstraint(['transaction_id'], ['transactions.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -141,9 +149,10 @@ def downgrade() -> None:
     op.drop_table('tickets')
     op.drop_table('tg_bot_tokens')
     op.drop_table('telegram_messages')
-    op.drop_table('servers_and_users')
+    op.drop_table('server_user_inbounds')
     op.drop_table('panel_servers')
     op.drop_index(op.f('ix_users_telegram_id'), table_name='users')
     op.drop_table('users')
+    op.drop_table('tariffs')
     op.drop_table('servers')
     # ### end Alembic commands ###

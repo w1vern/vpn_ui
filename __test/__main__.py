@@ -2,13 +2,16 @@
 
 import asyncio
 import json
+from operator import is_
+import uuid
 
 from _3x_ui_ import session_manager
+from _3x_ui_.repository import PanelRepository
 from _3x_ui_.service import Service
 from database.repositories.panel_server_repository import PanelServerRepository
 from interface.proxy.models import *
 from _3x_ui_.session_manager import server_session_manager
-#from __test.test import server, user
+# from __test.test import server, user
 from database.repositories.server_repository import ServerRepository
 from database.database import session_manager
 from database.repositories.user_repository import UserRepository
@@ -21,9 +24,10 @@ async def main():
         server = (await psr.get_all())[0]
         user = (await ur.get_all())[0]
         async with server_session_manager.get_session(server) as server_session:
+            panel_repository = PanelRepository(server_session)
             service = Service(db_session, server_session)
-            vpn_inbound = await service.get_vpn(user, VpnType.VLESS_REALITY)
-            print(vpn_inbound.create_string())#type: ignore
+            print(await service.get_config(user, AccessType.VLESS_REALITY))
+            print(await panel_repository.get_inbound_info(92))
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -16,14 +16,14 @@ class AccessType(str, Enum):
     VMESS = "vmess_id"
 
 class ProxyType(str, Enum):
-    HTTP = AccessType.HTTP
-    SOCKS = AccessType.SOCKS
+    HTTP = AccessType.HTTP.value
+    SOCKS = AccessType.SOCKS.value
 
 
 class VpnType(str, Enum):
-    VLESS = AccessType.VLESS
-    VLESS_REALITY = AccessType.VLESS_REALITY
-    VMESS = AccessType.VMESS
+    VLESS = AccessType.VLESS.value
+    VLESS_REALITY = AccessType.VLESS_REALITY.value
+    VMESS = AccessType.VMESS.value
 
 
 
@@ -194,14 +194,5 @@ class VpnConfig(AccessConfig):
         vpn_dict['security'] = security
         del(vpn_dict['class_name'])
         return cls(**vpn_dict)
-
-reality_sample = RealityOptions("public_key", "fp", "server_name_indication", "sid", "spx")
-vpn_config = VpnConfig(access_type=AccessType.VLESS_REALITY, uuid="uuid", ip="ip", port=20, protocol="tcp", path="/path", header_type="none", security=reality_sample, remark="remark", is_active=True) 
-
-vpn_str = vpn_config.to_string()
-
-print(vpn_str)
-
-print(AccessConfigFactory.from_string(vpn_str))  
 
 

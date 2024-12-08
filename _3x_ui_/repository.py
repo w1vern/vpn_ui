@@ -1,7 +1,9 @@
 
 
 import json
+from math import e
 from time import process_time
+from urllib import response
 import uuid
 from typing import Any, Optional
 
@@ -45,8 +47,8 @@ class GlobalSettings:
     }
 
     data = {
-        "up": 0,
-        "down": 0,
+        "up": 500,
+        "down": 300,
         "total": 0,
         "enable": True,
         "expiryTime": 0,
@@ -62,7 +64,7 @@ class PanelRepository:
         resp = await self.server_session.client.get(url=f"http://{self.server_session.server.ip}:9101/api/")
         return int(resp.text)
 
-    async def create_proxy(self, login: str, password: str, port: int, user: User, proxy_type: ProxyType, remark: str) -> dict[str, Any]:
+    async def create_proxy(self, login: str, password: str, port: int, proxy_type: ProxyType, remark: str) -> dict[str, Any]:
         settings = {**GlobalSettings.settings, **{
             "accounts": [{
                 "user": login,
@@ -167,7 +169,7 @@ class PanelRepository:
         data = {**GlobalSettings.data, **{
             "remark": remark,
             "port": port,
-            "protocol": "vless",
+            "protocol": protocol,
             "settings": json.dumps(settings),
             "streamSettings": json.dumps(streamSettings),
             "sniffing": json.dumps(sniffing),
@@ -195,27 +197,53 @@ class PanelRepository:
                 "fallbacks": []
             })
         })
-    
-    async def toggle_proxy(self, user: User, proxy_type: ProxyType) -> dict[str, Any]:
-        return {}
 
-    async def toggle_vpn_user(self, user: User, vpn_type: VpnType) -> dict[str, Any]:
-        return {}
+    async def set_proxy_enabled(self, id: int, enable: bool) -> dict[str, Any]:
+        info = await self.server_session.get(path=f"get/{id}")
+        info = json.loads(info.text)
+        info = info["obj"]
+        del (info["id"])
+        info["enable"] = enable
+        response = await self.server_session.post_dict(path=f"update/{id}", body=info)
+        return response
 
-    async def delete_proxy(self, user: User, proxy_type: ProxyType) -> dict[str, Any]:
-        return {}
+    async def set_vpn_user_enabled(self, inbound_id: int, client_id: uuid.UUID, enable: bool) -> dict[str, Any]:
+        info = await self.get_inbound_info(inbound_id)
+        data = None
+        for client in info["obj"]["settings"]["clients"]:
+            if client["id"] == str(client_id):
+                data = client
+                data["enable"] = enable
+                break
+        if data is None:
+            return {}
+        response = await self.server_session.post_dict(path=f"updateClient/{client_id}",
+                                                       body={
+            "id": inbound_id,
+            "settings": json.dumps({
+                "clients": [data]})})
+        return response
 
-    async def delete_vpn_user(self, user: User, vpn_type: VpnType) -> dict[str, Any]:
-        return {}
-    
-    async def get_proxy_traffic(self, user: User, proxy_type: ProxyType) -> dict[str, Any]:
-        return {}
-    
-    async def get_vpn_user_traffic(self, user: User, vpn_type: VpnType) -> dict[str, Any]:
-        return {}
-    
-    async def reset_proxy_traffic(self, user: User, proxy_type: ProxyType) -> dict[str, Any]:
-        return {}
-    
-    async def reset_vpn_user_traffic(self, user: User, vpn_type: VpnType) -> dict[str, Any]:
-        return {}
+    async def delete_proxy(self, id: int) -> dict[str, Any]:
+        response = await self.server_session.post_dict(path=f"del/{id}")
+        return response
+
+    async def delete_vpn_user(self, inbound_id: int, client_id: uuid.UUID) -> dict[str, Any]:
+        response = await self.server_session.post_dict(path=f"{inbound_id}/delClient/{client_id}")
+        return response
+
+    async def get_inbound_info(self, id: int) -> dict[str, Any]:
+        response = await self.server_session.get_dict(path=f"get/{id}")
+        return response
+
+    async def get_vpn_user_traffic(self, email: str) -> dict[str, Any]:
+        response = await self.server_session.get_dict(path=f"getClientTraffics/{email}")
+        return response
+
+    async def reset_proxy_traffic(self, id: int) -> dict[str, Any]:
+        response = await self.server_session.post_dict(path=f"resetAllClientTraffics/{id}")
+        return response
+
+    async def reset_vpn_user_traffic(self, email: str) -> dict[str, Any]:
+        response = await self.server_session.post_dict(path=f"resetClientTraffic/{email}")
+        return response

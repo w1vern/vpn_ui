@@ -60,14 +60,17 @@ class ServerSession():
     async def __get_dict(self, response: httpx.Response) -> dict[str, Any]:
         return json.loads(response.text.replace('\\n', '').replace('\\"', '"').replace('"{', '{').replace('}"', '}'))
 
-    async def post(self, path: str, body: dict[str, Any]) -> httpx.Response:
+    async def post(self, path: str, body: dict[str, Any] = {}) -> httpx.Response:
         return await self.__make_request(path, "POST", body)
 
     async def get(self, path: str) -> httpx.Response:
         return await self.__make_request(path, "GET")
 
-    async def post_dict(self, path: str, body: dict[str, Any]) -> dict[str, Any]:
-        return await self.__get_dict(await self.post(path, body))
+    async def post_dict(self, path: str, body: dict[str, Any] = {}) -> dict[str, Any]:
+        response = await self.post(path, body)
+        # print(response.status_code)
+        # print(response.text)
+        return await self.__get_dict(response)
 
     async def get_dict(self, path: str) -> dict[str, Any]:
         return await self.__get_dict(await self.get(path))
