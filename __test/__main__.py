@@ -3,6 +3,7 @@
 import asyncio
 import json
 from operator import is_
+from time import sleep
 import uuid
 
 from _3x_ui_ import session_manager
@@ -26,6 +27,9 @@ async def main():
         async with server_session_manager.get_session(server) as server_session:
             service = Service(db_session, server_session)
             await service.get_config(user)
+            await service.set_enable(user, False, AccessType.HTTP)
+            sleep(5)
+            await service.set_enable(user, True, AccessType.HTTP)
 
 if __name__ == "__main__":
     asyncio.run(main())
