@@ -24,7 +24,7 @@ class AuthController(Controller):
 	prefix = "/auth"
 	tags = ["auth"]
 
-	def __init__(self, session: AsyncSession = Depends(get_db_session)):
+	def __init__(self, session: AsyncSession = Depends(get_db_session)) -> None:
 		self.session = session
 
 	@post("/refresh",

@@ -13,7 +13,12 @@ class TransactionRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def create(self, user: User, amount: float = 4, date: Optional[datetime] = None, type: TransactionType = TransactionType.withdrawal) -> Optional[Transaction]:
+    async def create(self,
+                     user: User,
+                     amount: float,
+                     date: Optional[datetime] = None,
+                     type: int = TransactionType.withdrawal.value
+                     ) -> Optional[Transaction]:
         if date is None:
             date = datetime.now(UTC).replace(tzinfo=None)
         transaction = Transaction(
@@ -29,7 +34,7 @@ class TransactionRepository:
     async def get_all(self) -> list[Transaction]:
         stmt = select(Transaction)
         return list((await self.session.scalars(stmt)).all())
-    
+
     async def get_by_user(self, user: User) -> list[Transaction]:
-        stmt = select(Transaction).where(Transaction.user_id==user.id)
+        stmt = select(Transaction).where(Transaction.user_id == user.id)
         return list((await self.session.scalars(stmt)).all())

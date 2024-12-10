@@ -18,14 +18,16 @@ from database.repositories.user_repository import UserRepository
 
 
 async def main():
-    async with session_manager.session() as db_session:
-        psr = PanelServerRepository(db_session)
-        ur = UserRepository(db_session)
-        server = (await psr.get_all())[0]
-        user = (await ur.get_all())[0]
-        async with server_session_manager.get_session(server) as server_session:
-            service = Service(db_session, server_session)
-            await service.get_config(user)
+    print(0b1 << 15 - 1)
+    print(0b10 ^ 0b10)
+    # async with session_manager.session() as db_session:
+    #     psr = PanelServerRepository(db_session)
+    #     ur = UserRepository(db_session)
+    #     server = (await psr.get_all())[0]
+    #     user = (await ur.get_all())[0]
+    #     async with server_session_manager.get_session(server) as server_session:
+    #         service = Service(db_session, server_session)
+    #         await service.get_config(user)
 
 if __name__ == "__main__":
     asyncio.run(main())

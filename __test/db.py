@@ -1,6 +1,5 @@
 import asyncio
 import secrets
-from database.enums.role import Role
 from database.models.server import Server
 from datetime import datetime, UTC, timedelta
 from database.database import session_manager
