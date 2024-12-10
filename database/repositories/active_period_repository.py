@@ -14,10 +14,10 @@ class ActivePeriodRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def create(self, user: User, 
-                     transaction: Transaction, 
+    async def create(self, user: User,
+                     transaction: Transaction,
                      tariff: Tariff,
-                     start_date: Optional[datetime] = None, 
+                     start_date: Optional[datetime] = None,
                      end_date: Optional[datetime] = None,
                      result_traffic: Optional[int] = None
                      ) -> Optional[ActivePeriod]:
@@ -27,10 +27,10 @@ class ActivePeriodRepository:
             end_date = datetime.min
         if result_traffic is None:
             result_traffic = -1
-        active_period = ActivePeriod(user_id=user.id, 
-                                     transaction_id=transaction.id, 
+        active_period = ActivePeriod(user_id=user.id,
+                                     transaction_id=transaction.id,
                                      tariff_id=tariff.id,
-                                     start_date=start_date, 
+                                     start_date=start_date,
                                      end_date=end_date,
                                      result_traffic=result_traffic)
         self.session.add(active_period)
@@ -56,10 +56,8 @@ class ActivePeriodRepository:
                 max_date = ap.start_date
                 id = ap.id
         return await self.get_by_id(id)
-    
+
     async def close_period(self, active_period: ActivePeriod, all_traffic: int) -> None:
         active_period.end_date = datetime.now(UTC).replace(tzinfo=None)
         active_period.result_traffic = all_traffic
         await self.session.flush()
-
-
