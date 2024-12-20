@@ -4,9 +4,9 @@ import json
 import uuid
 from typing import Any
 
-from interface.proxy.models import ProxyType, VpnType
 from _3x_ui_.session_manager import ServerSession
 from database.models.user import User
+from interface.proxy.models import ProxyType, VpnType
 
 
 class GlobalSettings:

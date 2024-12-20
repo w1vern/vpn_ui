@@ -2,9 +2,9 @@
 
 import contextlib
 import json
-from urllib import response
 import uuid
 from typing import Any, AsyncIterator, Optional
+from urllib import response
 
 import httpx
 

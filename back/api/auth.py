@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.broker import get_broker, send_message
 from back.config import Config
-from back.schemas.tg_scheme import TgAuth, TgId
+from back.schemas.tg import TgAuth, TgId
 from back.token import AccessToken, RefreshToken
 from database.database import get_db_session
 from database.redis import RedisType, get_redis_client

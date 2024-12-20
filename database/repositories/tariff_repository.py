@@ -1,10 +1,11 @@
 
 
-from typing import Optional
 import uuid
+from datetime import timedelta
+from typing import Optional
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import timedelta
 
 from database.models.tariff import Tariff
 
@@ -16,11 +17,10 @@ class TrafficRepository:
     async def create(self,
                      duration: timedelta,
                      price: float,
-                     all_traffic: int,
-                     traffic_by_server
+                     all_traffic: int
                      ) -> Optional[Tariff]:
         tariff = Tariff(duration=duration, price=price,
-                        all_traffic=all_traffic, traffic_by_server=traffic_by_server)
+                        all_traffic=all_traffic)
         self.session.add(tariff)
         await self.session.flush()
         return await self.get_by_id(tariff.id)

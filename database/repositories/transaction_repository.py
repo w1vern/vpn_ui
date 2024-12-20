@@ -23,6 +23,7 @@ class TransactionRepository:
             date = datetime.now(UTC).replace(tzinfo=None)
         transaction = Transaction(
             user_id=user.id, amount=amount, date=date, type=type)
+        user.balance += amount
         self.session.add(transaction)
         await self.session.flush()
         return await self.get_by_id(transaction.id)

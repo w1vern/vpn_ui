@@ -5,11 +5,11 @@ from database.enums.rights import Rights
 
 class RightsType(Enum):
     super_admin = 0b1 << 15 - 1
-    admin = Rights.edit_member_rights.value + \
-        Rights.edit_servers.value + \
-        Rights.use_control_panel.value + \
-        Rights.verified.value + \
-        Rights.active.value
-    member = Rights.verified.value + \
-        Rights.active.value
+    admin = Rights.is_member_rights_editor.value + \
+        Rights.is_servers_editor.value + \
+        Rights.is_control_panel_user.value + \
+        Rights.is_verified.value + \
+        Rights.can_use.value
+    member = Rights.is_verified.value + \
+        Rights.can_use.value
     guest = 0

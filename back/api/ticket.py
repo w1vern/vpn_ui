@@ -5,14 +5,14 @@ from fastapi_controllers import Controller, delete, get, post
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.get_auth import get_user
-from back.schemas.server_scheme import ServerToCreate
-from back.schemas.ticket_scheme import NewTicket, TicketMessage
+from back.schemas.server import ServerToCreateScheme
+from back.schemas.ticket import NewTicket, TicketMessage
 from database.database import get_db_session
 from database.models.user import User
 from database.repositories.server_repository import ServerRepository
 
 
-class FeedbackController(Controller):
+class TicketController(Controller):
     prefix = "/feedback"
     tags = ["feedback"]
 

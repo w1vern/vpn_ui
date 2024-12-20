@@ -1,7 +1,7 @@
 
 
-from mailbox import Message
 import uuid
+from mailbox import Message
 from typing import Optional
 
 from sqlalchemy import select

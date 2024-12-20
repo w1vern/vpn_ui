@@ -1,7 +1,7 @@
 
 
-from email.policy import default
 import enum
+from email.policy import default
 
 
 class SettingsType(enum.Enum):

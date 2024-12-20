@@ -1,13 +1,15 @@
 
 
-from sqlalchemy import ForeignKey
-from database.models.base import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 import uuid
 
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from database.models.base import Base
 from database.models.server import Server
 from database.models.user import User
-from interface.proxy.models import AccessConfig, AccessConfigFactory, AccessType, VpnConfig
+from interface.proxy.models import (AccessConfig, AccessConfigFactory,
+                                    AccessType, VpnConfig)
 
 
 class ServerUserInbound(Base):

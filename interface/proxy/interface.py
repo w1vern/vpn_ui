@@ -4,6 +4,7 @@ import abc
 from typing import Optional
 
 from database.models.user import User
+
 from .models import AccessConfig, AccessType
 
 

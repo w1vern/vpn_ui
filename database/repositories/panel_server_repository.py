@@ -1,17 +1,16 @@
 
 
+import uuid
 from asyncio import Server
+from datetime import datetime
 from turtle import update
 from typing import Optional, Sequence
-import uuid
 
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models.panel_server import PanelServer
 from database.repositories.server_repository import ServerRepository
-from datetime import datetime
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from interface.proxy.models import VpnType
 
 
@@ -74,6 +73,18 @@ class PanelServerRepository(ServerRepository):
     async def get_all(self) -> Sequence[PanelServer]:
         stmt = select(PanelServer)
         return list((await self.session.scalars(stmt)).all())
+    
+    async def set_login(self, server: PanelServer, login: str) -> None:
+        server.login = login
+        await self.session.flush()
+
+    async def set_password(self, server: PanelServer, password: str) -> None:
+        server.password = password
+        await self.session.flush()
+
+    async def set_panel_path(self, server: PanelServer, panel_path: str) -> None:
+        server.panel_path = panel_path
+        await self.session.flush()
 
     async def update_vpn(self,
                          server: PanelServer,

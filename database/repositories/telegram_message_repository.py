@@ -1,12 +1,14 @@
 
+import uuid
 from datetime import datetime
 from typing import Optional
-import uuid
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models.telegram_message import TelegramMessage
 from database.models.user import User
+
 
 class TelegramMessageRepository:
     def __init__(self, session: AsyncSession) -> None:

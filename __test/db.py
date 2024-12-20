@@ -1,13 +1,14 @@
 import asyncio
 import secrets
-from database.models.server import Server
-from datetime import datetime, UTC, timedelta
-from database.database import session_manager
+from datetime import UTC, datetime, timedelta
 
+from database.database import session_manager
 from database.models.panel_server import PanelServer
+from database.models.server import Server
 from database.models.user import User
 from database.repositories.panel_server_repository import PanelServerRepository
 from database.repositories.user_repository import UserRepository
+
 
 async def main():
     async with session_manager.session() as session:
