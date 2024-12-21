@@ -1,17 +1,18 @@
 """first migration
 
-Revision ID: 8ad8b2919fef
+Revision ID: 3172ef4b7334
 Revises: 
-Create Date: 2024-12-07 20:41:12.410669
+Create Date: 2024-12-21 15:50:47.710674
 
 """
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = '8ad8b2919fef'
+revision: str = '3172ef4b7334'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -34,23 +35,10 @@ def upgrade() -> None:
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('duration', sa.Interval(), nullable=False),
     sa.Column('price', sa.Float(), nullable=False),
-    sa.Column('all_traffic', sa.Integer(), nullable=False),
-    sa.Column('traffic_by_server', sa.Integer(), nullable=False),
+    sa.Column('price_of_traffic_reset', sa.Float(), nullable=False),
+    sa.Column('traffic', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('users',
-    sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('telegram_id', sa.BigInteger(), nullable=False),
-    sa.Column('telegram_username', sa.String(), nullable=False),
-    sa.Column('balance', sa.Float(), nullable=False),
-    sa.Column('role', sa.Enum('admin', 'guest', 'member', name='role'), nullable=False),
-    sa.Column('active', sa.Boolean(), nullable=False),
-    sa.Column('auto_pay', sa.Boolean(), nullable=False),
-    sa.Column('created_date', sa.DateTime(), nullable=False),
-    sa.Column('secret', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_users_telegram_id'), 'users', ['telegram_id'], unique=True)
     op.create_table('panel_servers',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('panel_path', sa.String(), nullable=False),
@@ -70,6 +58,27 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['id'], ['servers.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('tg_bot_tokens',
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('token', sa.String(), nullable=False),
+    sa.Column('server_id', sa.Uuid(), nullable=False),
+    sa.ForeignKeyConstraint(['server_id'], ['servers.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('users',
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('telegram_id', sa.String(), nullable=False),
+    sa.Column('tariff_id', sa.Uuid(), nullable=False),
+    sa.Column('telegram_username', sa.String(), nullable=False),
+    sa.Column('balance', sa.Float(), nullable=False),
+    sa.Column('rights', sa.Integer(), nullable=False),
+    sa.Column('settings', sa.Integer(), nullable=False),
+    sa.Column('created_date', sa.DateTime(), nullable=False),
+    sa.Column('secret', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['tariff_id'], ['tariffs.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_users_telegram_id'), 'users', ['telegram_id'], unique=True)
     op.create_table('server_user_inbounds',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('server_id', sa.Uuid(), nullable=False),
@@ -89,13 +98,6 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['sender_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('tg_bot_tokens',
-    sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('token', sa.String(), nullable=False),
-    sa.Column('server_id', sa.Uuid(), nullable=False),
-    sa.ForeignKeyConstraint(['server_id'], ['servers.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('tickets',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
@@ -110,7 +112,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('amount', sa.Float(), nullable=False),
     sa.Column('date', sa.DateTime(), nullable=False),
-    sa.Column('type', sa.Enum('refund', 'replenishment', 'withdrawal', name='transactiontype'), nullable=False),
+    sa.Column('type', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Uuid(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -123,6 +125,7 @@ def upgrade() -> None:
     sa.Column('start_date', sa.DateTime(), nullable=False),
     sa.Column('end_date', sa.DateTime(), nullable=False),
     sa.Column('result_traffic', sa.Integer(), nullable=False),
+    sa.Column('opened', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['tariff_id'], ['tariffs.id'], ),
     sa.ForeignKeyConstraint(['transaction_id'], ['transactions.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
@@ -132,7 +135,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('text', sa.String(), nullable=False),
     sa.Column('date', sa.DateTime(), nullable=False),
-    sa.Column('type', sa.Enum('from_admin', 'from_user', name='messagetickettype'), nullable=False),
+    sa.Column('type', sa.Integer(), nullable=False),
     sa.Column('ticket_id', sa.Uuid(), nullable=False),
     sa.ForeignKeyConstraint(['ticket_id'], ['tickets.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -146,12 +149,12 @@ def downgrade() -> None:
     op.drop_table('active_periods')
     op.drop_table('transactions')
     op.drop_table('tickets')
-    op.drop_table('tg_bot_tokens')
     op.drop_table('telegram_messages')
     op.drop_table('server_user_inbounds')
-    op.drop_table('panel_servers')
     op.drop_index(op.f('ix_users_telegram_id'), table_name='users')
     op.drop_table('users')
+    op.drop_table('tg_bot_tokens')
+    op.drop_table('panel_servers')
     op.drop_table('tariffs')
     op.drop_table('servers')
     # ### end Alembic commands ###
