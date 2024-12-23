@@ -23,6 +23,10 @@ default_users = [{
     "active": True, "auto_pay": False, "created_date": datetime.now(UTC).replace(tzinfo=None), "secret": secrets.token_urlsafe()
 }]
 
+default_tariffs = [
+    
+]
+
 
 async def main():
     async with session_manager.session() as session:
