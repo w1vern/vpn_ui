@@ -12,7 +12,17 @@ from database.models import *
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_USER = os.getenv("DB_USER")
+DATABASE_PASSWORD = os.getenv("DB_PASSWORD")
+DATABASE_IP = os.getenv("DB_IP")
+DATABASE_PORT = os.getenv("DB_PORT")
+DATABASE_NAME = os.getenv("DB_NAME")
+
+
+if DATABASE_USER is None or DATABASE_PASSWORD is None or DATABASE_IP is None or DATABASE_PORT is None or DATABASE_NAME is None:
+    raise Exception("DATABASE_USER or DATABASE_PASSWORD or DATABASE_IP or DATABASE_PORT or DATABASE_NAME is not set")
+
+DATABASE_URL = f"postgresql+asyncpg://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_IP}:{DATABASE_PORT}/{DATABASE_NAME}"
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

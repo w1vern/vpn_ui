@@ -13,6 +13,7 @@ class Tariff(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
 
+    name: Mapped[str] = mapped_column()
     duration: Mapped[timedelta] = mapped_column()
     price: Mapped[float] = mapped_column()
     price_of_traffic_reset: Mapped[float] = mapped_column()

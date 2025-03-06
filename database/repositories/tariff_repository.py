@@ -10,17 +10,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.models.tariff import Tariff
 
 
-class TrafficRepository:
+class TariffRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
     async def create(self,
+                     name: str,
                      duration: timedelta,
                      price: float,
-                     all_traffic: int
+                     price_of_traffic_reset: float,
+                     traffic: int
                      ) -> Optional[Tariff]:
-        tariff = Tariff(duration=duration, price=price,
-                        all_traffic=all_traffic)
+        tariff = Tariff(name=name, duration=duration, price=price, price_of_traffic_reset=price_of_traffic_reset,
+                        traffic=traffic)
         self.session.add(tariff)
         await self.session.flush()
         return await self.get_by_id(tariff.id)
