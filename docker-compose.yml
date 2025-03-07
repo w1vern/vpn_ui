@@ -27,6 +27,12 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - app-network
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   backend:
     build:
@@ -42,10 +48,15 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - alembic
-      - postgres
-      - redis
-      - rabbitmq
+      alembic: 
+        condition: service_started
+      postgres: 
+        condition: service_started
+      redis: 
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      
     networks:
       - app-network
 
@@ -60,8 +71,10 @@ services:
       DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@${DB_IP}:${DB_PORT}/${DB_NAME}
       REDIS_HOST: redis
     depends_on:
-      - postgres
-      - rabbitmq
+      postgres: 
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     networks:
       - app-network
 
