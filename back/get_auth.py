@@ -15,7 +15,7 @@ async def get_user(access_token: str = Cookie(default=None), session: AsyncSessi
     if access_token is None:
         raise HTTPException(status_code=401, detail="access token doesn't exist")
     access = AccessToken.from_token(access_token)
-    current_time = datetime.now(UTC)
+    current_time = datetime.now(UTC).replace(tzinfo=None)
     if access.created_date > current_time or access.created_date + access.lifetime < current_time:
         raise HTTPException(status_code=401, detail="access token expired")
     user_id = access.user_id

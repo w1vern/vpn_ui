@@ -13,7 +13,7 @@ from database.models.user import User
 from database.repositories.active_period_repository import \
     ActivePeriodRepository
 from database.repositories.panel_server_repository import PanelServerRepository
-from database.repositories.tariff_repository import TrafficRepository
+from database.repositories.tariff_repository import TariffRepository
 from database.repositories.transaction_repository import TransactionRepository
 from database.repositories.user_repository import UserRepository
 

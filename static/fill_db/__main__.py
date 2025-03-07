@@ -1,11 +1,10 @@
 
 import asyncio
-import os
 import secrets
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
-from dotenv import load_dotenv
+
 from sqlalchemy import select
 
 from database.database import session_manager
@@ -15,15 +14,14 @@ from database.models.tariff import Tariff
 from database.models.user import User
 from database.repositories import UserRepository, TariffRepository
 
-load_dotenv()
+from config import settings
 
-SUPERUSER_TELEGRAM_ID = os.getenv("SUPERUSER_TELEGRAM_ID")
 
-if SUPERUSER_TELEGRAM_ID is None:
-    raise Exception()
+
+
 
 default_users = [{
-    "telegram_id": SUPERUSER_TELEGRAM_ID,
+    "telegram_id": settings.superuser_telegram_id,
     "telegram_username": "Admin",
     "balance": 0,
     "rights": RightsType.super_admin.value,

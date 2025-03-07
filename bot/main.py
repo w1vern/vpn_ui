@@ -1,12 +1,12 @@
 import json
-import os
 
-from dotenv import load_dotenv
 from telebot import telebot
 from telebot.async_telebot import AsyncTeleBot
 
-load_dotenv()
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+from config import settings
+
+
+BOT_TOKEN = settings.bot_token
 
 class ExceptionHandler(telebot.ExceptionHandler):
     def handle(self, exception = None):

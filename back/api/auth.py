@@ -8,9 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.broker import get_broker, send_message
 from back.config import Config
+from back.get_auth import get_user
 from back.schemas.tg import TgAuth, TgId
+from back.schemas.user import UserRightsScheme, UserScheme, UserSettingsScheme
 from back.token import AccessToken, RefreshToken
 from database.database import get_db_session
+from database.models.user import User
 from database.redis import RedisType, get_redis_client
 from database.repositories.user_repository import UserRepository
 
@@ -128,7 +131,6 @@ class AuthController(Controller):
 		response.delete_cookie(key="access_token")
 		return {"message": "OK"}
 
-
 	@post(
     "/tg_code",
     summary="Send a Telegram login code",
@@ -150,3 +152,19 @@ class AuthController(Controller):
 		redis.set(f"{RedisType.tg_code}:{user.telegram_id}", tg_code, ex=Config.tg_code_lifetime)
 		await send_message({"tg_id": tg_id.tg_id, "text": "your code to login: " + tg_code}, broker)
 		return {"message": "OK"}
+
+	@get("/user_info", response_model=UserScheme)
+	async def get_user_info(self, user: User = Depends(get_user)):
+		settings = UserSettingsScheme.model_validate(user)
+		rights = UserRightsScheme.model_validate(user)
+		return UserScheme(
+			id=user.id,
+			telegram_id=user.telegram_id,
+			telegram_username=user.telegram_username,
+			balance=user.balance,
+			created_date=user.created_date.isoformat(),
+			rights=rights,
+			settings=settings
+		)
+
+

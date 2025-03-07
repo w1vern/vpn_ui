@@ -1,28 +1,19 @@
 import contextlib
-import os
+
 from typing import Any, AsyncGenerator, AsyncIterator
 
-from dotenv import load_dotenv
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import (AsyncConnection, AsyncSession,
                                     async_sessionmaker, create_async_engine)
 from sqlalchemy.ext.declarative import declarative_base
 
 from database.models import *
-
-load_dotenv()
-
-DATABASE_USER = os.getenv("DB_USER")
-DATABASE_PASSWORD = os.getenv("DB_PASSWORD")
-DATABASE_IP = os.getenv("DB_IP")
-DATABASE_PORT = os.getenv("DB_PORT")
-DATABASE_NAME = os.getenv("DB_NAME")
+from config import settings
 
 
-if DATABASE_USER is None or DATABASE_PASSWORD is None or DATABASE_IP is None or DATABASE_PORT is None or DATABASE_NAME is None:
-    raise Exception("DATABASE_USER or DATABASE_PASSWORD or DATABASE_IP or DATABASE_PORT or DATABASE_NAME is not set")
 
-DATABASE_URL = f"postgresql+asyncpg://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_IP}:{DATABASE_PORT}/{DATABASE_NAME}"
+DATABASE_URL = f"postgresql+asyncpg://{settings.db_user}:{settings.db_password}@{settings.db_ip}:{settings.db_port}/{settings.db_name}"
 
 
 

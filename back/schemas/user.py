@@ -12,6 +12,9 @@ class UserSettingsScheme(BaseModel):
     is_active: bool
     get_traffic_notifications: bool
 
+    class Config:
+        from_attributes = True
+
 
 class UserRightsScheme(BaseModel):
     is_server_editor: bool
@@ -23,6 +26,9 @@ class UserRightsScheme(BaseModel):
     is_control_panel_user: bool
     is_verified: bool
 
+    class Config:
+        from_attributes = True
+
 
 class UserScheme(BaseModel):
     id: uuid.UUID
@@ -32,6 +38,9 @@ class UserScheme(BaseModel):
     created_date: str
     rights: UserRightsScheme
     settings: UserSettingsScheme
+
+    class Config:
+        from_attributes = True
 
 
 class EditUserSettingsScheme(BaseModel):

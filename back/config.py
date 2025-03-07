@@ -1,12 +1,12 @@
 
 
-import os
 
-from dotenv import load_dotenv
 
-load_dotenv()
 
-SECRET = os.getenv("SECRET")
+from config import settings
+
+
+SECRET = settings.secret
 
 class Config:
 	tg_code_lifetime = 60 * 2
