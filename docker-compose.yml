@@ -39,16 +39,17 @@ services:
     build:
       context: .
       target: production
-    command: bash -c "uvicorn back.main:app --host 0.0.0.0 --port 8000"
+    command: bash -c "python -m static.fill_db && uvicorn back.main:app --host 0.0.0.0 --port 8000"
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@${DB_IP}}:${DB_PORT}/${DB_NAME}
+      DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@${DB_IP}:${DB_PORT}/${DB_NAME}
       REDIS_HOST: redis
       RABBITMQ_HOST: rabbitmq
     ports:
       - "8000:8000"
     depends_on:
+      - alembic
       - postgres
       - redis
       - rabbitmq
@@ -63,11 +64,26 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@${DB_IP}}:${DB_PORT}/${DB_NAME}
+      DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@${DB_IP}:${DB_PORT}/${DB_NAME}
       REDIS_HOST: redis
     depends_on:
       - postgres
       - rabbitmq
+    networks:
+      - app-network
+
+  alembic:
+    build:
+      context: .
+      target: production
+    command: alembic upgrade head
+    restart: no
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@${DB_IP}}:${DB_PORT}/${DB_NAME}
+    depends_on:
+      - postgres
     networks:
       - app-network
 
