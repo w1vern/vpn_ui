@@ -11,13 +11,13 @@ from back.config import SECRET, Config
 class AccessToken:
     def __init__(self, user_id: uuid.UUID | str, created_date: datetime | str | None = None, lifetime: timedelta | float | None = None) -> None:
         if created_date is None:
-            created_date = datetime.now(UTC).replace(tzinfo=None)
+            self.created_date = datetime.now(UTC).replace(tzinfo=None)
         elif isinstance(created_date, str):
             self.created_date = datetime.fromisoformat(created_date)
         else:
             self.created_date = created_date
         if lifetime is None:
-            lifetime = timedelta(seconds=Config.access_token_lifetime)
+            self.lifetime = timedelta(seconds=Config.access_token_lifetime)
         elif isinstance(lifetime, (float, int)):
             self.lifetime = timedelta(seconds=lifetime)
         else:
@@ -43,13 +43,13 @@ class RefreshToken:
     def __init__(self, user_id: uuid.UUID | str, secret: str, created_date: datetime | str | None = None, lifetime: timedelta | float | None = None) -> None:
         self.secret = secret
         if created_date is None:
-            created_date = datetime.now(UTC).replace(tzinfo=None)
+            self.created_date = datetime.now(UTC).replace(tzinfo=None)
         elif isinstance(created_date, str):
             self.created_date = datetime.fromisoformat(created_date)
         else:
             self.created_date = created_date
         if lifetime is None:
-            lifetime = timedelta(seconds=Config.refresh_token_lifetime)
+            self.lifetime = timedelta(seconds=Config.refresh_token_lifetime)
         elif isinstance(lifetime, (float, int)):
             self.lifetime = timedelta(seconds=lifetime)
         else:
