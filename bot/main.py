@@ -5,7 +5,6 @@ from telebot.async_telebot import AsyncTeleBot
 
 from config import settings
 
-
 BOT_TOKEN = settings.bot_token
 
 class ExceptionHandler(telebot.ExceptionHandler):

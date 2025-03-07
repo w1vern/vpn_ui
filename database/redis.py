@@ -6,7 +6,6 @@ import redis.client
 from config import settings
 
 
-
 class RedisType(str, Enum):
     tg_code = "tg_code"
 

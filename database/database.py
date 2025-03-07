@@ -1,17 +1,13 @@
 import contextlib
-
 from typing import Any, AsyncGenerator, AsyncIterator
-
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import (AsyncConnection, AsyncSession,
                                     async_sessionmaker, create_async_engine)
 from sqlalchemy.ext.declarative import declarative_base
 
-from database.models import *
 from config import settings
-
-
+from database.models import *
 
 DATABASE_URL = f"postgresql+asyncpg://{settings.db_user}:{settings.db_password}@{settings.db_ip}:{settings.db_port}/{settings.db_name}"
 

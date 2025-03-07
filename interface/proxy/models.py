@@ -5,8 +5,6 @@ import json
 from enum import Enum
 from typing import Any
 
-from fastapi import security
-
 
 class AccessType(str, Enum):
     HTTP = "http_id"

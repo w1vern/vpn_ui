@@ -4,21 +4,15 @@ import secrets
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
-
 from sqlalchemy import select
 
+from config import settings
 from database.database import session_manager
 from database.enums.rights_type import RightsType
 from database.enums.settings_type import SettingsType
 from database.models.tariff import Tariff
 from database.models.user import User
-from database.repositories import UserRepository, TariffRepository
-
-from config import settings
-
-
-
-
+from database.repositories import TariffRepository, UserRepository
 
 default_users = [{
     "telegram_id": settings.superuser_telegram_id,

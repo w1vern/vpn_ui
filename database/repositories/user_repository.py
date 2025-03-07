@@ -16,9 +16,6 @@ from database.models import *
 from database.models.tariff import Tariff
 
 
-
-
-
 class UserRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session

@@ -97,7 +97,7 @@ class AuthController(Controller):
 	async def login(self, response: Response, tg_auth: TgAuth, redis=Depends(get_redis_client)):
 		tg_code = redis.get(f"{RedisType.tg_code}:{tg_auth.tg_id}")
 		if tg_code is None:
-			raise HTTPException(status_code=401, detail="incorrect code")
+			raise HTTPException(status_code=401, detail="code for user doesn't exist")
 		tg_code = tg_code.decode("utf-8")
 		ur = UserRepository(self.session)
 		user = await ur.get_by_telegram_id(tg_auth.tg_id)

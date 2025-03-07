@@ -5,9 +5,7 @@ from faststream.rabbit import RabbitBroker
 from telebot.async_telebot import AsyncTeleBot
 
 from bot.di_implementation import get_bot
-
 from config import settings
-
 
 RABBIT_URL = f"amqp://{settings.rabbit_user}:{settings.rabbit_password}@{settings.rabbit_ip}:{settings.rabbit_port}/"
 

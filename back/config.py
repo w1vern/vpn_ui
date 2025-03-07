@@ -5,7 +5,6 @@
 
 from config import settings
 
-
 SECRET = settings.secret
 
 class Config:
