@@ -6,6 +6,7 @@ from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 from dotenv import load_dotenv
+from sqlalchemy import select
 
 from database.database import session_manager
 from database.enums.rights_type import RightsType
@@ -44,6 +45,9 @@ default_tariffs = [
 
 async def main():
     async with session_manager.session() as session:
+        stmt = select(User)
+        if await session.scalar(stmt) is not None:
+            return
         tr = TariffRepository(session)
         _ = None
         for tariff in default_tariffs:
