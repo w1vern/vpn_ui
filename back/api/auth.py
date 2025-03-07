@@ -50,7 +50,7 @@ class AuthController(Controller):
 			raise HTTPException(
 				status_code=401, detail="refresh token doesn\"t exist")
 		refresh = RefreshToken.from_token(refresh_token)
-		current_time = datetime.now(UTC)
+		current_time = datetime.now(UTC).replace(tzinfo=None)
 		if refresh.created_date > current_time or refresh.created_date + refresh.lifetime < current_time:
 			raise HTTPException(
 				status_code=401, detail="refresh token expired")
@@ -121,7 +121,9 @@ class AuthController(Controller):
         200: {"description": "User successfully logged out"},
     },
 )
-	async def logout(self, response: Response):
+	async def logout(self, response: Response, refresh_token: str = Cookie(None)):
+		if refresh_token is None:
+			raise HTTPException(status_code=401, detail="unauthorized")
 		response.delete_cookie(key="refresh_token")
 		response.delete_cookie(key="access_token")
 		return {"message": "OK"}
