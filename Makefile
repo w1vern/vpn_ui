@@ -6,6 +6,9 @@ back:
 back_install:
 	poetry install
 
+bot_start:
+	set TARGET=dev&& python -m bot
+
 redis:
 	docker start Redis
 

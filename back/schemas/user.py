@@ -1,10 +1,9 @@
 
 
+from datetime import datetime
 import uuid
 from typing import Optional
-from venv import create
-
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from database.models.user import User
 
@@ -14,8 +13,7 @@ class UserSettingsSchema(BaseModel):
     is_active: bool
     get_traffic_notifications: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserRightsSchema(BaseModel):
@@ -28,8 +26,7 @@ class UserRightsSchema(BaseModel):
     is_control_panel_user: bool
     is_verified: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserSchema(BaseModel):
@@ -41,8 +38,13 @@ class UserSchema(BaseModel):
     rights: UserRightsSchema
     settings: UserSettingsSchema
 
-    class Config:
+    model_config = ConfigDict(
+        json_encoders={
+            uuid.UUID: lambda v: str(v),
+            datetime: lambda v: v.isoformat()
+        },
         from_attributes = True
+    )
 
     @classmethod
     def from_db(cls, user: User) -> "UserSchema":

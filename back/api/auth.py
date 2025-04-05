@@ -109,17 +109,19 @@ class AuthController(Controller):
         else: ip_counter = 0
         tg_code = redis.get(f"{RedisType.tg_code}:{tg_auth.tg_id}")
         if tg_code is None:
+            redis.set(f"{RedisType.incorrect_credentials_ip}:{ip}", int(ip_counter) + 1, ex=Config.ip_buffer_lifetime)
             raise HTTPException(
                 status_code=401, detail="code for user doesn't exist")
         tg_code = tg_code.decode("utf-8")
         ur = UserRepository(self.session)
         user = await ur.get_by_telegram_id(tg_auth.tg_id)
         if user is None:
+            redis.set(f"{RedisType.incorrect_credentials_ip}:{ip}", int(ip_counter) + 1, ex=Config.ip_buffer_lifetime)
             raise HTTPException(status_code=401, detail="user not found")
         if tg_auth.tg_code != tg_code:
             redis.set(f"{RedisType.incorrect_credentials_ip}:{ip}", int(ip_counter) + 1, ex=Config.ip_buffer_lifetime)
-            redis.set(f"{RedisType.incorrect_credentials}:{user.id}", 0, ex=Config.tg_code_gap)
-            raise HTTPException(status_code=401, detail="incorrect code")
+            redis.set(f"{RedisType.incorrect_credentials}:{user.id}", 0, ex=Config.login_gap)
+            raise HTTPException(status_code=401, detail="invalid credentials")
         redis.delete(f"{RedisType.tg_code}:{tg_auth.tg_id}")
         refresh = RefreshToken(user_id=user.id, secret=user.secret)
         access = AccessToken(user)
@@ -159,15 +161,23 @@ class AuthController(Controller):
             401: {"description": "User with the provided Telegram ID not found"},
         },
     )
-    async def tg_code(self, tg_id: TgId, broker=Depends(get_broker), redis=Depends(get_redis_client)):
+    async def tg_code(self, request: Request, tg_id: TgId, broker=Depends(get_broker), redis=Depends(get_redis_client)):
+        ip = request.client.host #type: ignore
+        ip_counter = redis.get(f"{RedisType.incorrect_credentials_ip}:{ip}")
+        if ip_counter is not None:
+             if int(ip_counter) >= Config.ip_buffer:
+                  raise HTTPException(status_code=401, detail=f"too many incorrect credentials for ip: {ip}")
+        else: ip_counter = 0
         ur = UserRepository(self.session)
         user = await ur.get_by_telegram_id(tg_id.tg_id)
         if user is None:
+            redis.set(f"{RedisType.incorrect_credentials_ip}:{ip}", int(ip_counter) + 1, ex=Config.ip_buffer_lifetime)
             raise HTTPException(status_code=401, detail="user not found")
         tg_code_time = redis.ttl(f"{RedisType.tg_code}:{user.telegram_id}")
         gap = Config.tg_code_gap - Config.tg_code_lifetime + tg_code_time
         if tg_code_time > 0 and gap > 0:
-             raise HTTPException(status_code=401, detail=f"new code could be sent in {gap} seconds")
+            redis.set(f"{RedisType.incorrect_credentials_ip}:{ip}", int(ip_counter) + 1, ex=Config.ip_buffer_lifetime)
+            raise HTTPException(status_code=401, detail=f"new code could be sent in {gap} seconds")
         tg_code = create_code()
         redis.set(f"{RedisType.tg_code}:{user.telegram_id}",
                   tg_code, ex=Config.tg_code_lifetime)

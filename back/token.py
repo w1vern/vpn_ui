@@ -41,7 +41,7 @@ class AccessToken:
         return jwt.encode(payload={
             "created_date": self.created_date.isoformat(),
             "lifetime": self.lifetime.total_seconds(),
-            "user": self.user.model_dump()
+            "user": self.user.model_dump(mode="json")
         }, key=SECRET)
 
 
