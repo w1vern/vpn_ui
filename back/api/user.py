@@ -6,11 +6,13 @@ from fastapi import Cookie, Depends, HTTPException
 from fastapi_controllers import Controller, get, post
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from back.get_auth import get_user
-from back.schemas.user import (EditUserScheme, UserRightsScheme, UserScheme,
-                               UserSettingsScheme)
+from back.config import Config
+from back.get_auth import get_user, get_user_db
+from back.schemas.user import (EditUserSchema, UserRightsSchema, UserSchema,
+                               UserSettingsSchema)
 from database.database import get_db_session
 from database.models.user import User
+from database.redis import RedisType, get_redis_client
 from database.repositories.user_repository import UserRepository
 
 
@@ -23,52 +25,33 @@ class UserController(Controller):
 
     @get("/get_all")
     async def get_all(self,
-                      user: User = Depends(get_user)
-                      ) -> list[UserScheme]:
-        if user.is_control_panel_user is False:
+                      user: UserSchema = Depends(get_user)
+                      ) -> list[UserSchema]:
+        if user.rights.is_control_panel_user is False:
             raise HTTPException(
                 status_code=403, detail="user is not control panel member")
         ur = UserRepository(self.session)
         users = await ur.get_all()
         users_to_send = []
-        for user in users:
-            user_settings = UserSettingsScheme(
-                auto_pay=user.auto_pay,
-                is_active=user.is_active,
-                get_traffic_notifications=user.get_traffic_notifications)
-            user_rights = UserRightsScheme(
-                is_server_editor=user.is_server_editor,
-                is_transaction_editor=user.is_transaction_editor,
-                is_active_period_editor=user.is_active_period_editor,
-                is_tariff_editor=user.is_tariff_editor,
-                is_member_rights_editor=user.is_member_rights_editor,
-                is_admin_rights_editor=user.is_admin_rights_editor,
-                is_control_panel_user=user.is_control_panel_user,
-                is_verified=user.is_verified)
-            user_to_send = UserScheme(
-                id=user.id,
-                telegram_id=user.telegram_id,
-                telegram_username=user.telegram_username,
-                balance=user.balance,
-                created_date=user.created_date.isoformat(),
-                rights=user_rights,
-                settings=user_settings)
-            users_to_send.append(user_to_send)
+        for u in users:
+            users_to_send.append(UserSchema.from_db(u))
         return users_to_send
 
     @post("/edit")
     async def edit_user(self,
-                        user_to_edit: EditUserScheme,
-                        user: User = Depends(get_user)):
+                        user_to_edit: EditUserSchema,
+                        user: User = Depends(get_user_db),
+                        redis=Depends(get_redis_client)): #TODO: fix method
+        redis.set(f"{RedisType.invalidated_access_token}:{user.id}", 1, ex=Config.access_token_lifetime)
         ur = UserRepository(self.session)
         if user_to_edit.rights is not None:
             if user.is_control_panel_user is False:
                 raise HTTPException(status_code=403, detail="no rights")
             if user.is_user_editor is False:
                 raise HTTPException(status_code=403, detail="no rights")
-            if user_to_edit.rights.is_admin_rights_editor is not None and user.is_admin_rights_editor is False:
+            if user_to_edit.rights.is_admin_rights_editor is not None or user.is_admin_rights_editor is False:
                 raise HTTPException(status_code=403, detail="no rights")
-            if user_to_edit.rights.is_member_rights_editor is True and user.is_member_rights_editor is False:
+            if user_to_edit.rights.is_member_rights_editor is True or user.is_member_rights_editor is False:
                 raise HTTPException(status_code=403, detail="no rights")
             await ur.update_rights(user, user_to_edit.rights.model_dump())
 

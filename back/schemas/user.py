@@ -6,8 +6,10 @@ from venv import create
 
 from pydantic import BaseModel
 
+from database.models.user import User
 
-class UserSettingsScheme(BaseModel):
+
+class UserSettingsSchema(BaseModel):
     auto_pay: bool
     is_active: bool
     get_traffic_notifications: bool
@@ -16,7 +18,7 @@ class UserSettingsScheme(BaseModel):
         from_attributes = True
 
 
-class UserRightsScheme(BaseModel):
+class UserRightsSchema(BaseModel):
     is_server_editor: bool
     is_transaction_editor: bool
     is_active_period_editor: bool
@@ -30,26 +32,40 @@ class UserRightsScheme(BaseModel):
         from_attributes = True
 
 
-class UserScheme(BaseModel):
+class UserSchema(BaseModel):
     id: uuid.UUID
     telegram_id: str
     telegram_username: str
     balance: float
     created_date: str
-    rights: UserRightsScheme
-    settings: UserSettingsScheme
+    rights: UserRightsSchema
+    settings: UserSettingsSchema
 
     class Config:
         from_attributes = True
 
+    @classmethod
+    def from_db(cls, user: User) -> "UserSchema":
+        settings = UserSettingsSchema.model_validate(user)
+        rights = UserRightsSchema.model_validate(user)
+        return UserSchema(
+			id=user.id,
+			telegram_id=user.telegram_id,
+			telegram_username=user.telegram_username,
+			balance=user.balance,
+			created_date=user.created_date.isoformat(),
+			rights=rights,
+			settings=settings
+		)
 
-class EditUserSettingsScheme(BaseModel):
+
+class EditUserSettingsSchema(BaseModel):
     auto_pay: Optional[bool]
     is_active: Optional[bool]
     get_traffic_notifications: Optional[bool]
 
 
-class EditUserRightsScheme(BaseModel):
+class EditUserRightsSchema(BaseModel):
     is_server_editor: Optional[bool]
     is_transaction_editor: Optional[bool]
     is_active_period_editor: Optional[bool]
@@ -60,9 +76,9 @@ class EditUserRightsScheme(BaseModel):
     is_verified: Optional[bool]
 
 
-class EditUserScheme(BaseModel):
+class EditUserSchema(BaseModel):
     id: uuid.UUID
     telegram_id: Optional[str]
     created_date: Optional[str]
-    rights: Optional[EditUserRightsScheme]
-    settings: Optional[EditUserSettingsScheme]
+    rights: Optional[EditUserRightsSchema]
+    settings: Optional[EditUserSettingsSchema]

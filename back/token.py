@@ -6,10 +6,14 @@ from datetime import UTC, datetime, timedelta
 import jwt
 
 from back.config import SECRET, Config
+from back.schemas.user import UserSchema
+from database.models.user import User
+from database.repositories.user_repository import UserRepository
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class AccessToken:
-    def __init__(self, user_id: uuid.UUID | str, created_date: datetime | str | None = None, lifetime: timedelta | float | None = None) -> None:
+    def __init__(self, user: User | UserSchema | dict, created_date: datetime | str | None = None, lifetime: timedelta | float | None = None) -> None:
         if created_date is None:
             self.created_date = datetime.now(UTC).replace(tzinfo=None)
         elif isinstance(created_date, str):
@@ -22,10 +26,12 @@ class AccessToken:
             self.lifetime = timedelta(seconds=lifetime)
         else:
             self.lifetime = lifetime
-        if isinstance(user_id, str):
-            self.user_id = uuid.UUID(user_id)
+        if isinstance(user, dict):
+            self.user = UserSchema(**user)
+        elif isinstance(user, User):
+            self.user = UserSchema.from_db(user)
         else:
-            self.user_id = user_id
+            self.user = user
 
     @classmethod
     def from_token(cls, token: str) -> "AccessToken":
@@ -35,7 +41,7 @@ class AccessToken:
         return jwt.encode(payload={
             "created_date": self.created_date.isoformat(),
             "lifetime": self.lifetime.total_seconds(),
-            "user_id": str(self.user_id)
+            "user": self.user.model_dump()
         }, key=SECRET)
 
 

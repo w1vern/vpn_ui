@@ -5,8 +5,9 @@ from fastapi_controllers import Controller, delete, get, post
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.get_auth import get_user
-from back.schemas.server import ServerToCreateScheme
+from back.schemas.server import ServerToCreateSchema
 from back.schemas.ticket import NewTicket, TicketMessage
+from back.schemas.user import UserSchema
 from database.database import get_db_session
 from database.models.user import User
 from database.repositories.server_repository import ServerRepository
@@ -31,7 +32,7 @@ class TicketController(Controller):
               400: {"description": "Invalid ticket data"},
           },
           )
-    async def create_new_ticket(self, new_ticket: NewTicket, user: User = Depends(get_user)):
+    async def create_new_ticket(self, new_ticket: NewTicket, user: UserSchema = Depends(get_user)):
         pass
 
     @post("/new_message",
@@ -46,7 +47,7 @@ class TicketController(Controller):
               404: {"description": "Ticket not found"},
           },
           )
-    async def new_message_ticket(self, message: TicketMessage, user: User = Depends(get_user)):
+    async def new_message_ticket(self, message: TicketMessage, user: UserSchema = Depends(get_user)):
         pass
 
     @post("/close_ticket",
@@ -61,5 +62,5 @@ class TicketController(Controller):
               404: {"description": "Ticket not found"},
           },
           )
-    async def close_ticket(self, user: User = Depends(get_user)):
+    async def close_ticket(self, user: UserSchema = Depends(get_user)):
         pass

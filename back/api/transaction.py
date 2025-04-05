@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.get_auth import get_user
 from back.schemas.transaction import Transaction
+from back.schemas.user import UserSchema
 from database.database import get_db_session
 from database.enums.transaction_type import TransactionType
 from database.models.user import User
@@ -24,10 +25,10 @@ class TransactionController(Controller):
         self.session = session
 
     @post("/create")
-    async def create_transaction(self, transaction_to_create: Transaction, user: User = Depends(get_user)):
-        if user.is_control_panel_user is False:
+    async def create_transaction(self, transaction_to_create: Transaction, user: UserSchema = Depends(get_user)):
+        if user.rights.is_control_panel_user is False:
             raise HTTPException(status_code=403, detail="no rights")
-        if user.is_transaction_editor is False:
+        if user.rights.is_transaction_editor is False:
             raise HTTPException(status_code=403, detail="no rights")
         tr = TransactionRepository(self.session)
         ur = UserRepository(self.session)
@@ -44,8 +45,8 @@ class TransactionController(Controller):
         return {"message": "OK"}
     
     @get("/get_all")
-    async def get_all_transactions(self, user: User = Depends(get_user)) -> list[Transaction]:
-        if user.is_control_panel_user is False:
+    async def get_all_transactions(self, user: UserSchema = Depends(get_user)) -> list[Transaction]:
+        if user.rights.is_control_panel_user is False:
             raise HTTPException(status_code=403, detail="no rights")
         tr = TransactionRepository(self.session)
         transactions = await tr.get_all()

@@ -10,8 +10,9 @@ from fastapi_controllers import Controller, delete, get, post
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.get_auth import get_user
-from back.schemas.server import (EditServerScheme, ServerScheme,
-                                 ServerToCreateScheme)
+from back.schemas.server import (EditServerSchema, ServerSchema,
+                                 ServerToCreateSchema)
+from back.schemas.user import UserSchema
 from database.database import get_db_session
 from database.models.server import Server
 from database.models.user import User
@@ -27,15 +28,15 @@ class ServerController(Controller):
         self.session = session
 
     @get("/get_all")
-    async def get_all(self, user: User = Depends(get_user)) -> list[ServerScheme]:
-        if user.is_control_panel_user is False:
+    async def get_all(self, user: UserSchema = Depends(get_user)) -> list[ServerSchema]:
+        if user.rights.is_control_panel_user is False:
             raise HTTPException(
                 status_code=403, detail="user is not control panel member")
         psr = PanelServerRepository(self.session)
         servers = await psr.get_all()
         result = []
         for server in servers:
-            server_to_send = ServerScheme(
+            server_to_send = ServerSchema(
                 id=server.id,
                 display_name=server.display_name,
                 ip=server.ip,
@@ -62,11 +63,11 @@ class ServerController(Controller):
               401: {"description": "Unauthorized user"},
           },
           )
-    async def create_server(self, server_to_create: ServerToCreateScheme, user: User = Depends(get_user)):
-        if user.is_control_panel_user is False:
+    async def create_server(self, server_to_create: ServerToCreateSchema, user: UserSchema = Depends(get_user)):
+        if user.rights.is_control_panel_user is False:
             raise HTTPException(
                 status_code=403, detail="user is not control panel member")
-        if user.is_server_editor is False:
+        if user.rights.is_server_editor is False:
             raise HTTPException(
                 status_code=403, detail="user is not server editor")
         psr = PanelServerRepository(self.session)
@@ -97,11 +98,11 @@ class ServerController(Controller):
               404: {"description": "Server not found"},
           },
           )
-    async def edit_server(self, server_to_edit: EditServerScheme, user: User = Depends(get_user)):
-        if user.is_control_panel_user is False:
+    async def edit_server(self, server_to_edit: EditServerSchema, user: UserSchema = Depends(get_user)):
+        if user.rights.is_control_panel_user is False:
             raise HTTPException(
                 status_code=403, detail="user is not control panel member")
-        if user.is_server_editor is False:
+        if user.rights.is_server_editor is False:
             raise HTTPException(
                 status_code=403, detail="user is not server editor")
         psr = PanelServerRepository(self.session)

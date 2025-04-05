@@ -7,7 +7,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class ServerScheme(BaseModel):
+class ServerSchema(BaseModel):
     id: uuid.UUID
     ip: str
     country_code: str
@@ -20,7 +20,7 @@ class ServerScheme(BaseModel):
     login: str
     password: str
 
-class EditServerScheme(BaseModel):
+class EditServerSchema(BaseModel):
     id: uuid.UUID
     ip: Optional[str]
     country_code: Optional[str]
@@ -33,7 +33,7 @@ class EditServerScheme(BaseModel):
     login: Optional[str]
     password: Optional[str]
 
-class ServerToCreateScheme(BaseModel):
+class ServerToCreateSchema(BaseModel):
     ip: str
     panel_path: str
     country_code: str

@@ -1,7 +1,7 @@
 
 import asyncio
 import secrets
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from uuid import UUID
 
 from sqlalchemy import select
@@ -13,6 +13,7 @@ from database.enums.settings_type import SettingsType
 from database.models.tariff import Tariff
 from database.models.user import User
 from database.repositories import TariffRepository, UserRepository
+from database.repositories.panel_server_repository import PanelServerRepository
 
 default_users = [{
     "telegram_id": settings.superuser_telegram_id,
@@ -34,6 +35,20 @@ default_tariffs = [
     }
 ]
 
+default_servers = [
+    {
+        "ip": "localhost",
+        "country_code": "ru",
+        "is_available": True,
+        "display_name": "test",
+        "created_date": datetime.now(UTC).replace(tzinfo=None),
+        "closing_date": (datetime.now(UTC) + timedelta(days=365)).replace(tzinfo=None),
+        "panel_path": "",
+        "login": "admin",
+        "password": "admin"
+    }
+]
+
 
 async def main():
     async with session_manager.session() as session:
@@ -51,6 +66,10 @@ async def main():
         ur = UserRepository(session)
         for user in default_users:
             await ur.create(**{**user,  **{"tariff_id": str(_.id)}})
+
+        psr = PanelServerRepository(session)
+        for server in default_servers:
+            await psr.create(**server)
 
 
 if __name__ == "__main__":
