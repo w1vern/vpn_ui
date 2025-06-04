@@ -2,7 +2,7 @@
 
 import uuid
 from mailbox import Message
-from typing import Optional
+
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,13 +15,13 @@ class MessageForTicketRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
     
-    async def create(self, text: str, ticket: Ticket, type: int) -> Optional[MessageForTicket]:
+    async def create(self, text: str, ticket: Ticket, type: int) -> MessageForTicket | None:
         message_for_ticket = MessageForTicket(text=text, ticket_id=ticket.id, type=type)
         self.session.add(message_for_ticket)
         await self.session.flush()
         return await self.get_by_id(message_for_ticket.id)
     
-    async def get_by_id(self, id: uuid.UUID) -> Optional[MessageForTicket]:
+    async def get_by_id(self, id: uuid.UUID) -> MessageForTicket | None:
         stmt = select(MessageForTicket).where(MessageForTicket.id == id).limit(1)
         return await self.session.scalar(stmt)
 

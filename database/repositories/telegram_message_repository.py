@@ -1,7 +1,7 @@
 
 import uuid
 from datetime import datetime
-from typing import Optional
+
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,13 +14,13 @@ class TelegramMessageRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def create(self, text: str, date: datetime, sender: User, recipient: User) -> Optional[TelegramMessage]:
+    async def create(self, text: str, date: datetime, sender: User, recipient: User) -> TelegramMessage | None:
         telegram_message = TelegramMessage(text=text, date=date, sender_id=sender.id, recipient_id=recipient.id)
         self.session.add(telegram_message)
         await self.session.flush()
         return await self.get_by_id(telegram_message.id)
     
-    async def get_by_id(self, id: uuid.UUID) -> Optional[TelegramMessage]:
+    async def get_by_id(self, id: uuid.UUID) -> TelegramMessage | None:
         stmt = select(TelegramMessage).where(TelegramMessage.id == id).limit(1)
         return await self.session.scalar(stmt)
     

@@ -3,7 +3,7 @@
 import contextlib
 import json
 import uuid
-from typing import Any, AsyncIterator, Optional
+from typing import Any, AsyncIterator
 from urllib import response
 
 import httpx
@@ -31,7 +31,7 @@ class ServerSession():
         self.server = server
         self.client = client
 
-    async def __make_request(self, path: str, method: str, body: Optional[dict[str, Any]] = None) -> httpx.Response:
+    async def __make_request(self, path: str, method: str, body: dict[str, Any] | None = None) -> httpx.Response:
         if not await self.__is_auth():
             await self.__auth()
         response = await self.client.request(method=method,

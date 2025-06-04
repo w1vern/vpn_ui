@@ -2,7 +2,7 @@
 
 from datetime import datetime
 import uuid
-from typing import Optional
+
 from pydantic import BaseModel, ConfigDict
 
 from database.models.user import User
@@ -62,25 +62,25 @@ class UserSchema(BaseModel):
 
 
 class EditUserSettingsSchema(BaseModel):
-    auto_pay: Optional[bool]
-    is_active: Optional[bool]
-    get_traffic_notifications: Optional[bool]
+    auto_pay: bool | None
+    is_active: bool | None
+    get_traffic_notifications: bool | None
 
 
 class EditUserRightsSchema(BaseModel):
-    is_server_editor: Optional[bool]
-    is_transaction_editor: Optional[bool]
-    is_active_period_editor: Optional[bool]
-    is_tariff_editor: Optional[bool]
-    is_member_rights_editor: Optional[bool]
-    is_admin_rights_editor: Optional[bool]
-    is_control_panel_user: Optional[bool]
-    is_verified: Optional[bool]
+    is_server_editor: bool | None
+    is_transaction_editor: bool | None
+    is_active_period_editor: bool | None
+    is_tariff_editor: bool | None
+    is_member_rights_editor: bool | None
+    is_admin_rights_editor: bool | None
+    is_control_panel_user: bool | None
+    is_verified: bool | None
 
 
 class EditUserSchema(BaseModel):
     id: uuid.UUID
-    telegram_id: Optional[str]
-    created_date: Optional[str]
-    rights: Optional[EditUserRightsSchema]
-    settings: Optional[EditUserSettingsSchema]
+    telegram_id: str | None
+    created_date: str | None
+    rights: EditUserRightsSchema | None
+    settings: EditUserSettingsSchema | None

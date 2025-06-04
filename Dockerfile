@@ -1,23 +1,35 @@
-FROM python:3.12-slim as base
+
+FROM python:3.13-slim AS builder
 
 RUN apt-get update && apt-get install -y \
-    gcc \
-    python3-dev \
+    curl \
+    git \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-ENV POETRY_VERSION=1.8.2
-RUN pip install "poetry==$POETRY_VERSION"
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && mv /root/.local/bin/uv /usr/local/bin/uv
 
 WORKDIR /app
-COPY pyproject.toml poetry.lock ./
 
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-interaction --no-ansi --only main
+COPY pyproject.toml uv.lock ./
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --no-install-project
 
 COPY . .
 
-FROM base as production
+FROM python:3.13-slim AS production
 
-RUN poetry install --no-interaction --no-ansi --only main
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /usr/local/bin/uv /usr/local/bin/uv
+COPY --from=builder /app /app
+
+WORKDIR /app
+
+ENV PATH="/app/.venv/bin:$PATH"
 
 CMD ["uvicorn", "back.main:app", "--host", "0.0.0.0", "--port", "8000"]

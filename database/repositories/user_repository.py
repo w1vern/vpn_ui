@@ -1,7 +1,7 @@
 import secrets
 from datetime import UTC, datetime
 from secrets import token_urlsafe
-from typing import Optional
+
 from uuid import UUID
 
 from httpx import get
@@ -27,9 +27,9 @@ class UserRepository:
                      balance: float = 0,
                      rights: int = RightsType.member.value,
                      settings: int = SettingsType.default.value,
-                     created_date: Optional[datetime] = None,
-                     secret: Optional[str] = None
-                     ) -> Optional[User]:
+                     created_date: datetime | None = None,
+                     secret: str | None = None
+                     ) -> User | None:
         if created_date is None:
             created_date = datetime.now(UTC).replace(tzinfo=None)
         if secret is None:
@@ -46,11 +46,11 @@ class UserRepository:
         await self.session.flush()
         return await self.get_by_id(user.id)
 
-    async def get_by_id(self, id: UUID) -> Optional[User]:
+    async def get_by_id(self, id: UUID) -> User | None:
         stmt = select(User).where(User.id == id).limit(1)
         return await self.session.scalar(stmt)
 
-    async def get_by_telegram_id(self, telegram_id: str) -> Optional[User]:
+    async def get_by_telegram_id(self, telegram_id: str) -> User | None:
         stmt = select(User).where(User.telegram_id == telegram_id).limit(1)
         return await self.session.scalar(stmt)
 

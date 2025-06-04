@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-from typing import Optional
+
 from uuid import UUID
 
 from sqlalchemy import select
@@ -16,9 +16,9 @@ class TransactionRepository:
     async def create(self,
                      user: User,
                      amount: float,
-                     date: Optional[datetime] = None,
+                     date: datetime | None = None,
                      type: int = TransactionType.withdrawal.value
-                     ) -> Optional[Transaction]:
+                     ) -> Transaction | None:
         if date is None:
             date = datetime.now(UTC).replace(tzinfo=None)
         transaction = Transaction(
@@ -28,7 +28,7 @@ class TransactionRepository:
         await self.session.flush()
         return await self.get_by_id(transaction.id)
 
-    async def get_by_id(self, id: UUID) -> Optional[Transaction]:
+    async def get_by_id(self, id: UUID) -> Transaction | None:
         stmt = select(Transaction).where(Transaction.id == id).limit(1)
         return await self.session.scalar(stmt)
 

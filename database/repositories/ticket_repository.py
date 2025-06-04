@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-from typing import Optional
+
 from uuid import UUID
 
 from sqlalchemy import select
@@ -12,7 +12,7 @@ class TicketRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, title: str, holder: User, opening_date: Optional[datetime] = None, closing_date: Optional[datetime] = None, is_open: bool = True) -> Optional[Ticket]:
+    async def create(self, title: str, holder: User, opening_date: datetime | None = None, closing_date: datetime | None = None, is_open: bool = True) -> Ticket | None:
         if opening_date is None:
             opening_date= datetime.now(UTC).replace(tzinfo=None)
         if closing_date is None:
@@ -23,7 +23,7 @@ class TicketRepository:
         await self.session.flush()
         return await self.get_by_id(ticket.id)
 
-    async def get_by_id(self, id: UUID) -> Optional[Ticket]:
+    async def get_by_id(self, id: UUID) -> Ticket | None:
         stmt = select(Ticket).where(Ticket.id == id).limit(1)
         return await self.session.scalar(stmt)
     

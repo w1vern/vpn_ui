@@ -1,6 +1,6 @@
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import Optional
+
 from unittest import result
 
 from sqlalchemy import select
@@ -17,10 +17,10 @@ class ActivePeriodRepository:
     async def create(self, user: User,
                      transaction: Transaction,
                      tariff: Tariff,
-                     start_date: Optional[datetime] = None,
-                     end_date: Optional[datetime] = None,
+                     start_date: datetime | None = None,
+                     end_date: datetime | None = None,
                      result_traffic: int = -1,
-                     ) -> Optional[ActivePeriod]:
+                     ) -> ActivePeriod | None:
         if start_date is None:
             start_date = datetime.now(UTC).replace(tzinfo=None)
         if end_date is None:
@@ -35,7 +35,7 @@ class ActivePeriodRepository:
         await self.session.flush()
         return await self.get_by_id(active_period.id)
 
-    async def get_by_id(self, id: uuid.UUID) -> Optional[ActivePeriod]:
+    async def get_by_id(self, id: uuid.UUID) -> ActivePeriod | None:
         stmt = select(ActivePeriod).where(ActivePeriod.id == id).limit(1)
         return await self.session.scalar(stmt)
 
@@ -43,12 +43,12 @@ class ActivePeriodRepository:
         stmt = select(ActivePeriod).where(ActivePeriod.user_id == user.id)
         return list((await self.session.scalars(stmt)).all())
 
-    async def get_last_by_user_id(self, user: User) -> Optional[ActivePeriod]:
+    async def get_last_by_user_id(self, user: User) -> ActivePeriod | None:
         stmt = select(ActivePeriod).where(ActivePeriod.user_id ==
                                           user.id).order_by(ActivePeriod.end_date.desc()).limit(1)
         return await self.session.scalar(stmt)
 
-    async def get_latest_for_user(self, user: User) -> Optional[ActivePeriod]:
+    async def get_latest_for_user(self, user: User) -> ActivePeriod | None:
         all = await self.get_by_user_id(user)
         if len(all) == 0:
             return None
@@ -60,7 +60,7 @@ class ActivePeriodRepository:
                 id = ap.id
         return await self.get_by_id(id)
 
-    async def close_period(self, active_period: ActivePeriod, all_traffic: int, end_date: Optional[datetime] = None) -> None:
+    async def close_period(self, active_period: ActivePeriod, all_traffic: int, end_date: datetime | None = None) -> None:
         if end_date is not None:
             active_period.end_date = end_date
         active_period.end_date = datetime.now(UTC).replace(tzinfo=None)

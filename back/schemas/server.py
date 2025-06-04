@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime
-from typing import Optional
+
 
 from pydantic import BaseModel
 
@@ -22,16 +22,16 @@ class ServerSchema(BaseModel):
 
 class EditServerSchema(BaseModel):
     id: uuid.UUID
-    ip: Optional[str]
-    country_code: Optional[str]
-    is_available: Optional[bool]
-    display_name: Optional[str]
-    created_date: Optional[str]
-    closing_date: Optional[str]
+    ip: str | None
+    country_code: str | None
+    is_available: bool | None
+    display_name: str | None
+    created_date: str | None
+    closing_date: str | None
 
-    panel_path: Optional[str]
-    login: Optional[str]
-    password: Optional[str]
+    panel_path: str | None
+    login: str | None
+    password: str | None
 
 class ServerToCreateSchema(BaseModel):
     ip: str

@@ -1,5 +1,5 @@
 import functools
-from typing import Optional
+
 
 from click import Option
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,7 +32,7 @@ def inject(di):
 
 @di.inject
 #@inject(di)
-async def get_user(session: AsyncSession, message: Message) -> Optional[User]:
+async def get_user(session: AsyncSession, message: Message) -> User | None:
     if message.from_user is None:
         return None
     ur = UserRepository(session)

@@ -1,6 +1,6 @@
 
 import uuid
-from typing import Optional
+
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,7 +17,7 @@ class ServerUserInboundRepository:
                      server: Server,
                      user: User,
                      config: AccessConfig,
-                     ) -> Optional[ServerUserInbound]:
+                     ) -> ServerUserInbound | None:
         server_user_inbound = ServerUserInbound(
             server_id=server.id,
             user_id=user.id,
@@ -36,7 +36,7 @@ class ServerUserInboundRepository:
         await self.session.delete(server_user_inbound)
         await self.session.flush()
 
-    async def get_by_id(self, id: uuid.UUID) -> Optional[ServerUserInbound]:
+    async def get_by_id(self, id: uuid.UUID) -> ServerUserInbound | None:
         stmt = select(ServerUserInbound).where(
             ServerUserInbound.id == id).limit(1)
         return await self.session.scalar(stmt)
@@ -47,7 +47,7 @@ class ServerUserInboundRepository:
                               ServerUserInbound.user_id == user.id)
         return list((await self.session.scalars(stmt)).all())
     
-    async def get_by_server_user_access_type(self, server: Server, user: User, access_type: AccessType) -> Optional[ServerUserInbound]:
+    async def get_by_server_user_access_type(self, server: Server, user: User, access_type: AccessType) -> ServerUserInbound | None:
         stmt = select(ServerUserInbound
                       ).where(ServerUserInbound.server_id == server.id,
                               ServerUserInbound.user_id == user.id)

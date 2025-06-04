@@ -1,0 +1,3 @@
+[submodule "front"]
+	path = services/front
+	url = https://github.com/w1vern/vpn_ui_front

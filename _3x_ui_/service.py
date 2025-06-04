@@ -4,7 +4,7 @@ import random
 import secrets
 import string
 import uuid
-from typing import Optional
+
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -68,7 +68,7 @@ class Service(ProxyInterface):
                          create_if_not_exists: bool = True,
                          login: str = "",
                          password: str = ""
-                         ) -> Optional[AccessConfig]:
+                         ) -> AccessConfig | None:
         inbounds = await self.__suir.get_by_server_and_user(self.__server_session.server, user)
         for inbound in inbounds:
             if inbound.access_type == access_type:
@@ -96,7 +96,7 @@ class Service(ProxyInterface):
                              login: str = "",
                              password: str = "",
                              proxy_type: ProxyType = ProxyType.HTTP,
-                             ) -> Optional[ProxyConfig]:
+                             ) -> ProxyConfig | None:
         if login == "":
             login = secrets.token_urlsafe(8)
         if password == "":
@@ -120,7 +120,7 @@ class Service(ProxyInterface):
     async def __create_vpn_user(self,
                                 user: User,
                                 vpn_type: VpnType = VpnType.VLESS_REALITY,
-                                ) -> Optional[VpnConfig]:
+                                ) -> VpnConfig | None:
         uuid4 = uuid.uuid4()
         sub_id = generate_sub_id()
         email = generate_email(user, vpn_type)
@@ -179,7 +179,7 @@ class Service(ProxyInterface):
     async def set_enable(self,
                          user: User,
                          enable: bool,
-                         access_type: Optional[AccessType] = None,
+                         access_type: AccessType | None = None,
                          ) -> None:
         if access_type is None:
             for proxy_type in ProxyType:
@@ -218,7 +218,7 @@ class Service(ProxyInterface):
             raise Exception()
         return
 
-    async def delete(self, user: User, access_type: Optional[AccessType]) -> None:
+    async def delete(self, user: User, access_type: AccessType | None) -> None:
         if access_type is None:
             for proxy_type in ProxyType:
                 await self.__delete_proxy(user, proxy_type)

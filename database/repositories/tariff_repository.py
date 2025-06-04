@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import timedelta
-from typing import Optional
+
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,13 +20,13 @@ class TariffRepository:
                      price: float,
                      price_of_traffic_reset: float,
                      traffic: int
-                     ) -> Optional[Tariff]:
+                     ) -> Tariff | None:
         tariff = Tariff(name=name, duration=duration, price=price, price_of_traffic_reset=price_of_traffic_reset,
                         traffic=traffic)
         self.session.add(tariff)
         await self.session.flush()
         return await self.get_by_id(tariff.id)
 
-    async def get_by_id(self, id: uuid.UUID) -> Optional[Tariff]:
+    async def get_by_id(self, id: uuid.UUID) -> Tariff | None:
         stmt = select(Tariff).where(Tariff.id == id).limit(1)
         return await self.session.scalar(stmt)

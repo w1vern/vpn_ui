@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime
-from typing import Optional, Sequence
+, Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,8 +21,8 @@ class PanelServerRepository(ServerRepository):
                      ip: str,
                      country_code: str,
                      display_name: str,
-                     created_date: Optional[datetime] = None,
-                     closing_date: Optional[datetime] = None,
+                     created_date: datetime | None = None,
+                     closing_date: datetime | None = None,
                      is_available: bool = True,
                      panel_path: str = "",
                      login: str = "",
@@ -38,7 +38,7 @@ class PanelServerRepository(ServerRepository):
                      vless_reality_private_key: str = "",
                      vmess_port: int = 0,
                      vmess_domain_short_id: str = ""
-                     ) -> Optional[PanelServer]:
+                     ) -> PanelServer | None:
         panel_server = PanelServer(
             ip=ip,
             country_code=country_code,
@@ -64,7 +64,7 @@ class PanelServerRepository(ServerRepository):
         self.session.add(panel_server)
         await self.session.flush()
 
-    async def get_by_id(self, id: uuid.UUID) -> Optional[PanelServer]:
+    async def get_by_id(self, id: uuid.UUID) -> PanelServer | None:
         stmt = select(PanelServer).where(PanelServer.id == id).limit(1)
         return await self.session.scalar(stmt)
 

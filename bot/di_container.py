@@ -1,6 +1,6 @@
 import functools
 import inspect
-from typing import Optional
+
 
 
 class RequestContext:
@@ -22,7 +22,7 @@ class Container:
 
     def inject(self, func):
         @functools.wraps(func)
-        async def wrapper(rq_context: Optional[RequestContext] = None):
+        async def wrapper(rq_context: RequestContext | None = None):
             kwargs = {}
             if rq_context is None:
                 rq_context = RequestContext()

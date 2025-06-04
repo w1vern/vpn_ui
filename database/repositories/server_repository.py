@@ -1,6 +1,6 @@
 import json
 from datetime import UTC, datetime, timedelta
-from typing import Optional, Sequence
+, Sequence
 from uuid import UUID
 
 from sqlalchemy import select
@@ -17,10 +17,10 @@ class ServerRepository:
                      ip: str,
                      country_code: str,
                      display_name: str,
-                     created_date: Optional[datetime] = None,
-                     closing_date: Optional[datetime] = None,
+                     created_date: datetime | None = None,
+                     closing_date: datetime | None = None,
                      is_available: bool = True
-                     ) -> Optional[Server]:
+                     ) -> Server | None:
         if created_date is None:
             created_date = datetime.now(UTC).replace(tzinfo=None)
         if closing_date is None:
@@ -36,7 +36,7 @@ class ServerRepository:
         await self.session.flush()
         return await self.get_by_id(server.id)
 
-    async def get_by_id(self, id: UUID) -> Optional[Server]:
+    async def get_by_id(self, id: UUID) -> Server | None:
         stmt = select(Server).where(Server.id == id).limit(1)
         return await self.session.scalar(stmt)
 
@@ -48,7 +48,7 @@ class ServerRepository:
         server.is_available = is_available
         await self.session.flush()
 
-    async def extend_period(self, server: Server, closing_date: Optional[datetime]) -> None:
+    async def extend_period(self, server: Server, closing_date: datetime | None) -> None:
         if closing_date is None:
             closing_date = (server.closing_date + timedelta(days=30)).replace(tzinfo=None)
         server.closing_date = closing_date

@@ -1,7 +1,7 @@
 
 
 import abc
-from typing import Optional
+
 
 from database.models.user import User
 
@@ -17,13 +17,13 @@ class ProxyInterface(abc.ABC):
                          create_if_not_exists: bool = True,
                          login: str = "",
                          password: str = ""
-                         ) -> Optional[AccessConfig]: ...
+                         ) -> AccessConfig | None: ...
 
     @abc.abstractmethod
     async def set_enable(self,
                          user: User,
                          enable: bool,
-                         access_type: Optional[AccessType] = None,
+                         access_type: AccessType | None = None,
                          ) -> None: ...
     @abc.abstractmethod
     async def delete(self, user: User, access_type: AccessType) -> None: ...

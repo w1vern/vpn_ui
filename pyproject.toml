@@ -1,29 +1,26 @@
-[tool.poetry]
+[project]
 name = "vpn-ui"
 version = "0.1.0"
 description = ""
-authors = ["w1vern <bndvvl@gmail.com>"]
-readme = "README.md"
+authors = [{ name = "w1vern", email = "bndvvl@gmail.com" }]
+requires-python = ">=3.13"
 
-[tool.poetry.dependencies]
-python = "^3.12"
-redis = "^5.2.0"
-fastapi = "^0.115.4"
-fastapi-controllers = "^0.3.0"
-sqlalchemy = "^2.0.36"
-pyjwt = "^2.9.0"
-faststream = {extras = ["rabbit"], version = "^0.5.28"}
-uvicorn = "^0.32.0"
-python-dotenv = "^1.0.1"
-asyncpg = "^0.30.0"
-pytelegrambotapi = "^4.23.0"
-aiohttp = "^3.10.10"
-alembic = "^1.14.0"
-isort = "^5.13.2"
-httpx = "^0.27.2"
-pydantic-settings = "^2.8.1"
+dependencies = [
+    "redis>=5.2.0",
+    "fastapi>=0.115.4",
+    "fastapi-controllers>=0.3.0",
+    "sqlalchemy>=2.0.36",
+    "pyjwt>=2.9.0",
+    "faststream[rabbit]>=0.5.28",
+    "python-dotenv>=1.0.1",
+    "uvicorn>=0.32.0",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.0",
+    "httpx>=0.27.2",
+    "pydantic-settings>=2.8.1",
+    "aiogram>=3.20.0.post0",
+    "fast-depends>=2.4.12",
+]
 
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = ["isort>=6.0.1"]
