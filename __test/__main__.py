@@ -15,7 +15,7 @@ from database.repositories.panel_server_repository import PanelServerRepository
 # from __test.test import server, user
 from database.repositories.server_repository import ServerRepository
 from database.repositories.user_repository import UserRepository
-from interface.proxy.models import *
+from interfaces.proxy.models import *
 
 
 async def main():

@@ -2,14 +2,14 @@
 
 import uuid
 from datetime import datetime
-, Sequence
+from typing import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models.panel_server import PanelServer
 from database.repositories.server_repository import ServerRepository
-from interface.proxy.models import VpnType
+from interfaces.proxy.models import VpnType
 
 
 class PanelServerRepository(ServerRepository):

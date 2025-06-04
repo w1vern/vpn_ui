@@ -6,7 +6,7 @@ from typing import Any
 
 from _3x_ui_.session_manager import ServerSession
 from database.models.user import User
-from interface.proxy.models import ProxyType, VpnType
+from interfaces.proxy.models import ProxyType, VpnType
 
 
 class GlobalSettings:

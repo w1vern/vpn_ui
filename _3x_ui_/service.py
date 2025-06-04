@@ -15,8 +15,8 @@ from database.models.user import User
 from database.repositories.panel_server_repository import PanelServerRepository
 from database.repositories.server_user_inbound_repository import \
     ServerUserInboundRepository
-from interface.proxy.interface import ProxyInterface
-from interface.proxy.models import (AccessConfig, AccessType, NoneSecurity,
+from interfaces.proxy.interface import ProxyInterface
+from interfaces.proxy.models import (AccessConfig, AccessType, NoneSecurity,
                                     ProxyConfig, ProxyType, RealityOptions,
                                     Security, VpnConfig, VpnType)
 
