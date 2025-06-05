@@ -50,7 +50,7 @@ default_servers = [
 ]
 
 
-async def main():
+async def main() -> None:
     async with session_manager.session() as session:
         stmt = select(User)
         if await session.scalar(stmt) is not None:

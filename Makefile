@@ -49,13 +49,13 @@ rabbit:
 	docker start RabbitMQ
 
 docker:
-	docker compose up -d
+	docker compose --env-file prod.env up -d
 
 docker_down:
 	docker compose down --volumes
 
 docker_build:
-	docker compose up -d --build
+	docker compose --env-file prod.env up -d --build
 
 install_submodules:
 	git submodule update --init --recursive
