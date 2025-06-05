@@ -8,12 +8,14 @@ import jwt
 from back.config import SECRET, Config
 from back.schemas.user import UserSchema
 from database.models.user import User
-from database.repositories.user_repository import UserRepository
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class AccessToken:
-    def __init__(self, user: User | UserSchema | dict, created_date: datetime | str | None = None, lifetime: timedelta | float | None = None) -> None:
+    def __init__(self,
+                 user: User | UserSchema | dict,
+                 created_date: datetime | str | None = None,
+                 lifetime: timedelta | float | None = None
+                 ) -> None:
         if created_date is None:
             self.created_date = datetime.now(UTC).replace(tzinfo=None)
         elif isinstance(created_date, str):
@@ -35,7 +37,9 @@ class AccessToken:
 
     @classmethod
     def from_token(cls, token: str) -> "AccessToken":
-        return AccessToken(**jwt.decode(jwt=token, key=SECRET, algorithms=[Config.algorithm]))
+        return AccessToken(**jwt.decode(jwt=token,
+                                        key=SECRET,
+                                        algorithms=[Config.algorithm]))
 
     def to_token(self) -> str:
         return jwt.encode(payload={
@@ -46,7 +50,12 @@ class AccessToken:
 
 
 class RefreshToken:
-    def __init__(self, user_id: uuid.UUID | str, secret: str, created_date: datetime | str | None = None, lifetime: timedelta | float | None = None) -> None:
+    def __init__(self,
+                 user_id: uuid.UUID | str,
+                 secret: str,
+                 created_date: datetime | str | None = None,
+                 lifetime: timedelta | float | None = None
+                 ) -> None:
         self.secret = secret
         if created_date is None:
             self.created_date = datetime.now(UTC).replace(tzinfo=None)
@@ -67,7 +76,9 @@ class RefreshToken:
 
     @classmethod
     def from_token(cls, token: str) -> "RefreshToken":
-        return RefreshToken(**jwt.decode(jwt=token, key=SECRET, algorithms=[Config.algorithm]))
+        return RefreshToken(**jwt.decode(jwt=token,
+                                         key=SECRET,
+                                         algorithms=[Config.algorithm]))
 
     def to_token(self) -> str:
         return jwt.encode(payload={

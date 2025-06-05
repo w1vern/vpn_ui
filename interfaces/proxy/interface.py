@@ -2,7 +2,6 @@
 
 import abc
 
-
 from database.models.user import User
 
 from .models import AccessConfig, AccessType

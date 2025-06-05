@@ -4,7 +4,6 @@ from datetime import UTC, datetime
 
 from fastapi import Cookie, Depends, HTTPException, Request, Response
 from fastapi_controllers import Controller, get, post
-
 from redis import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 

@@ -1,6 +1,5 @@
 import functools
 
-
 from click import Option
 from sqlalchemy.ext.asyncio import AsyncSession
 from telebot.async_telebot import AsyncTeleBot

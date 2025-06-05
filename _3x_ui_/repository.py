@@ -54,7 +54,13 @@ class PanelRepository:
         resp = await self.server_session.client.get(url=f"http://{self.server_session.server.ip}:9101/api/")
         return int(resp.text)
 
-    async def create_proxy(self, login: str, password: str, port: int, proxy_type: ProxyType, remark: str) -> dict[str, Any]:
+    async def create_proxy(self,
+                           login: str,
+                           password: str,
+                           port: int,
+                           proxy_type: ProxyType,
+                           remark: str
+                           ) -> dict[str, Any]:
         settings = {**GlobalSettings.settings, **{
             "accounts": [{
                 "user": login,
@@ -84,7 +90,19 @@ class PanelRepository:
         }}
         return await self.server_session.post_dict("add", body=data)
 
-    async def create_vpn(self, user: User, uuid4: uuid.UUID, sub_id: str, short_ids: list[str], port: int, vpn_type: VpnType, email: str, protocol: str, remark: str, public_key: str, private_key: str) -> dict[str, Any]:
+    async def create_vpn(self,
+                         user: User,
+                         uuid4: uuid.UUID,
+                         sub_id: str,
+                         short_ids: list[str],
+                         port: int,
+                         vpn_type: VpnType,
+                         email: str,
+                         protocol: str,
+                         remark: str,
+                         public_key: str,
+                         private_key: str
+                         ) -> dict[str, Any]:
         security = "none"
         if vpn_type == VpnType.VLESS_REALITY:
             security = "reality"
@@ -167,7 +185,13 @@ class PanelRepository:
         }}
         return await self.server_session.post_dict("add", body=data)
 
-    async def create_vpn_user(self, uuid4: uuid.UUID, sub_id: str, user: User, vpn_type: VpnType, email: str) -> dict[str, Any]:
+    async def create_vpn_user(self,
+                              uuid4: uuid.UUID,
+                              sub_id: str,
+                              user: User,
+                              vpn_type: VpnType,
+                              email: str
+                              ) -> dict[str, Any]:
         return await self.server_session.post_dict(path='addClient', body={
             "id": getattr(self.server_session.server, vpn_type.value),
             "settings": json.dumps({
@@ -188,7 +212,10 @@ class PanelRepository:
             })
         })
 
-    async def set_inbound_enabled(self, id: int, enable: bool) -> dict[str, Any]:
+    async def set_inbound_enabled(self,
+                                  id: int,
+                                  enable: bool
+                                  ) -> dict[str, Any]:
         info = await self.server_session.get(path=f"get/{id}")
         info = json.loads(info.text)
         info = info["obj"]
@@ -197,7 +224,11 @@ class PanelRepository:
         response = await self.server_session.post_dict(path=f"update/{id}", body=info)
         return response
 
-    async def set_vpn_user_enabled(self, inbound_id: int, client_id: uuid.UUID, enable: bool) -> dict[str, Any]:
+    async def set_vpn_user_enabled(self,
+                                   inbound_id: int,
+                                   client_id: uuid.UUID,
+                                   enable: bool
+                                   ) -> dict[str, Any]:
         info = await self.get_inbound_info(inbound_id)
         data = None
         for client in info["obj"]["settings"]["clients"]:

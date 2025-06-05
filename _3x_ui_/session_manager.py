@@ -4,7 +4,6 @@ import contextlib
 import json
 import uuid
 from typing import Any, AsyncIterator
-from urllib import response
 
 import httpx
 
@@ -27,11 +26,18 @@ def parse_nested_json(obj):
 
 
 class ServerSession():
-    def __init__(self, server: PanelServer, client: httpx.AsyncClient) -> None:
+    def __init__(self,
+                 server: PanelServer,
+                 client: httpx.AsyncClient
+                 ) -> None:
         self.server = server
         self.client = client
 
-    async def __make_request(self, path: str, method: str, body: dict[str, Any] | None = None) -> httpx.Response:
+    async def __make_request(self,
+                             path: str,
+                             method: str,
+                             body: dict[str, Any] | None = None
+                             ) -> httpx.Response:
         if not await self.__is_auth():
             await self.__auth()
         response = await self.client.request(method=method,
@@ -39,10 +45,9 @@ class ServerSession():
                                              headers={
                                                  "Content-Type": "application/json"},
                                              json=body)
-        # print(response.status_code, response.text)
         return response
 
-    def __get_api_path(self, endpoint: str):
+    def __get_api_path(self, endpoint: str) -> str:
         return self.server.connection_string + "panel/api/inbounds/" + endpoint
 
     async def __is_auth(self) -> bool:
@@ -58,21 +63,33 @@ class ServerSession():
         resp.raise_for_status()
 
     async def __get_dict(self, response: httpx.Response) -> dict[str, Any]:
-        return json.loads(response.text.replace('\\n', '').replace('\\"', '"').replace('"{', '{').replace('}"', '}'))
+        return json.loads(response.text
+                          .replace('\\n', '')
+                          .replace('\\"', '"')
+                          .replace('"{', '{')
+                          .replace('}"', '}'))
 
-    async def post(self, path: str, body: dict[str, Any] = {}) -> httpx.Response:
+    async def post(self,
+                   path: str,
+                   body: dict[str, Any] = {}
+                   ) -> httpx.Response:
         return await self.__make_request(path, "POST", body)
 
-    async def get(self, path: str) -> httpx.Response:
+    async def get(self,
+                  path: str
+                  ) -> httpx.Response:
         return await self.__make_request(path, "GET")
 
-    async def post_dict(self, path: str, body: dict[str, Any] = {}) -> dict[str, Any]:
+    async def post_dict(self,
+                        path: str,
+                        body: dict[str, Any] = {}
+                        ) -> dict[str, Any]:
         response = await self.post(path, body)
-        # print(response.status_code)
-        # print(response.text)
         return await self.__get_dict(response)
 
-    async def get_dict(self, path: str) -> dict[str, Any]:
+    async def get_dict(self,
+                       path: str
+                       ) -> dict[str, Any]:
         return await self.__get_dict(await self.get(path))
 
 
@@ -81,7 +98,9 @@ class ServerSessionManager:
         self.cookies: dict[uuid.UUID, Any] = {}
 
     @contextlib.asynccontextmanager
-    async def get_session(self, server: PanelServer) -> AsyncIterator[ServerSession]:
+    async def get_session(self,
+                          server: PanelServer
+                          ) -> AsyncIterator[ServerSession]:
         async with httpx.AsyncClient() as client:
             client.cookies = self.cookies.get(
                 server.id, {})

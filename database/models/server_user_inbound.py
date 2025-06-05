@@ -9,7 +9,7 @@ from database.models.base import Base
 from database.models.server import Server
 from database.models.user import User
 from interfaces.proxy.models import (AccessConfig, AccessConfigFactory,
-                                    AccessType, VpnConfig)
+                                     AccessType, VpnConfig)
 
 
 class ServerUserInbound(Base):
@@ -29,10 +29,10 @@ class ServerUserInbound(Base):
     user: Mapped[User] = relationship(lazy="selectin", foreign_keys=[user_id])
 
     @property
-    def config(self):
+    def config(self) -> AccessConfig:
         return AccessConfigFactory.from_string(self.config_str)
     
     @property
-    def access_type(self):
+    def access_type(self) -> AccessType:
         return self.config.access_type
 

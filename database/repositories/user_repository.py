@@ -1,7 +1,6 @@
 import secrets
 from datetime import UTC, datetime
 from secrets import token_urlsafe
-
 from uuid import UUID
 
 from httpx import get
