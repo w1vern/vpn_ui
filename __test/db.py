@@ -2,12 +2,12 @@ import asyncio
 import secrets
 from datetime import UTC, datetime, timedelta
 
-from database.main import session_manager
-from database.models.panel_server import PanelServer
-from database.models.server import Server
-from database.models.user import User
-from database.repositories.panel_server_repository import PanelServerRepository
-from database.repositories.user_repository import UserRepository
+from infra.database.main import session_manager
+from infra.database.models.panel_server import PanelServer
+from infra.database.models.server import Server
+from infra.database.models.user import User
+from infra.database.repositories.panel_server_repository import PanelServerRepository
+from infra.database.repositories.user_repository import UserRepository
 
 
 async def main():

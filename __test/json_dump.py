@@ -6,8 +6,8 @@ import json
 from http import server
 
 from _3x_ui_.session_manager import server_session_manager
-from database.main import session_manager
-from database.repositories.panel_server_repository import PanelServerRepository
+from infra.database.main import session_manager
+from infra.database.repositories.panel_server_repository import PanelServerRepository
 
 obj = {
     "success": True,

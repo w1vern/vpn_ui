@@ -6,8 +6,8 @@
 import asyncio
 
 from back.schemas.user import UserSchema
-from database.main import session_manager
-from database.repositories.user_repository import UserRepository
+from infra.database.main import session_manager
+from infra.database.repositories.user_repository import UserRepository
 
 
 async def main():

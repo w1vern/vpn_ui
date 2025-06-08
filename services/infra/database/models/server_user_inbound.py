@@ -1,0 +1,35 @@
+
+from uuid import UUID
+
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from infra.database.models.base import Base
+from infra.database.models.server import Server
+from infra.database.models.user import User
+from interfaces.proxy.models import (AccessConfig, AccessConfigFactory,
+                                     AccessType, VpnConfig)
+
+
+class ServerUserInbound(Base):
+    __tablename__ = "server_user_inbounds"
+
+    server_id: Mapped[UUID] = mapped_column(
+        ForeignKey("servers.id"))
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("users.id"))
+
+    config_str: Mapped[str] = mapped_column()
+
+    server: Mapped[Server] = relationship(
+        lazy="selectin", foreign_keys=[server_id])
+    user: Mapped[User] = relationship(lazy="selectin", foreign_keys=[user_id])
+
+    @property
+    def config(self) -> AccessConfig:
+        return AccessConfigFactory.from_string(self.config_str)
+    
+    @property
+    def access_type(self) -> AccessType:
+        return self.config.access_type
+
