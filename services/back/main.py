@@ -1,8 +1,13 @@
 
-from back.api import router
-from back.broker import router as faststream_router
+from .api import router
+from .broker import router as faststream_router
 from fastapi import FastAPI
 
-app = FastAPI(docs_url="/api/docs", redoc_url="/api/redoc", openapi_url="/api/openapi.json")
+app = FastAPI(docs_url="/api/docs",
+              redoc_url="/api/redoc",
+              openapi_url="/api/openapi.json",
+              swagger_ui_parameters={
+                  "tryItOutEnabled": True,
+              })
 app.include_router(router)
 app.include_router(faststream_router)

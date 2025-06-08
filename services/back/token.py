@@ -4,9 +4,9 @@ import uuid
 from datetime import UTC, datetime, timedelta
 
 import jwt
-from back.config import SECRET, Config
-from back.schemas.user import UserSchema
-from infra.database.models.user import User
+from .config import SECRET, Config
+from .schemas import UserSchema
+from services.infra.database import User
 
 
 class AccessToken:

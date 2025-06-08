@@ -3,17 +3,14 @@
 import uuid
 from datetime import datetime
 
-from back.get_auth import get_user
-from back.schemas.transaction import Transaction
-from back.schemas.user import UserSchema
+from ..get_auth import get_user
+from ..schemas import Transaction, UserSchema
 from fastapi import Depends, HTTPException
 from fastapi_controllers import Controller, get, post
-from infra.database.enums.transaction_type import TransactionType
-from infra.database.main import get_db_session
-from infra.database.models.user import User
-from infra.database.repositories.transaction_repository import \
-    TransactionRepository
-from infra.database.repositories.user_repository import UserRepository
+from services.infra.database import (
+    session_manager, User, UserRepository,
+    TransactionType, TransactionRepository)
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -21,7 +18,7 @@ class TransactionController(Controller):
     prefix = "/transaction"
     tags = ["transaction"]
 
-    def __init__(self, session: AsyncSession = Depends(get_db_session)) -> None:
+    def __init__(self, session: AsyncSession = Depends(session_manager.session)) -> None:
         self.session = session
 
     @post("/create")
@@ -40,10 +37,11 @@ class TransactionController(Controller):
             date = datetime.fromisoformat(transaction_to_create.date)
         type = getattr(TransactionType, transaction_to_create.type)
         if type is None:
-            raise HTTPException(status_code=404, detail="Transaction type doesn't exist")
+            raise HTTPException(
+                status_code=404, detail="Transaction type doesn't exist")
         await tr.create(tr_user, transaction_to_create.amount, date, type.value)
         return {"message": "OK"}
-    
+
     @get("/get_all")
     async def get_all_transactions(self, user: UserSchema = Depends(get_user)) -> list[Transaction]:
         if user.rights.is_control_panel_user is False:
@@ -52,7 +50,6 @@ class TransactionController(Controller):
         transactions = await tr.get_all()
         tr_to_send = []
         for transaction in transactions:
-            tr_to_send.append(Transaction(user_id=str(transaction.user_id), amount=transaction.amount, date=transaction.date.isoformat(), type=TransactionType(transaction.type).name))
+            tr_to_send.append(Transaction(user_id=str(transaction.user_id), amount=transaction.amount,
+                              date=transaction.date.isoformat(), type=TransactionType(transaction.transaction_type).name))
         return tr_to_send
-
-

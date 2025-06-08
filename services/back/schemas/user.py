@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from infra.database.models.user import User
+from services.infra.database import User
 from pydantic import BaseModel, ConfigDict
 
 
@@ -30,7 +30,7 @@ class UserRightsSchema(BaseModel):
 
 class UserSchema(BaseModel):
     id: uuid.UUID
-    telegram_id: str
+    telegram_id: int
     telegram_username: str
     balance: float
     created_date: str
@@ -42,7 +42,7 @@ class UserSchema(BaseModel):
             uuid.UUID: lambda v: str(v),
             datetime: lambda v: v.isoformat()
         },
-        from_attributes = True
+        from_attributes=True
     )
 
     @classmethod
@@ -50,14 +50,14 @@ class UserSchema(BaseModel):
         settings = UserSettingsSchema.model_validate(user)
         rights = UserRightsSchema.model_validate(user)
         return UserSchema(
-			id=user.id,
-			telegram_id=user.telegram_id,
-			telegram_username=user.telegram_username,
-			balance=user.balance,
-			created_date=user.created_date.isoformat(),
-			rights=rights,
-			settings=settings
-		)
+            id=user.id,
+            telegram_id=user.telegram_id,
+            telegram_username=user.telegram_username,
+            balance=user.balance,
+            created_date=user.created_date.isoformat(),
+            rights=rights,
+            settings=settings
+        )
 
 
 class EditUserSettingsSchema(BaseModel):
@@ -79,7 +79,7 @@ class EditUserRightsSchema(BaseModel):
 
 class EditUserSchema(BaseModel):
     id: uuid.UUID
-    telegram_id: str | None
+    telegram_id: int | None
     created_date: str | None
     rights: EditUserRightsSchema | None
     settings: EditUserSettingsSchema | None

@@ -1,22 +1,17 @@
 
 
-import uuid
 from datetime import datetime
-from operator import is_
-from typing import Sequence
 
-from back.get_auth import get_user
-from back.schemas.server import (EditServerSchema, ServerSchema,
-                                 ServerToCreateSchema)
-from back.schemas.user import UserSchema
+from ..get_auth import get_user
+from ..schemas import (
+    EditServerSchema, ServerSchema,
+    ServerToCreateSchema, UserSchema)
 from fastapi import Depends, HTTPException
-from fastapi_controllers import Controller, delete, get, post
-from infra.database.main import get_db_session
-from infra.database.models.server import Server
-from infra.database.models.user import User
-from infra.database.repositories.panel_server_repository import \
-    PanelServerRepository
-from infra.database.repositories.server_repository import ServerRepository
+from fastapi_controllers import Controller, get, post
+from services.infra.database import (
+    session_manager, PanelServerRepository, ServerRepository)
+
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -24,7 +19,7 @@ class ServerController(Controller):
     prefix = "/server"
     tags = ["server"]
 
-    def __init__(self, session: AsyncSession = Depends(get_db_session)) -> None:
+    def __init__(self, session: AsyncSession = Depends(session_manager.session)) -> None:
         self.session = session
 
     @get("/get_all")
@@ -38,12 +33,12 @@ class ServerController(Controller):
         for server in servers:
             server_to_send = ServerSchema(
                 id=server.id,
-                display_name=server.display_name,
-                ip=server.ip,
-                country_code=server.country_code,
-                is_available=server.is_available,
-                created_date=server.created_date.isoformat(),
-                closing_date=server.closing_date.isoformat(),
+                display_name=server.server.display_name,
+                ip=server.server.ip,
+                country_code=server.server.country_code,
+                is_available=server.server.is_available,
+                starting_date=server.server.starting_date.isoformat(),
+                closing_date=server.server.closing_date.isoformat(),
                 panel_path=server.panel_path,
                 login=server.login,
                 password=server.password
@@ -70,19 +65,21 @@ class ServerController(Controller):
         if user.rights.is_server_editor is False:
             raise HTTPException(
                 status_code=403, detail="user is not server editor")
+        sr = ServerRepository(self.session)
         psr = PanelServerRepository(self.session)
-        server = await psr.create(ip=server_to_create.ip,
-                                  country_code=server_to_create.country_code,
-                                  display_name=server_to_create.display_name,
-                                  is_available=server_to_create.is_available,
-                                  created_date=datetime.fromisoformat(
-                                      server_to_create.created_date),
-                                  closing_date=datetime.fromisoformat(
-                                      server_to_create.closing_date),
-                                  login=server_to_create.login,
-                                  password=server_to_create.password,
-                                  panel_path=server_to_create.panel_path)
-        if server is None:
+        server = await sr.create(ip=server_to_create.ip,
+                                 country_code=server_to_create.country_code,
+                                 is_available=server_to_create.is_available,
+                                 display_name=server_to_create.display_name,
+                                 starting_date=datetime.fromisoformat(
+                                     server_to_create.starting_date),
+                                 closing_date=datetime.fromisoformat(
+                                     server_to_create.closing_date))
+        pserver = await psr.create(server=server,
+                                   login=server_to_create.login,
+                                   password=server_to_create.password,
+                                   panel_path=server_to_create.panel_path)
+        if not (server and pserver):
             raise HTTPException(status_code=400, detail="Server create error")
         return {"message": "OK"}
 
@@ -105,26 +102,28 @@ class ServerController(Controller):
         if user.rights.is_server_editor is False:
             raise HTTPException(
                 status_code=403, detail="user is not server editor")
+        sr = ServerRepository(self.session)
         psr = PanelServerRepository(self.session)
-        server = await psr.get_by_id(server_to_edit.id)
-        if server is None:
+        server = await sr.get_by_id(server_to_edit.id)
+        pserver = await psr.get_by_id(server_to_edit.id)
+        if not (server and pserver):
             raise HTTPException(status_code=404, detail="Server not found")
         if server_to_edit.ip is not None:
-            await psr.set_ip(server, server_to_edit.ip)
+            await sr.set_ip(server, server_to_edit.ip)
         if server_to_edit.country_code is not None:
-            await psr.set_country_code(server, server_to_edit.country_code)
+            await sr.set_country_code(server, server_to_edit.country_code)
         if server_to_edit.display_name is not None:
-            await psr.set_display_name(server, server_to_edit.display_name)
+            await sr.set_display_name(server, server_to_edit.display_name)
         if server_to_edit.created_date is not None:
-            await psr.set_created_date(server, datetime.fromisoformat(server_to_edit.created_date))
+            await sr.set_created_date(server, datetime.fromisoformat(server_to_edit.created_date))
         if server_to_edit.closing_date is not None:
-            await psr.set_closing_date(server, datetime.fromisoformat(server_to_edit.closing_date))
+            await sr.set_closing_date(server, datetime.fromisoformat(server_to_edit.closing_date))
         if server_to_edit.is_available is not None:
-            await psr.set_is_available(server, server_to_edit.is_available)
+            await sr.set_is_available(server, server_to_edit.is_available)
         if server_to_edit.login is not None:
-            await psr.set_login(server, server_to_edit.login)
+            await psr.set_login(pserver, server_to_edit.login)
         if server_to_edit.password is not None:
-            await psr.set_password(server, server_to_edit.password)
+            await psr.set_password(pserver, server_to_edit.password)
         if server_to_edit.panel_path is not None:
-            await psr.set_panel_path(server, server_to_edit.panel_path)
+            await psr.set_panel_path(pserver, server_to_edit.panel_path)
         return {"message": "OK"}

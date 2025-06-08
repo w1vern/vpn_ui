@@ -71,12 +71,12 @@ def get_db_url(user: str,
     return f"postgresql+asyncpg://{user}:{password}@{ip}:{port}/{name}"
 
 
-database_url = get_db_url(
+DATABASE_URL = get_db_url(
     settings.db_user,
     settings.db_password,
     settings.db_ip,
     settings.db_port,
     settings.db_name)
 
-session_manager = DatabaseSessionManager(database_url,
+session_manager = DatabaseSessionManager(DATABASE_URL,
                                          {"echo": False})

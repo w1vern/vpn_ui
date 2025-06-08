@@ -1,7 +1,6 @@
 
 
 import uuid
-from datetime import datetime
 
 from pydantic import BaseModel
 
@@ -12,7 +11,7 @@ class ServerSchema(BaseModel):
     country_code: str
     is_available: bool
     display_name: str
-    created_date: str
+    starting_date: str
     closing_date: str
 
     panel_path: str
@@ -40,6 +39,6 @@ class ServerToCreateSchema(BaseModel):
     display_name: str
     login: str
     password: str
-    created_date: str
+    starting_date: str
     closing_date: str
 

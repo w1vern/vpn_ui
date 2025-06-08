@@ -1,17 +1,13 @@
 
 
-from datetime import datetime
-
-from back.config import Config
-from back.get_auth import get_user, get_user_db
-from back.schemas.user import (EditUserSchema, UserRightsSchema, UserSchema,
-                               UserSettingsSchema)
-from fastapi import Cookie, Depends, HTTPException
+from ..config import Config
+from ..get_auth import get_user, get_user_db
+from ..schemas import (EditUserSchema, UserSchema)
+from fastapi import Depends, HTTPException
 from fastapi_controllers import Controller, get, post
-from infra.database.main import get_db_session
-from infra.database.models.user import User
-from infra.database.redis import RedisType, get_redis_client
-from infra.database.repositories.user_repository import UserRepository
+from services.infra.database import (
+    session_manager, User, RedisType,
+    get_redis_client, UserRepository)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -19,7 +15,7 @@ class UserController(Controller):
     prefix = '/user'
     tags = ['user']
 
-    def __init__(self, session: AsyncSession = Depends(get_db_session)) -> None:
+    def __init__(self, session: AsyncSession = Depends(session_manager.session)) -> None:
         self.session = session
 
     @get("/get_all")
@@ -40,8 +36,9 @@ class UserController(Controller):
     async def edit_user(self,
                         user_to_edit: EditUserSchema,
                         user: User = Depends(get_user_db),
-                        redis=Depends(get_redis_client)): #TODO: fix method
-        redis.set(f"{RedisType.invalidated_access_token}:{user.id}", 1, ex=Config.access_token_lifetime)
+                        redis=Depends(get_redis_client)):  # TODO: fix method
+        redis.set(f"{RedisType.invalidated_access_token}:{user.id}",
+                  1, ex=Config.access_token_lifetime)
         ur = UserRepository(self.session)
         if user_to_edit.rights is not None:
             if user.is_control_panel_user is False:
@@ -67,6 +64,5 @@ class UserController(Controller):
         if user_to_edit.created_date is not None:
             if user.is_user_editor is False:
                 raise HTTPException(status_code=403, detail="no rights")
-            await ur.update_created_date(user, datetime.fromisoformat(user_to_edit.created_date))
 
         return {'message': 'OK'}

@@ -1,14 +1,10 @@
-import uuid
 
-from back.get_auth import get_user
-from back.schemas.server import ServerToCreateSchema
-from back.schemas.ticket import NewTicket, TicketMessage
-from back.schemas.user import UserSchema
-from fastapi import Depends, HTTPException
+from fastapi import Depends
+from ..get_auth import get_user
+from ..schemas import (UserSchema, NewTicket, TicketMessage, ServerToCreateSchema)
 from fastapi_controllers import Controller, delete, get, post
-from infra.database.main import get_db_session
-from infra.database.models.user import User
-from infra.database.repositories.server_repository import ServerRepository
+from services.infra.database import (session_manager, User, ServerRepository)
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -16,7 +12,7 @@ class TicketController(Controller):
     prefix = "/feedback"
     tags = ["feedback"]
 
-    def __init__(self, session: AsyncSession = Depends(get_db_session)) -> None:
+    def __init__(self, session: AsyncSession = Depends(session_manager.session)) -> None:
         self.session = session
 
     @post("/new_ticket",

@@ -1,8 +1,5 @@
 
 
-import os
-
-from fastapi import Depends
 from faststream.rabbit import RabbitBroker, fastapi
 
 from config import settings
@@ -14,6 +11,6 @@ router = fastapi.RabbitRouter(RABBIT_URL)
 def get_broker() -> RabbitBroker:
     return router.broker
 
-async def send_message(data: dict, broker: RabbitBroker):
+async def send_message(data: dict, broker: RabbitBroker) -> None:
     await broker.publish(data, "message")
     
