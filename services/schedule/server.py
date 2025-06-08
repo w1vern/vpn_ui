@@ -3,11 +3,11 @@
 from datetime import UTC, datetime
 
 from infra.database.main import session_manager
-from infra.database.repositories.server_repository import ServerRepository
+from infra.database.repositories import ServerRepository
 
 
 async def check_servers() -> None:
-    async with session_manager.session() as session:
+    async with session_manager.context_session() as session:
         sr = ServerRepository(session)
         servers = await sr.get_all()
         current_date = datetime.now(UTC).replace(tzinfo=None)

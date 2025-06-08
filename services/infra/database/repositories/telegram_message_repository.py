@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infra.database.models import TelegramMessage, User
+from ..models import TelegramMessage, User
 
 from .base_repository import BaseRepository
 

@@ -5,8 +5,8 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infra.database.enums import Rights, RightsType, Settings, SettingsType
-from infra.database.models import *
+from ..enums import Rights, RightsType, Settings, SettingsType
+from ..models import User, Tariff
 
 from .base_repository import BaseRepository
 

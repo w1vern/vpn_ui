@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infra.database.models import *
+from ..models import Server
 
 from .base_repository import BaseRepository
 

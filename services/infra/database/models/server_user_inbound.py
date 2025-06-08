@@ -4,11 +4,11 @@ from uuid import UUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from infra.database.models.base import Base
-from infra.database.models.server import Server
-from infra.database.models.user import User
-from interfaces.proxy.models import (AccessConfig, AccessConfigFactory,
-                                     AccessType, VpnConfig)
+from .base import Base
+from .server import Server
+from .user import User
+from services.infra.interfaces.proxy.models import (
+    AccessConfig, AccessConfigFactory, AccessType)
 
 
 class ServerUserInbound(Base):
@@ -28,8 +28,7 @@ class ServerUserInbound(Base):
     @property
     def config(self) -> AccessConfig:
         return AccessConfigFactory.from_string(self.config_str)
-    
+
     @property
     def access_type(self) -> AccessType:
         return self.config.access_type
-

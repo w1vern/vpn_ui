@@ -51,7 +51,7 @@ class PanelRepository:
         self.server_session = server_session
 
     async def get_free_port(self) -> int:
-        resp = await self.server_session.client.get(url=f"http://{self.server_session.server.ip}:9101/api/")
+        resp = await self.server_session.client.get(url=f"http://{self.server_session.server.server.ip}:9101/api/")
         return int(resp.text)
 
     async def create_proxy(self,

@@ -3,7 +3,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infra.database.models import Server, TgBotToken
+from ..models import Server, TgBotToken
 
 from .base_repository import BaseRepository
 

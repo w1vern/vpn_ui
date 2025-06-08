@@ -4,8 +4,8 @@ from datetime import timedelta
 
 import aioschedule as schedule
 
-from schedule.server import check_servers
-from schedule.user import check_users
+from .server import check_servers
+from .user import check_users
 
 
 async def main():

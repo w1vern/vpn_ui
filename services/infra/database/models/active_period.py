@@ -1,13 +1,14 @@
+
 from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import UUID, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from infra.database.models.base import Base
-from infra.database.models.tariff import Tariff
-from infra.database.models.transaction import Transaction
-from infra.database.models.user import User
+from .base import Base
+from .tariff import Tariff
+from .transaction import Transaction
+from .user import User
 
 
 class ActivePeriod(Base):

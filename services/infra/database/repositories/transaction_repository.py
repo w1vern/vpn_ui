@@ -1,12 +1,11 @@
 
 from datetime import UTC, datetime
-from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infra.database.enums import TransactionType
-from infra.database.models import *
+from ..enums import TransactionType
+from ..models import Transaction, User
 
 from .base_repository import BaseRepository
 

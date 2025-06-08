@@ -5,7 +5,7 @@ from datetime import timedelta
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infra.database.models import Tariff
+from ..models import Tariff
 
 from .base_repository import BaseRepository
 

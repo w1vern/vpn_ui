@@ -1,6 +1,6 @@
 from enum import Enum
 
-from infra.database.enums.rights import Rights
+from .rights import Rights
 
 
 class RightsType(Enum):

@@ -2,13 +2,11 @@
 import asyncio
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import select
-
 from config import settings
 from infra.database.enums import RightsType, SettingsType
 from infra.database.main import session_manager
 from infra.database.repositories import (PanelServerRepository, ServerRepository,
-                                   TariffRepository, UserRepository)
+                                         TariffRepository, UserRepository)
 
 default_users = [{
     "telegram_id": settings.superuser_telegram_id,

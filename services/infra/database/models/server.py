@@ -1,9 +1,9 @@
 
 from datetime import datetime
 
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
-from infra.database.models.base import Base
+from .base import Base
 
 
 class Server(Base):

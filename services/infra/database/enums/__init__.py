@@ -1,3 +1,4 @@
+
 from .message_ticket_type import MessageTicketType
 from .rights import Rights
 from .rights_type import RightsType

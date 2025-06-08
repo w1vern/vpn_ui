@@ -5,8 +5,8 @@ from uuid import UUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from infra.database.models.base import Base
-from infra.database.models.server import Server
+from .base import Base
+from .server import Server
 
 
 class TgBotToken(Base):

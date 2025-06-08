@@ -2,24 +2,16 @@
 
 from datetime import UTC, datetime
 
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from _3x_ui_.service import Service
-from _3x_ui_.session_manager import server_session_manager
-from infra.database.enums.rights import Rights
-from infra.database.enums.transaction_type import TransactionType
+from infra._3x_ui_ import Service, server_session_manager
+from infra.database.enums import TransactionType, Rights
 from infra.database.main import session_manager
-from infra.database.models.user import User
-from infra.database.repositories.active_period_repository import \
-    ActivePeriodRepository
-from infra.database.repositories.panel_server_repository import PanelServerRepository
-from infra.database.repositories.tariff_repository import TariffRepository
-from infra.database.repositories.transaction_repository import TransactionRepository
-from infra.database.repositories.user_repository import UserRepository
+from infra.database.repositories import (ActivePeriodRepository, PanelServerRepository,
+                                         TransactionRepository, UserRepository)
 
 
 async def check_users() -> None:
-    async with session_manager.session() as db_session:
+    async with session_manager.context_session() as db_session:
         ur = UserRepository(db_session)
         apr = ActivePeriodRepository(db_session)
         psr = PanelServerRepository(db_session)

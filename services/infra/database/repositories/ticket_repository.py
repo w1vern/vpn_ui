@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infra.database.models import *
+from ..models import Ticket, User
 
 from .base_repository import BaseRepository
 

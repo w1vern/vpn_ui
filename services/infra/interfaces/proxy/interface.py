@@ -2,7 +2,7 @@
 
 import abc
 
-from infra.database.models.user import User
+from database.models import User
 
 from .models import AccessConfig, AccessType
 

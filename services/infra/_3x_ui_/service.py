@@ -44,7 +44,7 @@ def generate_proxy_remark(server: PanelServer, user: User, proxy_type: ProxyType
 
 
 def generate_user_remark(server: PanelServer, user: User, vpn_type: VpnType) -> str:
-    return f"{server.country_code}-{server.display_name}-{user.telegram_username}-{vpn_type.value[:-3]}"
+    return f"{server.server.country_code}-{server.server.display_name}-{user.telegram_username}-{vpn_type.value[:-3]}"
 
 
 def generate_key(length: int = 43) -> str:
@@ -66,7 +66,7 @@ class Service(ProxyInterface):
                          login: str = "",
                          password: str = ""
                          ) -> AccessConfig | None:
-        inbounds = await self.__suir.get_by_server_and_user(self.__server_session.server, user)
+        inbounds = await self.__suir.get_by_server_and_user(self.__server_session.server.server, user)
         for inbound in inbounds:
             if inbound.access_type == access_type:
                 if await self.config_is_valid(user, inbound.config) is True:
@@ -82,7 +82,7 @@ class Service(ProxyInterface):
             return None
         if response is None:
             return None
-        await self.__suir.create(self.__server_session.server, user, response)
+        await self.__suir.create(self.__server_session.server.server, user, response)
         return response
 
     # TODO: create valid code
@@ -110,7 +110,7 @@ class Service(ProxyInterface):
             return None
         return ProxyConfig(id=response['obj']['id'],
                            access_type=AccessType(proxy_type.value),
-                           ip=self.__server_session.server.ip,
+                           ip=self.__server_session.server.server.ip,
                            port=response['obj']['port'],
                            login=response['obj']['settings']['accounts'][0]['user'],
                            password=response['obj']['settings']['accounts'][0]['pass'])
@@ -169,7 +169,7 @@ class Service(ProxyInterface):
         return VpnConfig(id=response['obj']['id'],
                          access_type=AccessType(vpn_type.value),
                          uuid=uuid4,
-                         ip=self.__server_session.server.ip,
+                         ip=self.__server_session.server.server.ip,
                          port=getattr(self.__server_session.server,
                          f"{vpn_type.value[:-3]}_port"),
                          protocol=protocol,
@@ -201,7 +201,7 @@ class Service(ProxyInterface):
                                  proxy_type: ProxyType,
                                  enable: bool
                                  ) -> None:
-        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server, user, AccessType(proxy_type))
+        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server.server, user, AccessType(proxy_type))
         if connection is None:
             raise Exception()
         response = await self.__pr.set_inbound_enabled(connection.config.id, enable)
@@ -211,7 +211,7 @@ class Service(ProxyInterface):
 
     async def __set_vpn_user_enable(self, user: User, vpn_type: VpnType, enable: bool) -> None:
 
-        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server,
+        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server.server,
                                                                       user,
                                                                       AccessType(vpn_type))
         if connection is None:
@@ -240,7 +240,7 @@ class Service(ProxyInterface):
             return
 
     async def __delete_proxy(self, user: User, proxy_type: ProxyType) -> None:
-        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server, user, AccessType(proxy_type))
+        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server.server, user, AccessType(proxy_type))
         if connection is None:
             raise Exception()
         response = await self.__pr.delete_inbound(connection.config.id)
@@ -249,7 +249,7 @@ class Service(ProxyInterface):
         return
 
     async def __delete_vpn_user(self, user: User, vpn_type: VpnType) -> None:
-        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server, user, AccessType(vpn_type))
+        connection = await self.__suir.get_by_server_user_access_type(self.__server_session.server.server, user, AccessType(vpn_type))
         if connection is None:
             raise Exception()
         response = await self.__pr.delete_vpn_user(connection.config.id,
@@ -259,7 +259,7 @@ class Service(ProxyInterface):
         return
 
     async def get_configs(self, user: User) -> list[AccessConfig]:
-        connections = await self.__suir.get_by_server_and_user(self.__server_session.server, user)
+        connections = await self.__suir.get_by_server_and_user(self.__server_session.server.server, user)
         configs = []
         for connection in connections:
             if not self.config_is_valid(user, connection.config):
@@ -269,7 +269,7 @@ class Service(ProxyInterface):
         return configs
 
     async def get_traffic(self, user: User) -> int:
-        connections = await self.__suir.get_by_server_and_user(self.__server_session.server, user)
+        connections = await self.__suir.get_by_server_and_user(self.__server_session.server.server, user)
         traffic = 0
         for connection in connections:
             if connection.access_type in ProxyType:
@@ -285,7 +285,7 @@ class Service(ProxyInterface):
         return traffic
 
     async def reset_traffic(self, user: User) -> None:
-        connections = await self.__suir.get_by_server_and_user(self.__server_session.server, user)
+        connections = await self.__suir.get_by_server_and_user(self.__server_session.server.server, user)
         for connection in connections:
             if connection.access_type in ProxyType:
                 await self.__pr.reset_proxy_traffic(connection.config.id)
