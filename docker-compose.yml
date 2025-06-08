@@ -42,7 +42,7 @@ services:
 
   backend:
     <<: *service-base
-    command: bash -c "uvicorn back.main:app --host 0.0.0.0 --port 8000 --workers ${WORKERS_COUNT}"
+    command: bash -c "uvicorn services.back.main:app --host 0.0.0.0 --port 8000 --workers ${WORKERS_COUNT}"
     ports:
       - "8000:8000"
     depends_on:
@@ -53,13 +53,13 @@ services:
 
   bot:
     <<: *service-base
-    command: python -m bot
+    command: python -m services.bot
     profiles:
       - with_bot
 
   fill_db:
     <<: *service-base
-    command: python -m static.fill_db
+    command: python -m services.fill_db
 
   alembic:
     build:
@@ -82,8 +82,8 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - ./logs:/var/log/nginx/
+      - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./logs/nginx:/var/log/nginx/
     restart: always
     depends_on:
       frontend:
