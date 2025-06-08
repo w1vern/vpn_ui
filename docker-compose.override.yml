@@ -1,0 +1,23 @@
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+  redis:
+    ports:
+      - "6379:6379"
+  rabbitmq:
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  backend:
+    ports:
+      - "8000:8000"
+
+  frontend:
+    ports:
+      - "3000:3000"
+
+  nginx:
+    ports:
+      - 80:80

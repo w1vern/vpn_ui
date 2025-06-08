@@ -4,8 +4,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=f"{os.getenv('TARGET', 'dev')}.env")
-    
+    model_config = SettingsConfigDict(
+        env_file=f"{os.getenv('TARGET', 'dev')}.env")
+
     db_user: str = "postgres"
     db_password: str = "1234"
     db_ip: str = "postgres"
@@ -20,5 +21,8 @@ class Settings(BaseSettings):
     bot_token: str = "YOUR_BOT_TOKEN"
     secret: str = "YOUR_SECRET"
     superuser_telegram_id: int = 0
+    workers_count: int = 1
+    compose_profiles: str = ""
+
 
 settings = Settings()

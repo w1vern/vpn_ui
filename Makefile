@@ -57,6 +57,9 @@ docker_down:
 docker_build:
 	docker compose --env-file prod.env up -d --build
 
+add_frontend:
+	git submodule add --name frontend https://github.com/ImmortalAI/vpn_front_vue services/frontend
+
 install_submodules:
 	git submodule update --init --recursive
 

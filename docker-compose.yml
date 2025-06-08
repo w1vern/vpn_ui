@@ -49,7 +49,7 @@ services:
       redis: 
         condition: service_started
     profiles:
-      - with_back
+      - with_backend
 
   bot:
     <<: *service-base
@@ -77,7 +77,7 @@ services:
     env_file:
       - prod.env
     profiles:
-      - with_front
+      - with_frontend
 
   nginx:
     image: nginx:latest

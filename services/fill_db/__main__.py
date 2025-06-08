@@ -51,7 +51,7 @@ async def main() -> None:
         ur = UserRepository(session)
         users = await ur.get_all()
         if len(users) > 0:
-            raise Exception("database is not empty")
+            print("database is not empty")
         tr = TariffRepository(session)
         _ = None
         for tariff in default_tariffs:
@@ -72,6 +72,8 @@ async def main() -> None:
                 panel_path=pserver["panel_path"],
                 login=pserver["login"],
                 password=pserver["password"])
+
+        print("database is filled")
 
 if __name__ == "__main__":
     asyncio.run(main())
