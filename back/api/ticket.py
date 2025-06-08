@@ -8,7 +8,7 @@ from back.get_auth import get_user
 from back.schemas.server import ServerToCreateSchema
 from back.schemas.ticket import NewTicket, TicketMessage
 from back.schemas.user import UserSchema
-from database.database import get_db_session
+from database.main import get_db_session
 from database.models.user import User
 from database.repositories.server_repository import ServerRepository
 

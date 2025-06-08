@@ -1,8 +1,8 @@
-import uuid
-from datetime import datetime
-from uuid import uuid4
 
-from sqlalchemy import UUID, ForeignKey
+from datetime import datetime
+from uuid import UUID
+
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base import Base
@@ -12,10 +12,9 @@ from database.models.user import User
 class Transaction(Base):
     __tablename__ = "transactions"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid4)
     amount: Mapped[float] = mapped_column()
     date: Mapped[datetime] = mapped_column()
-    type: Mapped[int] = mapped_column()
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    transaction_type: Mapped[str] = mapped_column()
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"))
 
     user: Mapped[User] = relationship(lazy="selectin", foreign_keys=[user_id])

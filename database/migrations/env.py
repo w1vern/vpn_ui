@@ -18,7 +18,7 @@ config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-fileConfig(config.config_file_name)
+fileConfig(config.config_file_name)  # type: ignore
 
 # add your model's MetaData object here
 # for 'autogenerate' support
@@ -30,6 +30,7 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

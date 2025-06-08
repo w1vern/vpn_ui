@@ -1,8 +1,7 @@
-import uuid
 from datetime import datetime
-from uuid import uuid4
+from uuid import UUID
 
-from sqlalchemy import UUID, ForeignKey
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base import Base
@@ -12,11 +11,10 @@ from database.models.ticket import Ticket
 class MessageForTicket(Base):
     __tablename__ = "ticket_messages"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid4)
     text: Mapped[str] = mapped_column()
     date: Mapped[datetime] = mapped_column()
-    type: Mapped[int] = mapped_column()
-    ticket_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tickets.id"))
-    
-    ticket: Mapped[Ticket] = relationship(lazy="selectin", foreign_keys=[ticket_id])
+    message_type: Mapped[str] = mapped_column()
+    ticket_id: Mapped[UUID] = mapped_column(ForeignKey("tickets.id"))
 
+    ticket: Mapped[Ticket] = relationship(
+        lazy="selectin", foreign_keys=[ticket_id])

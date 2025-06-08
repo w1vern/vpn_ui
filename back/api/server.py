@@ -13,7 +13,7 @@ from back.get_auth import get_user
 from back.schemas.server import (EditServerSchema, ServerSchema,
                                  ServerToCreateSchema)
 from back.schemas.user import UserSchema
-from database.database import get_db_session
+from database.main import get_db_session
 from database.models.server import Server
 from database.models.user import User
 from database.repositories.panel_server_repository import PanelServerRepository

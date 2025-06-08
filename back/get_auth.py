@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from back.schemas.user import UserSchema
 from back.token import AccessToken
-from database.database import get_db_session
+from database.main import get_db_session
 from database.models.user import User
 from database.redis import RedisType, get_redis_client
 from database.repositories.user_repository import UserRepository

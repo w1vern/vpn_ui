@@ -1,17 +1,18 @@
 
 
-import uuid
 from datetime import timedelta
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.models.tariff import Tariff
+from database.models import Tariff
+
+from .base_repository import BaseRepository
 
 
-class TariffRepository:
+class TariffRepository(BaseRepository[Tariff]):
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session, Tariff)
 
     async def create(self,
                      name: str,
@@ -19,13 +20,14 @@ class TariffRepository:
                      price: float,
                      price_of_traffic_reset: float,
                      traffic: int
-                     ) -> Tariff | None:
-        tariff = Tariff(name=name, duration=duration, price=price, price_of_traffic_reset=price_of_traffic_reset,
-                        traffic=traffic)
-        self.session.add(tariff)
-        await self.session.flush()
-        return await self.get_by_id(tariff.id)
+                     ) -> Tariff:
+        return await self.universal_create(
+            name=name,
+            duration=duration,
+            price=price,
+            price_of_traffic_reset=price_of_traffic_reset,
+            traffic=traffic)
 
-    async def get_by_id(self, id: uuid.UUID) -> Tariff | None:
-        stmt = select(Tariff).where(Tariff.id == id).limit(1)
+    async def get_by_name(self, name: str) -> Tariff | None:
+        stmt = select(Tariff).where(Tariff.name == name).limit(1)
         return await self.session.scalar(stmt)

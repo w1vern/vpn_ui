@@ -1,6 +1,5 @@
-import uuid
 from datetime import datetime
-from uuid import uuid4
+from uuid import UUID
 
 from sqlalchemy import UUID, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -14,11 +13,10 @@ from database.models.user import User
 class ActivePeriod(Base):
     __tablename__ = "active_periods"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
-    transaction_id: Mapped[uuid.UUID] = mapped_column(
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"))
+    transaction_id: Mapped[UUID] = mapped_column(
         ForeignKey("transactions.id"))
-    tariff_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tariffs.id"))
+    tariff_id: Mapped[UUID] = mapped_column(ForeignKey("tariffs.id"))
     start_date: Mapped[datetime] = mapped_column()
     end_date: Mapped[datetime] = mapped_column()
     result_traffic: Mapped[int] = mapped_column()

@@ -1,6 +1,7 @@
-import uuid
+
 from datetime import datetime
-from uuid import uuid4
+from secrets import token_urlsafe
+from uuid import UUID
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -14,15 +15,13 @@ from database.models.tariff import Tariff
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid4)
-    telegram_id: Mapped[str] = mapped_column(unique=True, index=True)
-    tariff_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tariffs.id"))
+    telegram_id: Mapped[int] = mapped_column(unique=True, index=True)
+    tariff_id: Mapped[UUID] = mapped_column(ForeignKey("tariffs.id"))
     telegram_username: Mapped[str] = mapped_column()
     balance: Mapped[float] = mapped_column()
     rights: Mapped[int] = mapped_column()
     settings: Mapped[int] = mapped_column()
-    created_date: Mapped[datetime] = mapped_column()
-    secret: Mapped[str] = mapped_column()
+    secret: Mapped[str] = mapped_column(default=token_urlsafe)
 
     tariff: Mapped[Tariff] = relationship(lazy="selectin", foreign_keys=[tariff_id])
     

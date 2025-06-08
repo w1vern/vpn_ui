@@ -7,8 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.models import *
 from interfaces.proxy.models import AccessConfig, AccessType
 
+from .base_repository import BaseRepository
 
-class ServerUserInboundRepository:
+
+class ServerUserInboundRepository(BaseRepository[ServerUserInbound]):
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
@@ -16,37 +18,27 @@ class ServerUserInboundRepository:
                      server: Server,
                      user: User,
                      config: AccessConfig,
-                     ) -> ServerUserInbound | None:
-        server_user_inbound = ServerUserInbound(
+                     ) -> ServerUserInbound:
+        return await self.universal_create(
             server_id=server.id,
             user_id=user.id,
             config_str=config.to_string()
         )
-        self.session.add(server_user_inbound)
-        await self.session.flush()
-        return await self.get_by_id(server_user_inbound.id)
 
-    async def delete(self, id: uuid.UUID) -> None:
-        stmt = select(ServerUserInbound).where(
-            ServerUserInbound.id == id).limit(1)
-        server_user_inbound = await self.session.scalar(stmt)
-        if server_user_inbound is None:
-            raise Exception()
-        await self.session.delete(server_user_inbound)
-        await self.session.flush()
-
-    async def get_by_id(self, id: uuid.UUID) -> ServerUserInbound | None:
-        stmt = select(ServerUserInbound).where(
-            ServerUserInbound.id == id).limit(1)
-        return await self.session.scalar(stmt)
-
-    async def get_by_server_and_user(self, server: Server, user: User) -> list[ServerUserInbound]:
+    async def get_by_server_and_user(self,
+                                     server: Server,
+                                     user: User
+                                     ) -> list[ServerUserInbound]:
         stmt = select(ServerUserInbound
                       ).where(ServerUserInbound.server_id == server.id,
                               ServerUserInbound.user_id == user.id)
         return list((await self.session.scalars(stmt)).all())
-    
-    async def get_by_server_user_access_type(self, server: Server, user: User, access_type: AccessType) -> ServerUserInbound | None:
+
+    async def get_by_server_user_access_type(self, 
+                                             server: Server, 
+                                             user: User, 
+                                             access_type: AccessType
+                                             ) -> ServerUserInbound | None:
         stmt = select(ServerUserInbound
                       ).where(ServerUserInbound.server_id == server.id,
                               ServerUserInbound.user_id == user.id)
@@ -65,5 +57,3 @@ class ServerUserInboundRepository:
             return
         server_user_inbounds.config_str = access_config.to_string()
         await self.session.flush()
-
-    

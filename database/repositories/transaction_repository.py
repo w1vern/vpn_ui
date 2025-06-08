@@ -1,40 +1,37 @@
+
 from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.enums.transaction_type import TransactionType
+from database.enums import TransactionType
 from database.models import *
 
+from .base_repository import BaseRepository
 
-class TransactionRepository:
+
+class TransactionRepository(BaseRepository[Transaction]):
     def __init__(self, session: AsyncSession) -> None:
-        self.session = session
+        super().__init__(session, Transaction)
 
     async def create(self,
                      user: User,
                      amount: float,
                      date: datetime | None = None,
-                     type: int = TransactionType.withdrawal.value
-                     ) -> Transaction | None:
+                     transaction_type: str = TransactionType.withdrawal.value
+                     ) -> Transaction:
         if date is None:
             date = datetime.now(UTC).replace(tzinfo=None)
-        transaction = Transaction(
-            user_id=user.id, amount=amount, date=date, type=type)
-        user.balance += amount
-        self.session.add(transaction)
-        await self.session.flush()
-        return await self.get_by_id(transaction.id)
+        return await self.universal_create(
+            user_id=user.id,
+            amount=amount,
+            date=date,
+            transaction_type=transaction_type)
 
-    async def get_by_id(self, id: UUID) -> Transaction | None:
-        stmt = select(Transaction).where(Transaction.id == id).limit(1)
-        return await self.session.scalar(stmt)
-
-    async def get_all(self) -> list[Transaction]:
-        stmt = select(Transaction)
-        return list((await self.session.scalars(stmt)).all())
-
-    async def get_by_user(self, user: User) -> list[Transaction]:
-        stmt = select(Transaction).where(Transaction.user_id == user.id)
+    async def get_by_user(self,
+                          user: User
+                          ) -> list[Transaction]:
+        stmt = select(Transaction).where(
+            Transaction.user_id == user.id)
         return list((await self.session.scalars(stmt)).all())

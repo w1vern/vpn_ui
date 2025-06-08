@@ -1,19 +1,14 @@
 
 import asyncio
-import secrets
-from datetime import UTC, date, datetime, timedelta
-from uuid import UUID
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import select
 
 from config import settings
-from database.database import session_manager
-from database.enums.rights_type import RightsType
-from database.enums.settings_type import SettingsType
-from database.models.tariff import Tariff
-from database.models.user import User
-from database.repositories import TariffRepository, UserRepository
-from database.repositories.panel_server_repository import PanelServerRepository
+from database.enums import RightsType, SettingsType
+from database.main import session_manager
+from database.repositories import (PanelServerRepository, ServerRepository,
+                                   TariffRepository, UserRepository)
 
 default_users = [{
     "telegram_id": settings.superuser_telegram_id,
@@ -21,8 +16,6 @@ default_users = [{
     "balance": 0,
     "rights": RightsType.super_admin.value,
     "settings": SettingsType.default.value,
-    "created_date": datetime.now(UTC).replace(tzinfo=None),
-    "secret": secrets.token_urlsafe()
 }]
 
 default_tariffs = [
@@ -41,8 +34,13 @@ default_servers = [
         "country_code": "ru",
         "is_available": True,
         "display_name": "test",
-        "created_date": datetime.now(UTC).replace(tzinfo=None),
+        "starting_date": datetime.now(UTC).replace(tzinfo=None),
         "closing_date": (datetime.now(UTC) + timedelta(days=365)).replace(tzinfo=None),
+    }
+]
+
+default_panel_servers = [
+    {
         "panel_path": "",
         "login": "admin",
         "password": "admin"
@@ -51,26 +49,31 @@ default_servers = [
 
 
 async def main() -> None:
-    async with session_manager.session() as session:
-        stmt = select(User)
-        if await session.scalar(stmt) is not None:
-            return
+    async with session_manager.context_session() as session:
+        ur = UserRepository(session)
+        users = await ur.get_all()
+        if len(users) > 0:
+            raise Exception("database is not empty")
         tr = TariffRepository(session)
         _ = None
         for tariff in default_tariffs:
             _ = await tr.create(**tariff)
-
         if _ is None:
-            raise Exception()
-        
-        ur = UserRepository(session)
+            raise Exception("tariff not created")
+
         for user in default_users:
             await ur.create(**{**user,  **{"tariff_id": str(_.id)}})
 
+        sr = ServerRepository(session)
         psr = PanelServerRepository(session)
-        for server in default_servers:
-            await psr.create(**server)
-
+        for i in range(len(default_servers)):
+            server = await sr.create(**default_servers[i])
+            pserver = default_panel_servers[i]
+            await psr.create(
+                server=server,
+                panel_path=pserver["panel_path"],
+                login=pserver["login"],
+                password=pserver["password"])
 
 if __name__ == "__main__":
     asyncio.run(main())

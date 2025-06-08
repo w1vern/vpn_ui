@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from _3x_ui_.service import Service
 from _3x_ui_.session_manager import server_session_manager
-from database.database import session_manager
 from database.enums.rights import Rights
 from database.enums.transaction_type import TransactionType
+from database.main import session_manager
 from database.models.user import User
 from database.repositories.active_period_repository import \
     ActivePeriodRepository

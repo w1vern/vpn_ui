@@ -1,29 +1,19 @@
 
-
-import uuid
-from datetime import datetime
-from typing import Sequence
-
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.models.panel_server import PanelServer
-from database.repositories.server_repository import ServerRepository
+from database.models import PanelServer, Server
 from interfaces.proxy.models import VpnType
 
+from .base_repository import BaseRepository
 
-class PanelServerRepository(ServerRepository):
+
+class PanelServerRepository(BaseRepository[PanelServer]):
 
     def __init__(self, session: AsyncSession) -> None:
-        super().__init__(session)
+        super().__init__(session, PanelServer)
 
     async def create(self,
-                     ip: str,
-                     country_code: str,
-                     display_name: str,
-                     created_date: datetime | None = None,
-                     closing_date: datetime | None = None,
-                     is_available: bool = True,
+                     server: Server,
                      panel_path: str = "",
                      login: str = "",
                      password: str = "",
@@ -38,14 +28,9 @@ class PanelServerRepository(ServerRepository):
                      vless_reality_private_key: str = "",
                      vmess_port: int = 0,
                      vmess_domain_short_id: str = ""
-                     ) -> PanelServer | None:
-        panel_server = PanelServer(
-            ip=ip,
-            country_code=country_code,
-            display_name=display_name,
-            created_date=created_date,
-            closing_date=closing_date,
-            is_available=is_available,
+                     ) -> PanelServer:
+        return await self.universal_create(
+            id=server.id,
             panel_path=panel_path,
             login=login,
             password=password,
@@ -61,26 +46,25 @@ class PanelServerRepository(ServerRepository):
             vmess_port=vmess_port,
             vmess_domain_short_id=vmess_domain_short_id
         )
-        self.session.add(panel_server)
-        await self.session.flush()
 
-    async def get_by_id(self, id: uuid.UUID) -> PanelServer | None:
-        stmt = select(PanelServer).where(PanelServer.id == id).limit(1)
-        return await self.session.scalar(stmt)
-
-    async def get_all(self) -> Sequence[PanelServer]:
-        stmt = select(PanelServer)
-        return list((await self.session.scalars(stmt)).all())
-    
-    async def set_login(self, server: PanelServer, login: str) -> None:
+    async def set_login(self,
+                        server: PanelServer,
+                        login: str
+                        ) -> None:
         server.login = login
         await self.session.flush()
 
-    async def set_password(self, server: PanelServer, password: str) -> None:
+    async def set_password(self,
+                           server: PanelServer,
+                           password: str
+                           ) -> None:
         server.password = password
         await self.session.flush()
 
-    async def set_panel_path(self, server: PanelServer, panel_path: str) -> None:
+    async def set_panel_path(self,
+                             server: PanelServer,
+                             panel_path: str
+                             ) -> None:
         server.panel_path = panel_path
         await self.session.flush()
 

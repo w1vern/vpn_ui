@@ -2,16 +2,15 @@
 
 
 import uuid
-from datetime import datetime
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database.models.base import Base
-from database.models.server import Server
+from .base import Base
+from .server import Server
 
 
-class PanelServer(Server):
+class PanelServer(Base):
     __tablename__ = 'panel_servers'
 
     id: Mapped[uuid.UUID] = mapped_column(ForeignKey('servers.id'), primary_key=True)
@@ -31,10 +30,8 @@ class PanelServer(Server):
     vmess_port: Mapped[int] = mapped_column()
     vmess_domain_short_id: Mapped[str] = mapped_column()
 
-    __mapper_args__ = {
-        "polymorphic_identity": "manager",
-    }
+    server: Mapped[Server] = relationship(lazy='selectin', foreign_keys=[id])
 
     @property
     def connection_string(self):
-        return 'https://' + self.ip + '/' + self.panel_path + ''
+        return 'https://' + self.server.ip + '/' + self.panel_path + ''

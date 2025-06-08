@@ -1,6 +1,5 @@
 
-
-import uuid
+from uuid import UUID
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -15,11 +14,9 @@ from interfaces.proxy.models import (AccessConfig, AccessConfigFactory,
 class ServerUserInbound(Base):
     __tablename__ = "server_user_inbounds"
 
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-
-    server_id: Mapped[uuid.UUID] = mapped_column(
+    server_id: Mapped[UUID] = mapped_column(
         ForeignKey("servers.id"))
-    user_id: Mapped[uuid.UUID] = mapped_column(
+    user_id: Mapped[UUID] = mapped_column(
         ForeignKey("users.id"))
 
     config_str: Mapped[str] = mapped_column()

@@ -10,8 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from back.get_auth import get_user
 from back.schemas.transaction import Transaction
 from back.schemas.user import UserSchema
-from database.database import get_db_session
 from database.enums.transaction_type import TransactionType
+from database.main import get_db_session
 from database.models.user import User
 from database.repositories.transaction_repository import TransactionRepository
 from database.repositories.user_repository import UserRepository

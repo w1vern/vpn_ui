@@ -14,7 +14,7 @@ from back.schemas import tg
 from back.schemas.tg import TgAuth, TgId
 from back.schemas.user import UserRightsSchema, UserSchema, UserSettingsSchema
 from back.token import AccessToken, RefreshToken
-from database.database import get_db_session
+from database.main import get_db_session
 from database.models.user import User
 from database.redis import RedisType, get_redis_client
 from database.repositories.user_repository import UserRepository

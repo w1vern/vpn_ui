@@ -10,7 +10,7 @@ from back.config import Config
 from back.get_auth import get_user, get_user_db
 from back.schemas.user import (EditUserSchema, UserRightsSchema, UserSchema,
                                UserSettingsSchema)
-from database.database import get_db_session
+from database.main import get_db_session
 from database.models.user import User
 from database.redis import RedisType, get_redis_client
 from database.repositories.user_repository import UserRepository

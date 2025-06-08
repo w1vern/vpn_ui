@@ -1,6 +1,7 @@
+
 from enum import Enum
 
 
-class MessageTicketType(Enum):
-    from_admin = 0b1 << 0
-    from_user = 0b1 << 1
+class MessageTicketType(str, Enum):
+    from_admin = "from_admin"
+    from_user = "from_user"

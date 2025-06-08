@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime
 
-from database.database import session_manager
+from database.main import session_manager
 from database.repositories.server_repository import ServerRepository
 
 

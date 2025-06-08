@@ -2,7 +2,7 @@ import asyncio
 import secrets
 from datetime import UTC, datetime, timedelta
 
-from database.database import session_manager
+from database.main import session_manager
 from database.models.panel_server import PanelServer
 from database.models.server import Server
 from database.models.user import User
