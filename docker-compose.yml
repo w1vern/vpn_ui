@@ -42,7 +42,7 @@ services:
 
   backend:
     <<: *service-base
-    command: bash -c "uvicorn services.back.main:app --host 0.0.0.0 --port 8000 --workers ${WORKERS_COUNT}"
+    command: bash -c "uvicorn services.backend.main:app --host 0.0.0.0 --port 8000 --workers ${WORKERS_COUNT}"
     ports:
       - "8000:8000"
     depends_on:
@@ -73,7 +73,7 @@ services:
 
   frontend:
     build:
-      context: ./services/front
+      context: ./services/frontend
     env_file:
       - prod.env
     profiles:

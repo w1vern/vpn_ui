@@ -2,19 +2,18 @@
 import random
 from datetime import UTC, datetime
 
+from fastapi import Cookie, Depends, HTTPException, Request, Response
+from fastapi_controllers import Controller, get, post
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from services.infra.database import (RedisType, UserRepository,
+                                     get_redis_client, session_manager)
+
 from ..broker import get_broker, send_message
 from ..config import Config
 from ..get_auth import get_user
-from ..schemas import (
-    TgAuth, TgId, UserSchema)
+from ..schemas import TgAuth, TgId, UserSchema
 from ..token import AccessToken, RefreshToken
-from fastapi import Cookie, Depends, HTTPException, Request, Response
-from fastapi_controllers import Controller, get, post
-from services.infra.database import (
-    session_manager, RedisType,
-    get_redis_client, UserRepository)
-
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 def create_code() -> str:

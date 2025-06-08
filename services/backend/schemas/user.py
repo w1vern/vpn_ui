@@ -3,8 +3,9 @@
 import uuid
 from datetime import datetime
 
-from services.infra.database import User
 from pydantic import BaseModel, ConfigDict
+
+from services.infra.database import User
 
 
 class UserSettingsSchema(BaseModel):

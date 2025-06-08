@@ -1,13 +1,14 @@
 
 from datetime import UTC, datetime
 
+from fastapi import Cookie, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from services.infra.database import (RedisType, User, UserRepository,
+                                     get_redis_client, session_manager)
+
 from .schemas.user import UserSchema
 from .token import AccessToken
-from fastapi import Cookie, Depends, HTTPException
-from services.infra.database import (
-    session_manager, User, UserRepository,
-    RedisType, get_redis_client)
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def get_user(access_token: str = Cookie(default=None),

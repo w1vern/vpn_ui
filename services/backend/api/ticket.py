@@ -1,11 +1,13 @@
 
 from fastapi import Depends
-from ..get_auth import get_user
-from ..schemas import (UserSchema, NewTicket, TicketMessage, ServerToCreateSchema)
 from fastapi_controllers import Controller, delete, get, post
-from services.infra.database import (session_manager, User, ServerRepository)
-
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from services.infra.database import ServerRepository, User, session_manager
+
+from ..get_auth import get_user
+from ..schemas import (NewTicket, ServerToCreateSchema, TicketMessage,
+                       UserSchema)
 
 
 class TicketController(Controller):

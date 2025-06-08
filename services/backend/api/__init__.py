@@ -1,11 +1,12 @@
 
 
+from fastapi import APIRouter
+
 from .auth import AuthController
 from .server import ServerController
 from .ticket import TicketController
 from .transaction import TransactionController
 from .user import UserController
-from fastapi import APIRouter
 
 router = APIRouter(prefix="/api")
 router.include_router(AuthController.create_router())

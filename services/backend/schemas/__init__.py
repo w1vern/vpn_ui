@@ -1,12 +1,9 @@
 
 
-from .server import (
-    ServerSchema, EditServerSchema,
-    ServerToCreateSchema)
+from .server import EditServerSchema, ServerSchema, ServerToCreateSchema
 from .tg import TgAuth, TgId
 from .ticket import NewTicket, TicketMessage
 from .transaction import Transaction
-from .user import (
-    UserSchema, UserRightsSchema,
-    UserSettingsSchema, EditUserRightsSchema,
-    EditUserSchema, EditUserSettingsSchema)
+from .user import (EditUserRightsSchema, EditUserSchema,
+                   EditUserSettingsSchema, UserRightsSchema, UserSchema,
+                   UserSettingsSchema)

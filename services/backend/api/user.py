@@ -1,14 +1,15 @@
 
 
-from ..config import Config
-from ..get_auth import get_user, get_user_db
-from ..schemas import (EditUserSchema, UserSchema)
 from fastapi import Depends, HTTPException
 from fastapi_controllers import Controller, get, post
-from services.infra.database import (
-    session_manager, User, RedisType,
-    get_redis_client, UserRepository)
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from services.infra.database import (RedisType, User, UserRepository,
+                                     get_redis_client, session_manager)
+
+from ..config import Config
+from ..get_auth import get_user, get_user_db
+from ..schemas import EditUserSchema, UserSchema
 
 
 class UserController(Controller):

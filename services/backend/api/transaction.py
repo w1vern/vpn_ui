@@ -3,15 +3,15 @@
 import uuid
 from datetime import datetime
 
-from ..get_auth import get_user
-from ..schemas import Transaction, UserSchema
 from fastapi import Depends, HTTPException
 from fastapi_controllers import Controller, get, post
-from services.infra.database import (
-    session_manager, User, UserRepository,
-    TransactionType, TransactionRepository)
-
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from services.infra.database import (TransactionRepository, TransactionType,
+                                     User, UserRepository, session_manager)
+
+from ..get_auth import get_user
+from ..schemas import Transaction, UserSchema
 
 
 class TransactionController(Controller):

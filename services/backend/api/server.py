@@ -2,17 +2,16 @@
 
 from datetime import datetime
 
-from ..get_auth import get_user
-from ..schemas import (
-    EditServerSchema, ServerSchema,
-    ServerToCreateSchema, UserSchema)
 from fastapi import Depends, HTTPException
 from fastapi_controllers import Controller, get, post
-from services.infra.database import (
-    session_manager, PanelServerRepository, ServerRepository)
-
-
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from services.infra.database import (PanelServerRepository, ServerRepository,
+                                     session_manager)
+
+from ..get_auth import get_user
+from ..schemas import (EditServerSchema, ServerSchema, ServerToCreateSchema,
+                       UserSchema)
 
 
 class ServerController(Controller):
