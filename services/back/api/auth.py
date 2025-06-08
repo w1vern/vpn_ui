@@ -2,11 +2,6 @@
 import random
 from datetime import UTC, datetime
 
-from fastapi import Cookie, Depends, HTTPException, Request, Response
-from fastapi_controllers import Controller, get, post
-from redis import Redis
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from back.broker import get_broker, send_message
 from back.config import Config
 from back.get_auth import get_user
@@ -14,10 +9,14 @@ from back.schemas import tg
 from back.schemas.tg import TgAuth, TgId
 from back.schemas.user import UserRightsSchema, UserSchema, UserSettingsSchema
 from back.token import AccessToken, RefreshToken
+from fastapi import Cookie, Depends, HTTPException, Request, Response
+from fastapi_controllers import Controller, get, post
 from infra.database.main import get_db_session
 from infra.database.models.user import User
 from infra.database.redis import RedisType, get_redis_client
 from infra.database.repositories.user_repository import UserRepository
+from redis import Redis
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 def create_code() -> str:

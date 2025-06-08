@@ -4,11 +4,12 @@ from uuid import UUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from services.infra.proxy_interface import (AccessConfig, AccessConfigFactory,
+                                            AccessType)
+
 from .base import Base
 from .server import Server
 from .user import User
-from services.infra.interfaces.proxy.models import (
-    AccessConfig, AccessConfigFactory, AccessType)
 
 
 class ServerUserInbound(Base):

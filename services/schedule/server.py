@@ -2,8 +2,7 @@
 
 from datetime import UTC, datetime
 
-from infra.database.main import session_manager
-from infra.database.repositories import ServerRepository
+from services.infra.database import ServerRepository, session_manager
 
 
 async def check_servers() -> None:

@@ -2,18 +2,17 @@
 
 from datetime import datetime
 
-from fastapi import Cookie, Depends, HTTPException
-from fastapi_controllers import Controller, get, post
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from back.config import Config
 from back.get_auth import get_user, get_user_db
 from back.schemas.user import (EditUserSchema, UserRightsSchema, UserSchema,
                                UserSettingsSchema)
+from fastapi import Cookie, Depends, HTTPException
+from fastapi_controllers import Controller, get, post
 from infra.database.main import get_db_session
 from infra.database.models.user import User
 from infra.database.redis import RedisType, get_redis_client
 from infra.database.repositories.user_repository import UserRepository
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserController(Controller):

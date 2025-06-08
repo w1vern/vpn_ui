@@ -6,8 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..enums import Rights, RightsType, Settings, SettingsType
-from ..models import User, Tariff
-
+from ..models import Tariff, User
 from .base_repository import BaseRepository
 
 

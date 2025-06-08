@@ -1,9 +1,9 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import PanelServer, Server
-from services.infra.interfaces.proxy.models import VpnType
+from services.infra.proxy_interface import VpnType
 
+from ..models import PanelServer, Server
 from .base_repository import BaseRepository
 
 

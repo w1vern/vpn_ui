@@ -4,7 +4,6 @@ import uuid
 from datetime import UTC, datetime, timedelta
 
 import jwt
-
 from back.config import SECRET, Config
 from back.schemas.user import UserSchema
 from infra.database.models.user import User

@@ -2,7 +2,7 @@
 
 import abc
 
-from database.models import User
+from services.infra.database.models.user import User
 
 from .models import AccessConfig, AccessType
 

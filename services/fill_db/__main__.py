@@ -3,10 +3,10 @@ import asyncio
 from datetime import UTC, datetime, timedelta
 
 from config import settings
-from infra.database.enums import RightsType, SettingsType
-from infra.database.main import session_manager
-from infra.database.repositories import (PanelServerRepository, ServerRepository,
-                                         TariffRepository, UserRepository)
+from services.infra.database import (PanelServerRepository, RightsType,
+                                     ServerRepository, SettingsType,
+                                     TariffRepository, UserRepository,
+                                     session_manager)
 
 default_users = [{
     "telegram_id": settings.superuser_telegram_id,

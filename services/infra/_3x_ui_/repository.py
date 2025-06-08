@@ -4,9 +4,10 @@ import json
 import uuid
 from typing import Any
 
-from _3x_ui_.session_manager import ServerSession
-from infra.database.models.user import User
-from interfaces.proxy.models import ProxyType, VpnType
+from services.infra.database.models.user import User
+from services.infra.proxy_interface import ProxyType, VpnType
+
+from .session_manager import ServerSession
 
 
 class GlobalSettings:

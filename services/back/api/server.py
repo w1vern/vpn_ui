@@ -5,19 +5,19 @@ from datetime import datetime
 from operator import is_
 from typing import Sequence
 
-from fastapi import Depends, HTTPException
-from fastapi_controllers import Controller, delete, get, post
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from back.get_auth import get_user
 from back.schemas.server import (EditServerSchema, ServerSchema,
                                  ServerToCreateSchema)
 from back.schemas.user import UserSchema
+from fastapi import Depends, HTTPException
+from fastapi_controllers import Controller, delete, get, post
 from infra.database.main import get_db_session
 from infra.database.models.server import Server
 from infra.database.models.user import User
-from infra.database.repositories.panel_server_repository import PanelServerRepository
+from infra.database.repositories.panel_server_repository import \
+    PanelServerRepository
 from infra.database.repositories.server_repository import ServerRepository
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class ServerController(Controller):

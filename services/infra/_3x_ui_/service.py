@@ -7,15 +7,16 @@ import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from _3x_ui_.repository import PanelRepository
-from _3x_ui_.session_manager import ServerSession
-from infra.database.models import PanelServer, User
-from infra.database.repositories import (PanelServerRepository,
-                                   ServerUserInboundRepository)
-from interfaces.proxy.interface import ProxyInterface
-from interfaces.proxy.models import (AccessConfig, AccessType, NoneSecurity,
-                                     ProxyConfig, ProxyType, RealityOptions,
-                                     VpnConfig, VpnType)
+from services.infra.database.models import PanelServer, User
+from services.infra.database.repositories import (PanelServerRepository,
+                                                  ServerUserInboundRepository)
+from services.infra.proxy_interface import (AccessConfig, AccessType,
+                                            NoneSecurity, ProxyConfig,
+                                            ProxyInterface, ProxyType,
+                                            RealityOptions, VpnConfig, VpnType)
+
+from .repository import PanelRepository
+from .session_manager import ServerSession
 
 
 def generate_sub_id(length: int = 16) -> str:

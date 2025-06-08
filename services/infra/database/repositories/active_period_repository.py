@@ -5,9 +5,7 @@ from datetime import UTC, datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import (User, ActivePeriod,
-                    Transaction, Tariff)
-
+from ..models import ActivePeriod, Tariff, Transaction, User
 from .base_repository import BaseRepository
 
 

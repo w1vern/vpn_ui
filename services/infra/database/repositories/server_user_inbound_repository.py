@@ -4,9 +4,9 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import ServerUserInbound, Server, User
-from services.infra.interfaces.proxy.models import AccessConfig, AccessType
+from services.infra.proxy_interface import AccessConfig, AccessType
 
+from ..models import Server, ServerUserInbound, User
 from .base_repository import BaseRepository
 
 

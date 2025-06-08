@@ -4,7 +4,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import MessageForTicket, Ticket
-
 from .base_repository import BaseRepository
 
 
