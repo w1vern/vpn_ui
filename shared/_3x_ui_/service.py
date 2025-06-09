@@ -9,11 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database.models import PanelServer, User
 from shared.database.repositories import (PanelServerRepository,
-                                                  ServerUserInboundRepository)
-from shared.proxy_interface import (AccessConfig, AccessType,
-                                            NoneSecurity, ProxyConfig,
-                                            ProxyInterface, ProxyType,
-                                            RealityOptions, VpnConfig, VpnType)
+                                          ServerUserInboundRepository)
+from shared.proxy_interface import (AccessConfig, AccessType, NoneSecurity,
+                                    ProxyConfig, ProxyInterface, ProxyType,
+                                    RealityOptions, VpnConfig, VpnType)
 
 from .repository import PanelRepository
 from .session_manager import ServerSession

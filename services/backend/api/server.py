@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (PanelServerRepository, ServerRepository,
-                                     session_manager)
+                             session_manager)
 
 from ..get_auth import get_user
 from ..schemas import (EditServerSchema, ServerSchema, ServerToCreateSchema,

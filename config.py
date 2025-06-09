@@ -1,12 +1,10 @@
+
 import os
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, DotEnvSettingsSource
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=f"{os.getenv('TARGET', 'dev')}.env")
-
     db_user: str = "postgres"
     db_password: str = "1234"
     db_ip: str = "postgres"
@@ -23,6 +21,22 @@ class Settings(BaseSettings):
     superuser_telegram_id: int = 0
     workers_count: int = 1
     compose_profiles: str = ""
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls,
+        init_settings,
+        env_settings,
+        dotenv_settings,
+        file_secret_settings,
+    ):
+        target_env = os.getenv("TARGET", "dev.") + "env"
+        return (
+            init_settings,
+            DotEnvSettingsSource(settings_cls, env_file=target_env),
+            file_secret_settings
+        )
 
 
 settings = Settings()

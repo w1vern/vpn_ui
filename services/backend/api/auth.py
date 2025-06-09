@@ -7,8 +7,8 @@ from fastapi import (APIRouter, Cookie, Depends, HTTPException, Request,
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import (RedisType, UserRepository,
-                                     get_redis_client, session_manager)
+from shared.database import (RedisType, UserRepository, get_redis_client,
+                             session_manager)
 
 from ..broker import get_broker, send_message
 from ..config import Config

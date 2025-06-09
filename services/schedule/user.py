@@ -3,10 +3,9 @@
 from datetime import UTC, datetime
 
 from shared._3x_ui_ import Service, server_session_manager
-from shared.database import (ActivePeriodRepository,
-                                     PanelServerRepository, Rights,
-                                     TransactionRepository, TransactionType,
-                                     UserRepository, session_manager)
+from shared.database import (ActivePeriodRepository, PanelServerRepository,
+                             Rights, TransactionRepository, TransactionType,
+                             UserRepository, session_manager)
 
 
 async def check_users() -> None:

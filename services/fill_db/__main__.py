@@ -4,9 +4,8 @@ from datetime import UTC, datetime, timedelta
 
 from config import settings
 from shared.database import (PanelServerRepository, RightsType,
-                                     ServerRepository, SettingsType,
-                                     TariffRepository, UserRepository,
-                                     session_manager)
+                             ServerRepository, SettingsType, TariffRepository,
+                             UserRepository, session_manager)
 
 default_users = [{
     "telegram_id": settings.superuser_telegram_id,

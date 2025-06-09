@@ -5,7 +5,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from shared.proxy_interface import (AccessConfig, AccessConfigFactory,
-                                            AccessType)
+                                    AccessType)
 
 from .base import Base
 from .server import Server

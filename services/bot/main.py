@@ -1,9 +1,10 @@
 
 from aiogram import Bot, Dispatcher
 
+from config import settings
+
 from .handlers import router
 from .lifecycle import register_lifecycle
-from config import settings
 
 
 async def main() -> None:
