@@ -3,7 +3,7 @@ import os
 
 from pydantic import BaseModel
 from pydantic_settings import (
-    BaseSettings, DotEnvSettingsSource, SettingsConfigDict)
+    BaseSettings, SettingsConfigDict)
 
 
 class DBSettings(BaseModel):
@@ -52,6 +52,7 @@ class BackendSettings(BaseModel):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
+        env_file=os.getenv("TARGET", "dev.") + "env",
         env_nested_delimiter="_",
         extra="ignore"
     )
@@ -61,22 +62,6 @@ class Settings(BaseSettings):
     rabbit: RabbitSettings = RabbitSettings()
     bot: BotSettings = BotSettings()
     backend: BackendSettings = BackendSettings()
-
-    @classmethod
-    def settings_customise_sources(
-        cls,
-        settings_cls,
-        init_settings,
-        env_settings,
-        dotenv_settings,
-        file_secret_settings,
-    ):
-        target_env = os.getenv("TARGET", "dev.") + "env"
-        return (
-            init_settings,
-            DotEnvSettingsSource(settings_cls, env_file=target_env),
-            file_secret_settings
-        )
 
 
 settings = Settings()

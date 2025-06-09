@@ -2,6 +2,8 @@
 x-service-base: &service-base
   build:
     context: .
+  env_file:
+    - .env
   depends_on:
     alembic: 
       condition: service_started
@@ -38,7 +40,7 @@ services:
 
   backend:
     <<: *service-base
-    command: bash -c "export TARGET="." && uvicorn services.backend.main:app --host 0.0.0.0 --port 8000 --workers ${BACKEND_WORKERS_COUNT}"
+    command: bash -c "uvicorn services.backend.main:app --host 0.0.0.0 --port 8000 --workers ${BACKEND_WORKERS_COUNT}"
     ports:
       - "8000:8000"
     depends_on:
@@ -49,13 +51,13 @@ services:
 
   bot:
     <<: *service-base
-    command: bash -c "export TARGET="." && python -m services.bot"
+    command: python -m services.bot
     profiles:
       - with_bot
 
   fill_db:
     <<: *service-base
-    command: bash -c "export TARGET="." && python -m services.fill_db"
+    command: python -m services.fill_db
     depends_on:
       alembic: 
         condition: service_started
@@ -63,7 +65,7 @@ services:
   alembic:
     build:
       context: .
-    command: bash -c "export TARGET="." && alembic upgrade head"
+    command: alembic upgrade head
     restart: no
     env_file:
       - .env
