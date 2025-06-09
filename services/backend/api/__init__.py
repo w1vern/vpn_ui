@@ -2,16 +2,15 @@
 
 from fastapi import APIRouter
 
-from .auth import AuthController
-from .server import ServerController
-from .ticket import TicketController
-from .transaction import TransactionController
-from .user import UserController
+from .auth import router as auth_router
+from .server import router as server_router
+from .ticket import router as ticket_router
+from .transaction import router as transaction_router
+from .user import router as user_router
 
 router = APIRouter(prefix="/api")
-router.include_router(AuthController.create_router())
-router.include_router(ServerController.create_router())
-router.include_router(TicketController.create_router())
-router.include_router(ServerController.create_router())
-router.include_router(TransactionController.create_router())
-router.include_router(UserController.create_router())
+router.include_router(auth_router)
+router.include_router(server_router)
+router.include_router(ticket_router)
+router.include_router(transaction_router)
+router.include_router(user_router)

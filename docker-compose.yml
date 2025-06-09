@@ -2,8 +2,6 @@
 x-service-base: &service-base
   build:
     context: .
-  env_file:
-    - prod.env
   depends_on:
     alembic: 
       condition: service_started
@@ -15,8 +13,6 @@ x-service-base: &service-base
 services:
   postgres:
     image: postgres:16
-    env_file:
-      - prod.env
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -42,7 +38,7 @@ services:
 
   backend:
     <<: *service-base
-    command: bash -c "uvicorn services.backend.main:app --host 0.0.0.0 --port 8000 --workers ${WORKERS_COUNT}"
+    command: bash -c "export TARGET="." && uvicorn services.backend.main:app --host 0.0.0.0 --port 8000 --workers ${BACKEND_WORKERS_COUNT}"
     ports:
       - "8000:8000"
     depends_on:
@@ -53,21 +49,24 @@ services:
 
   bot:
     <<: *service-base
-    command: python -m services.bot
+    command: bash -c "export TARGET="." && python -m services.bot"
     profiles:
       - with_bot
 
   fill_db:
     <<: *service-base
-    command: python -m services.fill_db
+    command: bash -c "export TARGET="." && python -m services.fill_db"
+    depends_on:
+      alembic: 
+        condition: service_started
 
   alembic:
     build:
       context: .
-    command: alembic upgrade head
+    command: bash -c "export TARGET="." && alembic upgrade head"
     restart: no
     env_file:
-      - prod.env
+      - .env
     depends_on:
       - postgres
 
@@ -75,7 +74,7 @@ services:
     build:
       context: ./services/frontend
     env_file:
-      - prod.env
+      - .env
     profiles:
       - with_frontend
 

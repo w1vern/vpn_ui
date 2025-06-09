@@ -72,11 +72,11 @@ def get_db_url(user: str,
 
 
 DATABASE_URL = get_db_url(
-    settings.db_user,
-    settings.db_password,
-    settings.db_ip,
-    settings.db_port,
-    settings.db_name)
+    settings.db.user,
+    settings.db.password,
+    settings.db.ip,
+    settings.db.port,
+    settings.db.name)
 
 session_manager = DatabaseSessionManager(DATABASE_URL,
                                          {"echo": False})

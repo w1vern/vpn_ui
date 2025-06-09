@@ -8,7 +8,7 @@ from .lifecycle import register_lifecycle
 
 
 async def main() -> None:
-    bot = Bot(token=settings.bot_token)
+    bot = Bot(token=settings.bot.token)
     dp = Dispatcher()
 
     dp.include_router(router)

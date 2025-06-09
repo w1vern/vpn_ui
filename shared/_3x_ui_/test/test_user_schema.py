@@ -13,7 +13,7 @@ from shared.database import UserRepository, session_manager
 async def main():
     async with session_manager.context_session() as session:
         ur = UserRepository(session)
-        user = await ur.get_by_telegram_id(settings.superuser_telegram_id)
+        user = await ur.get_by_telegram_id(settings.bot.superuser_id)
         if user is None:
             raise Exception("user not found")
         us = UserSchema.from_db(user)

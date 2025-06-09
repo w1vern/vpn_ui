@@ -15,7 +15,7 @@ class RedisType(str, Enum):
 
 def get_redis_client() -> Redis:
     return Redis(
-        host=settings.redis_ip,
-        port=settings.redis_port,
+        host=settings.redis.ip,
+        port=settings.redis.port,
         db=0,
         decode_responses=True)

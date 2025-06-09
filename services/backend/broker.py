@@ -4,7 +4,7 @@ from faststream.rabbit import RabbitBroker, fastapi
 
 from config import settings
 
-RABBIT_URL = f"amqp://{settings.rabbit_user}:{settings.rabbit_password}@{settings.rabbit_ip}:{settings.rabbit_port}/"
+RABBIT_URL = f"amqp://{settings.rabbit.user}:{settings.rabbit.password}@{settings.rabbit.ip}:{settings.rabbit.port}/"
 
 router = fastapi.RabbitRouter(RABBIT_URL)
 
