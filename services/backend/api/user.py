@@ -1,6 +1,7 @@
 
 
 from fastapi import APIRouter, Depends, HTTPException
+from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.infra.database import (RedisType, User, UserRepository,
@@ -9,7 +10,6 @@ from services.infra.database import (RedisType, User, UserRepository,
 from ..config import Config
 from ..get_auth import get_user, get_user_db
 from ..schemas import EditUserSchema, UserSchema
-from redis.asyncio import Redis
 
 router = APIRouter(prefix="/user", tags=["user"])
 

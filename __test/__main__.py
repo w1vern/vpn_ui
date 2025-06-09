@@ -1,26 +1,17 @@
 
 
 import asyncio
-import json
-import uuid
-from operator import is_
 from time import sleep
 
-from _3x_ui_ import session_manager
-from _3x_ui_.repository import PanelRepository
-from _3x_ui_.service import Service
-from _3x_ui_.session_manager import server_session_manager
-from infra.database.database import session_manager
-from infra.database.repositories.panel_server_repository import \
-    PanelServerRepository
-# from __test.test import server, user
-from infra.database.repositories.server_repository import ServerRepository
-from infra.database.repositories.user_repository import UserRepository
-from interfaces.proxy.models import *
+from services.infra._3x_ui_ import (PanelRepository, Service,
+                                    server_session_manager)
+from services.infra.database import (PanelServerRepository, ServerRepository,
+                                     UserRepository, session_manager)
+from services.infra.proxy_interface import AccessType
 
 
 async def main():
-    async with session_manager.session() as db_session:
+    async with session_manager.context_session() as db_session:
         psr = PanelServerRepository(db_session)
         ur = UserRepository(db_session)
         server = (await psr.get_all())[0]

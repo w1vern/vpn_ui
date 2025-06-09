@@ -2,13 +2,13 @@
 import random
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import (APIRouter, Cookie, Depends, HTTPException, Request,
+                     Response)
 from redis.asyncio import Redis
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.infra.database import (
-    RedisType, UserRepository,
-    get_redis_client, session_manager)
+from services.infra.database import (RedisType, UserRepository,
+                                     get_redis_client, session_manager)
 
 from ..broker import get_broker, send_message
 from ..config import Config

@@ -1,14 +1,10 @@
 
 
-
 import asyncio
 import json
-from http import server
 
-from _3x_ui_.session_manager import server_session_manager
-from infra.database.main import session_manager
-from infra.database.repositories.panel_server_repository import \
-    PanelServerRepository
+from services.infra._3x_ui_ import server_session_manager
+from services.infra.database import PanelServerRepository, session_manager
 
 obj = {
     "success": True,
@@ -33,8 +29,9 @@ obj = {
     }
 }
 
+
 async def main():
-    async with session_manager.session() as session:
+    async with session_manager.context_session() as session:
         psr = PanelServerRepository(session)
         server = (await psr.get_all())[0]
     async with server_session_manager.get_session(server) as server_session:

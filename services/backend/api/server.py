@@ -5,13 +5,12 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.infra.database import (
-    PanelServerRepository, ServerRepository, session_manager)
+from services.infra.database import (PanelServerRepository, ServerRepository,
+                                     session_manager)
 
 from ..get_auth import get_user
-from ..schemas import (
-    EditServerSchema, ServerSchema,
-    ServerToCreateSchema, UserSchema)
+from ..schemas import (EditServerSchema, ServerSchema, ServerToCreateSchema,
+                       UserSchema)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
