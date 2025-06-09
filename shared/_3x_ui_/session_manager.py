@@ -7,7 +7,7 @@ from typing import Any, AsyncIterator
 
 import httpx
 
-from services.infra.database import PanelServer
+from shared.database import PanelServer
 
 
 def parse_nested_json(obj):

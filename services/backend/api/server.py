@@ -5,7 +5,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.infra.database import (PanelServerRepository, ServerRepository,
+from shared.database import (PanelServerRepository, ServerRepository,
                                      session_manager)
 
 from ..get_auth import get_user

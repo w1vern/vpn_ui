@@ -7,10 +7,10 @@ import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.infra.database.models import PanelServer, User
-from services.infra.database.repositories import (PanelServerRepository,
+from shared.database.models import PanelServer, User
+from shared.database.repositories import (PanelServerRepository,
                                                   ServerUserInboundRepository)
-from services.infra.proxy_interface import (AccessConfig, AccessType,
+from shared.proxy_interface import (AccessConfig, AccessType,
                                             NoneSecurity, ProxyConfig,
                                             ProxyInterface, ProxyType,
                                             RealityOptions, VpnConfig, VpnType)

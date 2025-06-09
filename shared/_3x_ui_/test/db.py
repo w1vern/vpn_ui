@@ -1,12 +1,12 @@
 import asyncio
 from datetime import UTC, datetime, timedelta
 
-from services.infra.database import (PanelServer, PanelServerRepository,
+from shared.database import (PanelServer, PanelServerRepository,
                                      RightsType, Server, ServerRepository,
                                      SettingsType, TariffRepository, User,
                                      UserRepository, session_manager)
-from services.infra.database.enums.rights_type import RightsType
-from services.infra.database.enums.settings_type import SettingsType
+from shared.database.enums.rights_type import RightsType
+from shared.database.enums.settings_type import SettingsType
 
 
 async def main():

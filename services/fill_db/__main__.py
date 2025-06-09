@@ -3,7 +3,7 @@ import asyncio
 from datetime import UTC, datetime, timedelta
 
 from config import settings
-from services.infra.database import (PanelServerRepository, RightsType,
+from shared.database import (PanelServerRepository, RightsType,
                                      ServerRepository, SettingsType,
                                      TariffRepository, UserRepository,
                                      session_manager)

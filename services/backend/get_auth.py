@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 from fastapi import Cookie, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.infra.database import (RedisType, User, UserRepository,
+from shared.database import (RedisType, User, UserRepository,
                                      get_redis_client, session_manager)
 
 from .schemas.user import UserSchema

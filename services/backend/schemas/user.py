@@ -5,7 +5,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from services.infra.database import User
+from shared.database import User
 
 
 class UserSettingsSchema(BaseModel):

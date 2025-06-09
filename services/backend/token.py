@@ -5,7 +5,7 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 
-from services.infra.database import User
+from shared.database import User
 
 from .config import SECRET, Config
 from .schemas import UserSchema

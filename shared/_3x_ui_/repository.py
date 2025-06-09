@@ -4,8 +4,8 @@ import json
 import uuid
 from typing import Any
 
-from services.infra.database.models.user import User
-from services.infra.proxy_interface import ProxyType, VpnType
+from shared.database.models.user import User
+from shared.proxy_interface import ProxyType, VpnType
 
 from .session_manager import ServerSession
 

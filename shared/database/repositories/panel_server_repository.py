@@ -1,7 +1,7 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.infra.proxy_interface import VpnType
+from shared.proxy_interface import VpnType
 
 from ..models import PanelServer, Server
 from .base_repository import BaseRepository

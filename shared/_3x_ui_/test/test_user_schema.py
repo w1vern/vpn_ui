@@ -7,7 +7,7 @@ import asyncio
 
 from config import settings
 from services.backend.schemas import UserSchema
-from services.infra.database import UserRepository, session_manager
+from shared.database import UserRepository, session_manager
 
 
 async def main():

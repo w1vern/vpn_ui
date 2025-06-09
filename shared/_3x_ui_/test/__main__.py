@@ -3,11 +3,11 @@
 import asyncio
 from time import sleep
 
-from services.infra._3x_ui_ import (PanelRepository, Service,
+from shared._3x_ui_ import (PanelRepository, Service,
                                     server_session_manager)
-from services.infra.database import (PanelServerRepository, ServerRepository,
+from shared.database import (PanelServerRepository, ServerRepository,
                                      UserRepository, session_manager)
-from services.infra.proxy_interface import AccessType
+from shared.proxy_interface import AccessType
 
 
 async def main():

@@ -6,7 +6,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.infra.database import (TransactionRepository, TransactionType,
+from shared.database import (TransactionRepository, TransactionType,
                                      User, UserRepository, session_manager)
 
 from ..get_auth import get_user

@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from services.infra.proxy_interface import (AccessConfig, AccessConfigFactory,
+from shared.proxy_interface import (AccessConfig, AccessConfigFactory,
                                             AccessType)
 
 from .base import Base

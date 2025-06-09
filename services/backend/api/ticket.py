@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.infra.database import ServerRepository, User, session_manager
+from shared.database import ServerRepository, User, session_manager
 
 from ..get_auth import get_user
 from ..schemas import (NewTicket, ServerToCreateSchema, TicketMessage,
