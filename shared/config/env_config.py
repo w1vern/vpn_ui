@@ -10,36 +10,37 @@ class DBSettings(BaseModel):
     model_config = SettingsConfigDict(
         populate_by_name=True)
 
-    user: str = "postgres"
-    password: str = "1234"
-    ip: str = "postgres"
-    port: int = 5432
-    name: str = "vpn_ui_db"
+    user: str = ""
+    password: str = ""
+    ip: str = ""
+    port: int = 0
+    name: str = ""
 
 
 class RedisSettings(BaseModel):
     model_config = SettingsConfigDict(
         populate_by_name=True)
 
-    ip: str = "redis"
-    port: int = 6379
+    ip: str = ""
+    port: int = 0
 
 
 class RabbitSettings(BaseModel):
     model_config = SettingsConfigDict(
         populate_by_name=True)
 
-    user: str = "guest"
-    password: str = "guest"
-    ip: str = "rabbitmq"
-    port: int = 5672
+    user: str = ""
+    password: str = ""
+    ip: str = ""
+    port: int = 0
 
 
 class BotSettings(BaseModel):
     model_config = SettingsConfigDict(
-        populate_by_name=True)
+        populate_by_name=True,
+    )
 
-    token: str = "YOUR_BOT_TOKEN"
+    token: str = ""
     superuser: int = 0
 
 
@@ -47,12 +48,12 @@ class BackendSettings(BaseModel):
     model_config = SettingsConfigDict(
         populate_by_name=True)
 
-    secret: str = "YOUR_SECRET"
+    secret: str = ""
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=os.getenv("TARGET", "dev.env"),
+        env_file=os.getenv("ENV_FILE", "dev.env"),
         env_nested_delimiter="_",
         extra="ignore"
     )
@@ -64,7 +65,10 @@ class Settings(BaseSettings):
     backend: BackendSettings = BackendSettings()
 
 
-settings = Settings()
+env_config = Settings()
+
+if env_config.bot.superuser == 0:
+    raise ValueError("env parameters not set")
 
 if __name__ == "__main__":
-    print(settings.model_dump_json(indent=2))
+    print(env_config.model_dump_json(indent=2))

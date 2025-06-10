@@ -5,7 +5,7 @@
 
 import asyncio
 
-from config import settings
+from shared.config import env_config
 from services.backend.schemas import UserSchema
 from shared.database import UserRepository, session_manager
 
@@ -13,7 +13,7 @@ from shared.database import UserRepository, session_manager
 async def main():
     async with session_manager.context_session() as session:
         ur = UserRepository(session)
-        user = await ur.get_by_telegram_id(settings.bot.superuser)
+        user = await ur.get_by_telegram_id(env_config.bot.superuser)
         if user is None:
             raise Exception("user not found")
         us = UserSchema.from_db(user)

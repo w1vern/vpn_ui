@@ -2,13 +2,13 @@
 import asyncio
 from datetime import UTC, datetime, timedelta
 
-from config import settings
+from shared.config import env_config
 from shared.database import (PanelServerRepository, RightsType,
                              ServerRepository, SettingsType, TariffRepository,
                              UserRepository, session_manager)
 
 default_users = [{
-    "telegram_id": settings.bot.superuser,
+    "telegram_id": env_config.bot.superuser,
     "telegram_username": "Admin",
     "balance": 0,
     "rights": RightsType.super_admin.value,

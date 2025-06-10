@@ -3,9 +3,9 @@
 
 
 
-from config import settings
+from shared.config import env_config
 
-SECRET = settings.backend.secret
+SECRET = env_config.backend.secret
 
 class Config:
 	tg_code_lifetime = 60 * 2

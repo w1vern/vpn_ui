@@ -3,7 +3,7 @@ from enum import Enum
 
 from redis.asyncio import Redis
 
-from config import settings
+from shared.config import env_config
 
 
 class RedisType(str, Enum):
@@ -15,7 +15,7 @@ class RedisType(str, Enum):
 
 def get_redis_client() -> Redis:
     return Redis(
-        host=settings.redis.ip,
-        port=settings.redis.port,
+        host=env_config.redis.ip,
+        port=env_config.redis.port,
         db=0,
         decode_responses=True)

@@ -5,7 +5,7 @@ from typing import Any, AsyncGenerator, AsyncIterator
 from sqlalchemy.ext.asyncio import (AsyncConnection, AsyncSession,
                                     async_sessionmaker, create_async_engine)
 
-from config import settings
+from shared.config import env_config
 
 from .models.base import Base
 
@@ -72,11 +72,11 @@ def get_db_url(user: str,
 
 
 DATABASE_URL = get_db_url(
-    settings.db.user,
-    settings.db.password,
-    settings.db.ip,
-    settings.db.port,
-    settings.db.name)
+    env_config.db.user,
+    env_config.db.password,
+    env_config.db.ip,
+    env_config.db.port,
+    env_config.db.name)
 
 session_manager = DatabaseSessionManager(DATABASE_URL,
                                          {"echo": False})
