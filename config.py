@@ -52,7 +52,7 @@ class BackendSettings(BaseModel):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=os.getenv("TARGET", "dev.") + "env",
+        env_file=os.getenv("TARGET", "dev.env"),
         env_nested_delimiter="_",
         extra="ignore"
     )

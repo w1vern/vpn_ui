@@ -1,13 +1,13 @@
 .PHONY: back
 
 back:
-	set TARGET=dev&& uvicorn back.main:app --reload
+	uvicorn back.main:app --reload
 
 back_install:
-	poetry install
+	uv sync
 
 bot_start:
-	set TARGET=dev&& python -m bot
+	python -m bot
 
 redis:
 	docker start Redis
@@ -16,7 +16,7 @@ postgres:
 	docker start PostgreSQL
 	
 gen_migration:
-	set TARGET=dev&& alembic revision --autogenerate -m "first migration"
+	alembic revision --autogenerate -m "first migration"
 
 migration:
 	alembic upgrade head
@@ -25,16 +25,13 @@ down_migration:
 	alembic downgrade -1
 
 fill_db:
-	set TARGET=dev&& python -m static.fill_db
+	python -m services.fill_db
 
 create_postgres:
 	docker run --name PostgreSQL -p 5432:5432 -e POSTGRES_PASSWORD=1234 -d postgres
 
 create_redis:
 	docker run --name Redis -p 6379:6379 -d redis
-
-main_install:
-	poetry install
 
 proxy_install:
 	npm install --prefix ./proxy
@@ -49,13 +46,13 @@ rabbit:
 	docker start RabbitMQ
 
 docker:
-	docker compose --env-file prod.env up -d
+	docker compose up -d
 
 docker_down:
 	docker compose down --volumes
 
 docker_build:
-	docker compose --env-file prod.env up -d --build
+	docker compose up -d --build
 
 add_frontend:
 	git submodule add --name frontend https://github.com/ImmortalAI/vpn_front_vue services/frontend
