@@ -46,21 +46,26 @@ services:
     depends_on:
       redis: 
         condition: service_started
+      fill_db: 
+        condition: service_completed_successfully
     profiles:
       - with_backend
 
   bot:
     <<: *service-base
     command: python -m services.bot
+    depends_on:
+      fill_db: 
+        condition: service_completed_successfully
     profiles:
       - with_bot
-
+    
   fill_db:
     <<: *service-base
     command: python -m services.fill_db
     depends_on:
       alembic: 
-        condition: service_started
+        condition: service_completed_successfully
 
   alembic:
     build:
@@ -77,6 +82,9 @@ services:
       context: ./services/frontend
     env_file:
       - .env
+    depends_on:
+      backend:
+        condition: service_started
     profiles:
       - with_frontend
 
