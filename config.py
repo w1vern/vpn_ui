@@ -40,7 +40,7 @@ class BotSettings(BaseModel):
         populate_by_name=True)
 
     token: str = "YOUR_BOT_TOKEN"
-    superuser_id: int = 0
+    superuser: int = 0
 
 
 class BackendSettings(BaseModel):

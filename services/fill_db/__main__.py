@@ -8,7 +8,7 @@ from shared.database import (PanelServerRepository, RightsType,
                              UserRepository, session_manager)
 
 default_users = [{
-    "telegram_id": settings.bot.superuser_id,
+    "telegram_id": settings.bot.superuser,
     "telegram_username": "Admin",
     "balance": 0,
     "rights": RightsType.super_admin.value,
