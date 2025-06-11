@@ -15,7 +15,7 @@ from redis.asyncio import Redis
 async def get_user(access_token: str | None = Cookie(default=None),
                    redis: Redis=Depends(get_redis_client)
                    ) -> UserSchema:
-    if not access_token:
+    if access_token is None:
         raise HTTPException(
             status_code=401, detail="access token doesn't exist")
     access = AccessToken.from_token(access_token)

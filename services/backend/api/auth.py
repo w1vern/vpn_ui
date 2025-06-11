@@ -31,9 +31,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 )
 async def refresh(response: Response,
                   session: AsyncSession = Depends(session_manager.session),
-                  refresh_token: str = Cookie(None)
+                  refresh_token: str | None = Cookie(None)
                   ):
-    if not refresh_token:
+    if refresh_token is None:
         raise HTTPException(
             status_code=401, detail="refresh token doesn't exist")
     refresh = RefreshToken.from_token(refresh_token)

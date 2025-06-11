@@ -90,7 +90,7 @@ async def main() -> None:
 
             await ur.create(**{
                 **user,
-                  **{"tariff_id": UUID(_.id)
+                  **{"tariff_id": str(_.id)
                      }})
 
         sr = ServerRepository(session)
