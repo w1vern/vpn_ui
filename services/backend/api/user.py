@@ -26,7 +26,7 @@ async def get_all(user: UserSchema = Depends(get_user),
             status_code=403, detail="user is not control panel member")
     ur = UserRepository(session)
     users = await ur.get_all()
-    users_to_send = []
+    users_to_send: list[UserSchema] = []
     for u in users:
         users_to_send.append(UserSchema.from_db(u))
     return users_to_send

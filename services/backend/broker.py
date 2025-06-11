@@ -1,6 +1,7 @@
 
 
 from faststream.rabbit import RabbitBroker, fastapi
+from pydantic import BaseModel
 
 from shared.config import env_config
 
@@ -8,9 +9,13 @@ RABBIT_URL = f"amqp://{env_config.rabbit.user}:{env_config.rabbit.password}@{env
 
 router = fastapi.RabbitRouter(RABBIT_URL)
 
+class CodeToTG(BaseModel):
+    tg_id: int
+    code: str
+
 def get_broker() -> RabbitBroker:
     return router.broker
 
-async def send_message(data: dict, broker: RabbitBroker) -> None:
+async def send_message(data: CodeToTG, broker: RabbitBroker) -> None:
     await broker.publish(data, "message")
     

@@ -47,11 +47,11 @@ class AccessConfigFactory:
     __registry: dict[str, AccessConfig] = {}
 
     @classmethod
-    def register(cls, name, config_class):
+    def register(cls, name: str, config_class):
         cls.__registry[name] = config_class
 
     @classmethod
-    def from_string(cls, access_config_str):
+    def from_string(cls, access_config_str: str) -> AccessConfig:
         d = json.loads(access_config_str)
         name = d['class_name']
         if name not in cls.__registry:

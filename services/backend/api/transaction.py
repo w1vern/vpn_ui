@@ -6,7 +6,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import (TransactionRepository, TransactionType, User,
+from shared.database import (TransactionRepository, TransactionType,
                              UserRepository, session_manager)
 
 from ..get_auth import get_user
@@ -56,7 +56,7 @@ async def get_all_transactions(user: UserSchema = Depends(get_user),
         raise HTTPException(status_code=403, detail="no rights")
     tr = TransactionRepository(session)
     transactions = await tr.get_all()
-    tr_to_send = []
+    tr_to_send: list[Transaction] = []
     for transaction in transactions:
         tr_to_send.append(Transaction(user_id=str(transaction.user_id), amount=transaction.amount,
                                       date=transaction.date.isoformat(), type=TransactionType(transaction.transaction_type).name))

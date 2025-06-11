@@ -1,5 +1,6 @@
 
 
+from typing import Any
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -11,9 +12,22 @@ from .config import SECRET, Config
 from .schemas import UserSchema
 
 
+def decode_jwt(token: str) -> dict[str, Any]:
+    return jwt.decode(  # type: ignore
+        token,
+        key=SECRET,
+        algorithms=[Config.algorithm])
+
+
+def encode_jwt(payload: dict[str, Any]) -> str:
+    return jwt.encode(  # type: ignore
+        payload,
+        key=SECRET)
+
+
 class AccessToken:
     def __init__(self,
-                 user: User | UserSchema | dict,
+                 user: User | UserSchema | dict[str, Any],
                  created_date: datetime | str | None = None,
                  lifetime: timedelta | float | None = None
                  ) -> None:
@@ -38,16 +52,14 @@ class AccessToken:
 
     @classmethod
     def from_token(cls, token: str) -> "AccessToken":
-        return AccessToken(**jwt.decode(jwt=token,
-                                        key=SECRET,
-                                        algorithms=[Config.algorithm]))
+        return AccessToken(**decode_jwt(token))
 
     def to_token(self) -> str:
-        return jwt.encode(payload={
+        return encode_jwt({
             "created_date": self.created_date.isoformat(),
             "lifetime": self.lifetime.total_seconds(),
             "user": self.user.model_dump(mode="json")
-        }, key=SECRET)
+        })
 
 
 class RefreshToken:
@@ -77,14 +89,12 @@ class RefreshToken:
 
     @classmethod
     def from_token(cls, token: str) -> "RefreshToken":
-        return RefreshToken(**jwt.decode(jwt=token,
-                                         key=SECRET,
-                                         algorithms=[Config.algorithm]))
+        return RefreshToken(**decode_jwt(token))
 
     def to_token(self) -> str:
-        return jwt.encode(payload={
+        return encode_jwt({
             "created_date": self.created_date.isoformat(),
             "lifetime": self.lifetime.total_seconds(),
             "user_id": str(self.user_id),
             "secret": self.secret
-        }, key=SECRET)
+        })

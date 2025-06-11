@@ -23,8 +23,8 @@ def generate_sub_id(length: int = 16) -> str:
 
 
 def generate_short_ids(count: int = 1) -> list[str]:
-    res = []
-    for i in range(count):
+    res: list[str] = []
+    for _ in range(count):
         length = random.randint(16, 16)
         res.append(
             hex(random.randint(0b1 << 4 * (length-1), 0b1 << 4 * length))[2:])
@@ -260,9 +260,9 @@ class Service(ProxyInterface):
 
     async def get_configs(self, user: User) -> list[AccessConfig]:
         connections = await self.__suir.get_by_server_and_user(self.__server_session.server.server, user)
-        configs = []
+        configs: list[AccessConfig] = []
         for connection in connections:
-            if not self.config_is_valid(user, connection.config):
+            if not await self.config_is_valid(user, connection.config):
                 del (connections[connections.index(connection)])
             else:
                 configs.append(connection.config)
@@ -270,7 +270,7 @@ class Service(ProxyInterface):
 
     async def get_traffic(self, user: User) -> int:
         connections = await self.__suir.get_by_server_and_user(self.__server_session.server.server, user)
-        traffic = 0
+        traffic: int = 0
         for connection in connections:
             if connection.access_type in ProxyType:
                 response = await self.__pr.get_inbound_info(connection.config.id)

@@ -1,6 +1,8 @@
 
 import asyncio
 from datetime import UTC, datetime, timedelta
+from typing import Any
+from uuid import UUID
 
 from sqlalchemy import text
 
@@ -9,15 +11,17 @@ from shared.database import (PanelServerRepository, RightsType,
                              ServerRepository, SettingsType, TariffRepository,
                              UserRepository, session_manager)
 
-default_users = [{
-    "telegram_id": env_config.bot.superuser,
-    "telegram_username": "Admin",
-    "balance": 0,
-    "rights": RightsType.super_admin.value,
-    "settings": SettingsType.default.value,
-}]
+default_users: list[dict[str, Any]] = [
+    {
+        "telegram_id": env_config.bot.superuser,
+        "telegram_username": "Admin",
+        "balance": 0,
+        "rights": RightsType.super_admin.value,
+        "settings": SettingsType.default.value,
+    }
+]
 
-default_tariffs = [
+default_tariffs: list[dict[str, Any]] = [
     {
         "name": "default",
         "duration": timedelta(days=1),
@@ -27,7 +31,7 @@ default_tariffs = [
     }
 ]
 
-default_servers = [
+default_servers: list[dict[str, Any]] = [
     {
         "ip": "localhost",
         "country_code": "ru",
@@ -38,7 +42,7 @@ default_servers = [
     }
 ]
 
-default_panel_servers = [
+default_panel_servers: list[dict[str, Any]] = [
     {
         "panel_path": "",
         "login": "admin",
@@ -83,7 +87,11 @@ async def main() -> None:
             raise Exception("tariff not created")
 
         for user in default_users:
-            await ur.create(**{**user,  **{"tariff_id": str(_.id)}})
+
+            await ur.create(**{
+                **user,
+                  **{"tariff_id": UUID(_.id)
+                     }})
 
         sr = ServerRepository(session)
         psr = PanelServerRepository(session)

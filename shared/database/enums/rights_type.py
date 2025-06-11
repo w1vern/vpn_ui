@@ -1,3 +1,4 @@
+
 from enum import Enum
 
 from .rights import Rights

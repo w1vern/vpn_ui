@@ -28,7 +28,7 @@ async def get_all(user: UserSchema = Depends(get_user),
             status_code=403, detail="user is not control panel member")
     psr = PanelServerRepository(session)
     servers = await psr.get_all()
-    result = []
+    result: list[ServerSchema] = []
     for server in servers:
         server_to_send = ServerSchema(
             id=server.id,

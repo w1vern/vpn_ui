@@ -1,6 +1,7 @@
 
 import random
 from datetime import UTC, datetime
+from faststream.rabbit import RabbitBroker
 
 from fastapi import (APIRouter, Cookie, Depends, HTTPException, Request,
                      Response)
@@ -10,10 +11,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.database import (RedisType, UserRepository, get_redis_client,
                              session_manager)
 
-from ..broker import get_broker, send_message
+from ..broker import CodeToTG, get_broker, send_message
 from ..config import Config
-from ..get_auth import get_user
-from ..schemas import TgAuth, TgId, UserSchema
+from ..schemas import TgAuth, TgId
 from ..token import AccessToken, RefreshToken
 
 
@@ -33,7 +33,7 @@ async def refresh(response: Response,
                   session: AsyncSession = Depends(session_manager.session),
                   refresh_token: str = Cookie(None)
                   ):
-    if refresh_token is None:
+    if not refresh_token:
         raise HTTPException(
             status_code=401, detail="refresh token doesn't exist")
     refresh = RefreshToken.from_token(refresh_token)
@@ -113,7 +113,7 @@ async def login(request: Request,
 async def logout(response: Response,
                  refresh_token: str = Cookie(None)
                  ):
-    if refresh_token is None:
+    if not refresh_token:
         raise HTTPException(status_code=401, detail="unauthorized")
     response.delete_cookie(key="refresh_token")
     response.delete_cookie(key="access_token")
@@ -125,7 +125,7 @@ async def logout(response: Response,
     summary="Send a Telegram login code"
 )
 async def tg_code(request: Request,
-                  tg_id: TgId, broker=Depends(get_broker),
+                  tg_id: TgId, broker: RabbitBroker = Depends(get_broker),
                   redis: Redis = Depends(get_redis_client),
                   session: AsyncSession = Depends(session_manager.session)
                   ):
@@ -153,5 +153,8 @@ async def tg_code(request: Request,
     tg_code = create_code()
     await redis.set(f"{RedisType.tg_code}:{user.telegram_id}",
                     tg_code, ex=Config.tg_code_lifetime)
-    await send_message({"tg_id": tg_id.tg_id, "text": "your code to login: " + tg_code}, broker)
+    await send_message(CodeToTG(
+        tg_id=tg_id.tg_id,
+        code=tg_code),
+        broker)
     return {"message": "OK"}

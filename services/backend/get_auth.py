@@ -9,12 +9,13 @@ from shared.database import (RedisType, User, UserRepository, get_redis_client,
 
 from .schemas.user import UserSchema
 from .token import AccessToken
+from redis.asyncio import Redis
 
 
-async def get_user(access_token: str = Cookie(default=None),
-                   redis=Depends(get_redis_client)
+async def get_user(access_token: str | None = Cookie(default=None),
+                   redis: Redis=Depends(get_redis_client)
                    ) -> UserSchema:
-    if access_token is None:
+    if not access_token:
         raise HTTPException(
             status_code=401, detail="access token doesn't exist")
     access = AccessToken.from_token(access_token)
@@ -23,7 +24,7 @@ async def get_user(access_token: str = Cookie(default=None),
         raise HTTPException(status_code=401, detail="access token expired")
     if redis.exists(f"{RedisType.invalidated_access_token}:{access.user.id}"):
         raise HTTPException(status_code=401, detail="access token invalidated")
-    if access.user is None:
+    if not access.user:
         raise HTTPException(status_code=401, detail="access token damaged")
     return access.user
 

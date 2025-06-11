@@ -10,3 +10,17 @@ from .tg_bot_token_repository import TgBotTokenRepository
 from .ticket_repository import TicketRepository
 from .transaction_repository import TransactionRepository
 from .user_repository import UserRepository
+
+__all__ = [
+    'ActivePeriodRepository',
+    'MessageForTicketRepository',
+    'PanelServerRepository',
+    'ServerRepository',
+    'ServerUserInboundRepository',
+    'TariffRepository',
+    'TelegramMessageRepository',
+    'TgBotTokenRepository',
+    'TicketRepository',
+    'TransactionRepository',
+    'UserRepository',
+]

@@ -19,7 +19,7 @@ class BaseRepository(Generic[ModelType]):
         self.session = session
         self.model = model
 
-    async def universal_create(self, **kwargs) -> ModelType:
+    async def universal_create(self, **kwargs: dict[str, object]) -> ModelType:
         model = self.model(**kwargs)
         self.session.add(model)
         await self.session.flush()
@@ -39,7 +39,7 @@ class BaseRepository(Generic[ModelType]):
         stmt = select(self.model).where(self.model.deleted_date == None)
         return list((await self.session.scalars(stmt)).all())
     
-    async def get_all_filtered(self, **kwargs) -> list[ModelType]:
+    async def get_all_filtered(self, **kwargs: dict[str, object]) -> list[ModelType]:
         stmt = select(self.model).where(self.model.deleted_date == None, **kwargs)
         return list((await self.session.scalars(stmt)).all())
 
