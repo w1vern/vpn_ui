@@ -63,9 +63,6 @@ services:
   fill_db:
     <<: *service-base
     command: python -m services.fill_db
-    depends_on:
-      alembic: 
-        condition: service_started
 
   alembic:
     build:
