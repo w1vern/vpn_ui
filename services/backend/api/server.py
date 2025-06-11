@@ -1,6 +1,7 @@
 
 
 from datetime import datetime
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,10 +13,13 @@ from ..get_auth import get_user
 from ..schemas import (EditServerSchema, ServerSchema, ServerToCreateSchema,
                        UserSchema)
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/server", tags=["server"])
 
 
-@router.get("/get_all")
+@router.get(
+    path="/all",
+    summary="Get all servers"
+)
 async def get_all(user: UserSchema = Depends(get_user),
                   session: AsyncSession = Depends(session_manager.session)
                   ) -> list[ServerSchema]:
@@ -42,18 +46,10 @@ async def get_all(user: UserSchema = Depends(get_user),
     return result
 
 
-@router.post("/create",
-             summary="Create a new server",
-             description=(
-                 "This endpoint allows the user to create a new server. "
-                 "If a server with the provided ID already exists, a 400 error is returned."
-             ),
-             responses={
-                 200: {"description": "Server successfully created"},
-                 400: {"description": "Server already exists"},
-                 401: {"description": "Unauthorized user"},
-             },
-             )
+@router.post(
+    path="",
+    summary="Create a new server",
+)
 async def create_server(server_to_create: ServerToCreateSchema,
                         user: UserSchema = Depends(get_user),
                         session: AsyncSession = Depends(
@@ -84,19 +80,12 @@ async def create_server(server_to_create: ServerToCreateSchema,
     return {"message": "OK"}
 
 
-@router.post("/edit",
-             summary="Update an existing server",
-             description=(
-                 "This endpoint allows the user to update an existing server's details. "
-                 "The new server data must be provided in the request body."
-             ),
-             responses={
-                 200: {"description": "Server successfully updated"},
-                 401: {"description": "Unauthorized user"},
-                 404: {"description": "Server not found"},
-             },
-             )
-async def edit_server(server_to_edit: EditServerSchema,
+@router.patch(
+    path="/{server_id}",
+    summary="Update an existing server",
+)
+async def edit_server(server_id: UUID,
+                      server_to_edit: EditServerSchema,
                       user: UserSchema = Depends(get_user),
                       session: AsyncSession = Depends(session_manager.session)
                       ):
@@ -108,8 +97,8 @@ async def edit_server(server_to_edit: EditServerSchema,
             status_code=403, detail="user is not server editor")
     sr = ServerRepository(session)
     psr = PanelServerRepository(session)
-    server = await sr.get_by_id(server_to_edit.id)
-    pserver = await psr.get_by_id(server_to_edit.id)
+    server = await sr.get_by_id(server_id)
+    pserver = await psr.get_by_id(server_id)
     if not (server and pserver):
         raise HTTPException(status_code=404, detail="Server not found")
     if server_to_edit.ip is not None:

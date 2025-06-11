@@ -79,7 +79,6 @@ class EditUserRightsSchema(BaseModel):
 
 
 class EditUserSchema(BaseModel):
-    id: uuid.UUID
     telegram_id: int | None
     created_date: str | None
     rights: EditUserRightsSchema | None

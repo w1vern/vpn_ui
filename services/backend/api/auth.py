@@ -25,24 +25,10 @@ def create_code() -> str:
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/refresh",
-             summary="Refresh the access token",
-             description=(
-                 "This endpoint refreshes the access token (`access_token`) using the provided "
-                 "`refresh_token`. If the `refresh_token` is missing, expired, or invalid, "
-                 "it returns a 401 Unauthorized error."
-             ),
-             responses={
-                 200: {
-                     "description": "Access token successfully refreshed",
-                     "content": {
-                         "application/json": {
-                             "example": {"message": "OK"}
-                         }
-                     },
-                 },
-                 401: {"description": "Invalid or expired refresh token"},
-             },)
+@router.post(
+    path="/refresh",
+    summary="Refresh the access token"
+)
 async def refresh(response: Response,
                   session: AsyncSession = Depends(session_manager.session),
                   refresh_token: str = Cookie(None)
@@ -69,30 +55,10 @@ async def refresh(response: Response,
     return {"message": "OK"}
 
 
-@router.post("/login",
-             summary="Login using Telegram authentication",
-             description=(
-                 "This endpoint authenticates the user using their Telegram credentials. "
-                 "It verifies the provided Telegram code (`tg_code`) and generates both "
-                 "`access_token` and `refresh_token`. These tokens are set as HTTP-only cookies."
-             ),
-             responses={
-                 200: {
-                     "description": "User successfully authenticated",
-                     "content": {
-                         "application/json": {
-                             "example": {"message": "OK"}
-                         }
-                     },
-                 },
-                 401: {
-                     "description": (
-                         "Authentication failed due to incorrect Telegram code, missing user, "
-                         "or invalid credentials"
-                     ),
-                 },
-             },
-             )
+@router.post(
+    path="/login",
+    summary="Login using Telegram authentication"
+)
 async def login(request: Request,
                 response: Response,
                 tg_auth: TgAuth,
@@ -141,15 +107,8 @@ async def login(request: Request,
 
 
 @router.post(
-    "/logout",
-    summary="Logout the user",
-    description=(
-        "This endpoint logs out the user by deleting the `refresh_token` and `access_token` cookies. "
-        "No authentication is required to call this endpoint."
-    ),
-    responses={
-        200: {"description": "User successfully logged out"},
-    },
+    path="/logout",
+    summary="Logout the user"
 )
 async def logout(response: Response,
                  refresh_token: str = Cookie(None)
@@ -162,16 +121,8 @@ async def logout(response: Response,
 
 
 @router.post(
-    "/tg_code",
-    summary="Send a Telegram login code",
-    description=(
-        "This endpoint generates a login code for the user associated with the provided Telegram ID. "
-        "The code is stored in Redis with a time-to-live (TTL) and sent to the user's Telegram account."
-    ),
-    responses={
-        200: {"description": "Code successfully generated and sent"},
-        401: {"description": "User with the provided Telegram ID not found"},
-    },
+    path="/tg_code",
+    summary="Send a Telegram login code"
 )
 async def tg_code(request: Request,
                   tg_id: TgId, broker=Depends(get_broker),
@@ -204,9 +155,3 @@ async def tg_code(request: Request,
                     tg_code, ex=Config.tg_code_lifetime)
     await send_message({"tg_id": tg_id.tg_id, "text": "your code to login: " + tg_code}, broker)
     return {"message": "OK"}
-
-
-@router.get("/user_info", response_model=UserSchema)
-async def get_user_info(user: UserSchema = Depends(get_user)
-                        ) -> UserSchema:
-    return user

@@ -15,7 +15,10 @@ from ..schemas import Transaction, UserSchema
 router = APIRouter(prefix="/transaction", tags=["transaction"])
 
 
-@router.post("/create")
+@router.post(
+    path="",
+    summary="Create a new transaction"
+)
 async def create_transaction(transaction_to_create: Transaction,
                              user: UserSchema = Depends(get_user),
                              session: AsyncSession = Depends(
@@ -41,7 +44,10 @@ async def create_transaction(transaction_to_create: Transaction,
     return {"message": "OK"}
 
 
-@router.get("/get_all")
+@router.get(
+    path="/all",
+    summary="Get all transactions"
+)
 async def get_all_transactions(user: UserSchema = Depends(get_user),
                                session: AsyncSession = Depends(
                                    session_manager.session)

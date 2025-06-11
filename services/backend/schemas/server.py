@@ -1,12 +1,12 @@
 
 
-import uuid
+from uuid import UUID
 
 from pydantic import BaseModel
 
 
 class ServerSchema(BaseModel):
-    id: uuid.UUID
+    id: UUID
     ip: str
     country_code: str
     is_available: bool
@@ -19,7 +19,6 @@ class ServerSchema(BaseModel):
     password: str
 
 class EditServerSchema(BaseModel):
-    id: uuid.UUID
     ip: str | None
     country_code: str | None
     is_available: bool | None

@@ -14,7 +14,10 @@ from ..schemas import EditUserSchema, UserSchema
 router = APIRouter(prefix="/user", tags=["user"])
 
 
-@router.get("/get_all")
+@router.get(
+    path="/all",
+    summary="Get all users"
+)
 async def get_all(user: UserSchema = Depends(get_user),
                   session: AsyncSession = Depends(session_manager.session)
                   ) -> list[UserSchema]:
@@ -29,7 +32,9 @@ async def get_all(user: UserSchema = Depends(get_user),
     return users_to_send
 
 
-@router.post("/edit")
+@router.patch(
+    path="/{user_id}",
+    summary="Edit user")
 async def edit_user(user_to_edit: EditUserSchema,
                     user: User = Depends(get_user_db),
                     redis: Redis = Depends(get_redis_client),
@@ -64,3 +69,11 @@ async def edit_user(user_to_edit: EditUserSchema,
             raise HTTPException(status_code=403, detail="no rights")
 
     return {'message': 'OK'}
+
+
+@router.get(
+    path="",
+    summary="Get self info")
+async def get_self_info(user: UserSchema = Depends(get_user)
+                        ) -> UserSchema:
+    return user

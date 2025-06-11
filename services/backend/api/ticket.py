@@ -11,57 +11,36 @@ from ..schemas import (NewTicket, ServerToCreateSchema, TicketMessage,
 router = APIRouter(prefix="/ticket", tags=["ticket"])
 
 
-
-@router.post("/new_ticket",
-        summary="Create a new feedback ticket",
-        description=(
-            "This endpoint allows the user to create a new feedback ticket. "
-            "The ticket details are provided in the request body."
-        ),
-        responses={
-            200: {"description": "Ticket successfully created"},
-            401: {"description": "Unauthorized user"},
-            400: {"description": "Invalid ticket data"},
-        },
-        )
-async def create_new_ticket(new_ticket: NewTicket, 
-                            user: UserSchema = Depends(get_user), 
-                            session: AsyncSession = Depends(session_manager.session)
+@router.post(
+    path="",
+    summary="Create a new feedback ticket"
+)
+async def create_new_ticket(new_ticket: NewTicket,
+                            user: UserSchema = Depends(get_user),
+                            session: AsyncSession = Depends(
+                                session_manager.session)
                             ):
     pass
 
-@router.post("/new_message",
-        summary="Add a message to an existing ticket",
-        description=(
-            "This endpoint allows the user to add a new message to an existing feedback ticket. "
-            "The message details are provided in the request body."
-        ),
-        responses={
-            200: {"description": "Message successfully added to the ticket"},
-            401: {"description": "Unauthorized user"},
-            404: {"description": "Ticket not found"},
-        },
-        )
-async def new_message_ticket(self, 
-                             message: TicketMessage, 
+
+@router.post(
+    path="/new_message",
+    summary="Add a new message to an existing ticket"
+)
+async def new_message_ticket(self,
+                             message: TicketMessage,
                              user: UserSchema = Depends(get_user),
-                             session: AsyncSession = Depends(session_manager.session)
+                             session: AsyncSession = Depends(
+                                 session_manager.session)
                              ):
     pass
 
-@router.post("/close_ticket",
-        summary="Close an existing feedback ticket",
-        description=(
-            "This endpoint allows the user to close an existing feedback ticket. "
-            "The user must have the necessary permissions to perform this action."
-        ),
-        responses={
-            200: {"description": "Ticket successfully closed"},
-            401: {"description": "Unauthorized user"},
-            404: {"description": "Ticket not found"},
-        },
-        )
-async def close_ticket(self, 
+
+@router.patch(
+    path="/close_ticket/{ticket_id}",
+    summary="Close an existing feedback ticket"
+)
+async def close_ticket(self,
                        user: UserSchema = Depends(get_user),
                        session: AsyncSession = Depends(session_manager.session)
                        ):
