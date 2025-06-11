@@ -47,7 +47,7 @@ services:
       redis: 
         condition: service_started
       fill_db: 
-        condition: service_started
+        condition: service_completed_successfully
     profiles:
       - with_backend
 
@@ -56,7 +56,7 @@ services:
     command: python -m services.bot
     depends_on:
       fill_db: 
-        condition: service_started
+        condition: service_completed_successfully
     profiles:
       - with_bot
     
