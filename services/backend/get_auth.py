@@ -2,18 +2,18 @@
 from datetime import UTC, datetime
 
 from fastapi import Cookie, Depends, HTTPException
+from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import (RedisType, User, UserRepository, get_redis_client,
-                             session_manager)
+from shared.database import User, UserRepository, session_manager
+from shared.infrastructure import RedisType, get_redis_client
 
 from .schemas.user import UserSchema
 from .token import AccessToken
-from redis.asyncio import Redis
 
 
 async def get_user(access_token: str | None = Cookie(default=None),
-                   redis: Redis=Depends(get_redis_client)
+                   redis: Redis = Depends(get_redis_client)
                    ) -> UserSchema:
     if access_token is None:
         raise HTTPException(

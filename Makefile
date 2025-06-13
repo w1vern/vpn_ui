@@ -1,13 +1,13 @@
 .PHONY: back
 
 back:
-	uvicorn back.main:app --reload
+	uvicorn services.backend.main:app --reload
 
 back_install:
 	uv sync
 
-bot_start:
-	python -m bot
+bot:
+	python -m services.bot
 
 redis:
 	docker start Redis

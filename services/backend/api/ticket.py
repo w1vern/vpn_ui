@@ -5,8 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.database import session_manager
 
 from ..get_auth import get_user
-from ..schemas import (NewTicket, TicketMessage,
-                       UserSchema)
+from ..schemas import NewTicket, TicketMessage, UserSchema
 
 router = APIRouter(prefix="/ticket", tags=["ticket"])
 

@@ -8,7 +8,6 @@ from .user import (EditUserRightsSchema, EditUserSchema,
                    EditUserSettingsSchema, UserRightsSchema, UserSchema,
                    UserSettingsSchema)
 
-
 __all__ = [
     "EditServerSchema",
     "ServerSchema",

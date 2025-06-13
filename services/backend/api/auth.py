@@ -1,18 +1,18 @@
 
 import random
 from datetime import UTC, datetime
-from faststream.rabbit import RabbitBroker
 
 from fastapi import (APIRouter, Cookie, Depends, HTTPException, Request,
                      Response)
+from faststream.rabbit import RabbitBroker
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import (RedisType, UserRepository, get_redis_client,
-                             session_manager)
+from shared.database import UserRepository, session_manager
+from shared.infrastructure import RedisType, get_redis_client
 
-from ..broker import CodeToTG, get_broker, send_message
 from ..config import Config
+from ..rabbit import CodeToTG, get_broker, send_tg_code
 from ..schemas import TgAuth, TgId
 from ..token import AccessToken, RefreshToken
 
@@ -125,7 +125,8 @@ async def logout(response: Response,
     summary="Send a Telegram login code"
 )
 async def tg_code(request: Request,
-                  tg_id: TgId, broker: RabbitBroker = Depends(get_broker),
+                  tg_id: TgId,
+                  broker: RabbitBroker = Depends(get_broker),
                   redis: Redis = Depends(get_redis_client),
                   session: AsyncSession = Depends(session_manager.session)
                   ):
@@ -153,7 +154,7 @@ async def tg_code(request: Request,
     tg_code = create_code()
     await redis.set(f"{RedisType.tg_code}:{user.telegram_id}",
                     tg_code, ex=Config.tg_code_lifetime)
-    await send_message(CodeToTG(
+    await send_tg_code(CodeToTG(
         tg_id=tg_id.tg_id,
         code=tg_code),
         broker)

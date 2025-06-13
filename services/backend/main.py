@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 
 from .api import router
-from .broker import router as faststream_router
+from .rabbit import router as faststream_router
 
 app = FastAPI(docs_url="/api/docs",
               redoc_url="/api/redoc",
