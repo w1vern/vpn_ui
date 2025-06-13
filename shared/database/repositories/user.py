@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..enums import Rights, RightsType, Settings, SettingsType
 from ..models import Tariff, User
-from .base_repository import BaseRepository
+from .base import BaseRepository
 
 
 class UserRepository(BaseRepository[User]):

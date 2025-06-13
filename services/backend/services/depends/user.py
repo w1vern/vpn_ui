@@ -8,8 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.database import User, UserRepository, session_manager
 from shared.infrastructure import RedisType, get_redis_client
 
-from .schemas.user import UserSchema
-from .token import AccessToken
+from ...schemas.user import UserSchema
+from ...token import AccessToken
 
 
 async def get_user(access_token: str | None = Cookie(default=None),
@@ -29,7 +29,7 @@ async def get_user(access_token: str | None = Cookie(default=None),
     return access.user
 
 
-async def get_user_db(user: UserSchema = Depends(get_user),
+async def get_db_user(user: UserSchema = Depends(get_user),
                       session: AsyncSession = Depends(session_manager.session)
                       ) -> User:
     ur = UserRepository(session)

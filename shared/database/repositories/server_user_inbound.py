@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.proxy_interface import AccessConfig, AccessType
 
 from ..models import Server, ServerUserInbound, User
-from .base_repository import BaseRepository
+from .base import BaseRepository
 
 
 class ServerUserInboundRepository(BaseRepository[ServerUserInbound]):

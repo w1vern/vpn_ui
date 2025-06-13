@@ -23,4 +23,10 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["isort>=6.0.1"]
+dev = [
+    "cli-tools",
+    "isort>=6.0.1",
+]
+
+[tool.uv.sources]
+cli-tools = { git = "https://github.com/w1vern/cli_tools" }

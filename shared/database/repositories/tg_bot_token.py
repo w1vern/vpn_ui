@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import Server, TgBotToken
-from .base_repository import BaseRepository
+from .base import BaseRepository
 
 
 class TgBotTokenRepository(BaseRepository[TgBotToken]):

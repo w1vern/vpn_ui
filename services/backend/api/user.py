@@ -8,7 +8,7 @@ from shared.database import User, UserRepository, session_manager
 from shared.infrastructure import RedisType, get_redis_client
 
 from ..config import Config
-from ..get_auth import get_user, get_user_db
+from ..depends.user import get_db_user, get_user
 from ..schemas import EditUserSchema, UserSchema
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -36,7 +36,7 @@ async def get_all(user: UserSchema = Depends(get_user),
     path="/{user_id}",
     summary="Edit user")
 async def edit_user(user_to_edit: EditUserSchema,
-                    user: User = Depends(get_user_db),
+                    user: User = Depends(get_db_user),
                     redis: Redis = Depends(get_redis_client),
                     session: AsyncSession = Depends(session_manager.session)
                     ):  # TODO: fix method

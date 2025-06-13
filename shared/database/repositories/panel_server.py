@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.proxy_interface import VpnType
 
 from ..models import PanelServer, Server
-from .base_repository import BaseRepository
+from .base import BaseRepository
 
 
 class PanelServerRepository(BaseRepository[PanelServer]):

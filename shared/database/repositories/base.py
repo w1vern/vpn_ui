@@ -1,7 +1,7 @@
 
 
 from datetime import UTC, datetime
-from typing import Generic, Type, TypeVar
+from typing import Generic, TypeVar
 from uuid import UUID
 
 from sqlalchemy import select
@@ -13,13 +13,14 @@ ModelType = TypeVar("ModelType", bound=Base)
 
 
 class BaseRepository(Generic[ModelType]):
-    def __init__(self, session: AsyncSession,
-                 model: Type[ModelType]
+    def __init__(self,
+                 session: AsyncSession,
+                 model: type[ModelType]
                  ) -> None:
         self.session = session
         self.model = model
 
-    async def universal_create(self, **kwargs: dict[str, object]) -> ModelType:
+    async def universal_create(self, **kwargs) -> ModelType:
         model = self.model(**kwargs)
         self.session.add(model)
         await self.session.flush()
@@ -38,9 +39,10 @@ class BaseRepository(Generic[ModelType]):
     async def get_all(self) -> list[ModelType]:
         stmt = select(self.model).where(self.model.deleted_date == None)
         return list((await self.session.scalars(stmt)).all())
-    
-    async def get_all_filtered(self, **kwargs: dict[str, object]) -> list[ModelType]:
-        stmt = select(self.model).where(self.model.deleted_date == None, **kwargs)
+
+    async def get_all_filtered(self, **kwargs) -> list[ModelType]:
+        stmt = select(self.model).where(
+            self.model.deleted_date == None, **kwargs)
         return list((await self.session.scalars(stmt)).all())
 
     async def delete(self, instance: ModelType) -> None:

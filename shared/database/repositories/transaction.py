@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..enums import TransactionType
 from ..models import Transaction, User
-from .base_repository import BaseRepository
+from .base import BaseRepository
 
 
 class TransactionRepository(BaseRepository[Transaction]):

@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.database import (TransactionRepository, TransactionType,
                              UserRepository, session_manager)
 
-from ..get_auth import get_user
+from ..depends.user import get_user
 from ..schemas import Transaction, UserSchema
 
 router = APIRouter(prefix="/transaction", tags=["transaction"])

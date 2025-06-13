@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import TelegramMessage, User
-from .base_repository import BaseRepository
+from .base import BaseRepository
 
 
 class TelegramMessageRepository(BaseRepository[TelegramMessage]):

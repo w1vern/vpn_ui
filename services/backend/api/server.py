@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.database import (PanelServerRepository, ServerRepository,
                              session_manager)
 
-from ..get_auth import get_user
+from ..depends.user import get_user
 from ..schemas import (EditServerSchema, ServerSchema, ServerToCreateSchema,
                        UserSchema)
 
