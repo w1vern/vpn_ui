@@ -16,13 +16,13 @@ postgres:
 	docker start PostgreSQL
 	
 gen_migration:
-	alembic revision --autogenerate -m "first migration"
+	alembic -c services/alembic/alembic.ini revision --autogenerate -m "first migration"
 
 migration:
-	alembic upgrade head
+	alembic -c services/alembic/alembic.ini upgrade head
 
 down_migration:
-	alembic downgrade -1
+	alembic -c services/alembic/alembic.ini downgrade -1
 
 fill_db:
 	python -m services.fill_db

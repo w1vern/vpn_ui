@@ -67,7 +67,7 @@ services:
   alembic:
     build:
       context: .
-    command: alembic upgrade head
+    command: alembic -c services/alembic/alembic.ini upgrade head
     restart: no
     env_file:
       - .env
