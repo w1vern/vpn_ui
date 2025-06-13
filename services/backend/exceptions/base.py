@@ -1,5 +1,7 @@
 
-from fastapi import HTTPException
+from fastapi import (
+    HTTPException,
+)
 
 
 class BaseCustomHTTPException(HTTPException):

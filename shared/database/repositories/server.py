@@ -1,10 +1,17 @@
 
-from datetime import UTC, datetime
+from datetime import (
+    UTC,
+    datetime,
+)
 
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
 from ..models import Server
-from .base import BaseRepository
+from .base import (
+    BaseRepository,
+)
 
 
 class ServerRepository(BaseRepository[Server]):

@@ -1,11 +1,22 @@
 
-from secrets import token_urlsafe
+from secrets import (
+    token_urlsafe,
+)
 from uuid import UUID
 
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import (
+    ForeignKey,
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship,
+)
 
-from ..enums import Rights, Settings
+from ..enums import (
+    Rights,
+    Settings,
+)
 from .base import Base
 from .tariff import Tariff
 

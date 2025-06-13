@@ -3,11 +3,16 @@
 import contextlib
 import json
 import uuid
-from typing import Any, AsyncIterator
+from typing import (
+    Any,
+    AsyncIterator,
+)
 
 import httpx
 
-from shared.database import PanelServer
+from shared.database import (
+    PanelServer,
+)
 
 
 def parse_nested_json(obj):

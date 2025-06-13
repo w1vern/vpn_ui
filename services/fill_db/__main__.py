@@ -1,15 +1,27 @@
 
 import asyncio
-from datetime import UTC, datetime, timedelta
+from datetime import (
+    UTC,
+    datetime,
+    timedelta,
+)
 from typing import Any
 from uuid import UUID
 
 from sqlalchemy import text
 
-from shared.config import env_config
-from shared.database import (PanelServerRepository, RightsType,
-                             ServerRepository, SettingsType, TariffRepository,
-                             UserRepository, session_manager)
+from shared.config import (
+    env_config,
+)
+from shared.database import (
+    PanelServerRepository,
+    RightsType,
+    ServerRepository,
+    SettingsType,
+    TariffRepository,
+    UserRepository,
+    session_manager,
+)
 
 default_users: list[dict[str, Any]] = [
     {

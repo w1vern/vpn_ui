@@ -1,11 +1,19 @@
 
 
-from datetime import UTC, datetime
-from typing import Generic, TypeVar
+from datetime import (
+    UTC,
+    datetime,
+)
+from typing import (
+    Generic,
+    TypeVar,
+)
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
 from ..models import Base
 

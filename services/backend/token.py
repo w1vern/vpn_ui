@@ -1,15 +1,26 @@
 
 
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import (
+    UTC,
+    datetime,
+    timedelta,
+)
 from typing import Any
 
 import jwt
 
-from shared.database import User
+from shared.database import (
+    User,
+)
 
-from .config import SECRET, Config
-from .schemas import UserSchema
+from .config import (
+    SECRET,
+    Config,
+)
+from .schemas import (
+    UserSchema,
+)
 
 
 def decode_jwt(token: str) -> dict[str, Any]:

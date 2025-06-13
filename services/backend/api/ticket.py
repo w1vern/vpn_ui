@@ -1,11 +1,24 @@
 
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import (
+    APIRouter,
+    Depends,
+)
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from shared.database import session_manager
+from shared.database import (
+    session_manager,
+)
 
-from ..depends.user import get_user
-from ..schemas import NewTicket, TicketMessage, UserSchema
+from ..depends.user import (
+    get_user,
+)
+from ..schemas import (
+    NewTicketSchema,
+    TicketMessageSchema,
+    UserSchema,
+)
 
 router = APIRouter(prefix="/ticket", tags=["ticket"])
 
@@ -14,7 +27,7 @@ router = APIRouter(prefix="/ticket", tags=["ticket"])
     path="",
     summary="Create a new feedback ticket"
 )
-async def create_new_ticket(new_ticket: NewTicket,
+async def create_new_ticket(new_ticket: NewTicketSchema,
                             user: UserSchema = Depends(get_user),
                             session: AsyncSession = Depends(
                                 session_manager.session)
@@ -26,7 +39,7 @@ async def create_new_ticket(new_ticket: NewTicket,
     path="/new_message",
     summary="Add a new message to an existing ticket"
 )
-async def new_message_ticket(message: TicketMessage,
+async def new_message_ticket(message: TicketMessageSchema,
                              user: UserSchema = Depends(get_user),
                              session: AsyncSession = Depends(
                                  session_manager.session)

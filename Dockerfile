@@ -31,5 +31,3 @@ COPY --from=builder /app /app
 WORKDIR /app
 
 ENV PATH="/app/.venv/bin:$PATH"
-
-CMD ["uvicorn", "back.main:app", "--host", "0.0.0.0", "--port", "8000"]

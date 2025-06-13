@@ -1,10 +1,17 @@
 
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from ..models import MessageForTicket, Ticket
-from .base import BaseRepository
+from ..models import (
+    MessageForTicket,
+    Ticket,
+)
+from .base import (
+    BaseRepository,
+)
 
 
 class MessageForTicketRepository(BaseRepository[MessageForTicket]):

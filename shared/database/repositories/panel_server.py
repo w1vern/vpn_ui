@@ -1,10 +1,19 @@
 
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from shared.proxy_interface import VpnType
+from shared.proxy_interface import (
+    VpnType,
+)
 
-from ..models import PanelServer, Server
-from .base import BaseRepository
+from ..models import (
+    PanelServer,
+    Server,
+)
+from .base import (
+    BaseRepository,
+)
 
 
 class PanelServerRepository(BaseRepository[PanelServer]):

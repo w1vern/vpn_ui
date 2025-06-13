@@ -1,8 +1,15 @@
 
 
-from faststream.rabbit import RabbitBroker, fastapi
+from faststream.rabbit import (
+    RabbitBroker,
+    fastapi,
+)
 
-from shared.infrastructure import RABBIT_URL, CodeToTG, tg_code_queue
+from shared.infrastructure import (
+    RABBIT_URL,
+    CodeToTG,
+    tg_code_queue,
+)
 
 router = fastapi.RabbitRouter(RABBIT_URL)
 

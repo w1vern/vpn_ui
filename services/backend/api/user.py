@@ -1,15 +1,36 @@
 
 
-from fastapi import APIRouter, Depends, HTTPException
-from redis.asyncio import Redis
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+)
+from redis.asyncio import (
+    Redis,
+)
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from shared.database import User, UserRepository, session_manager
-from shared.infrastructure import RedisType, get_redis_client
+from shared.database import (
+    User,
+    UserRepository,
+    session_manager,
+)
+from shared.infrastructure import (
+    RedisType,
+    get_redis_client,
+)
 
 from ..config import Config
-from ..depends.user import get_db_user, get_user
-from ..schemas import EditUserSchema, UserSchema
+from ..depends.user import (
+    get_db_user,
+    get_user,
+)
+from ..schemas import (
+    EditUserSchema,
+    UserSchema,
+)
 
 router = APIRouter(prefix="/user", tags=["user"])
 

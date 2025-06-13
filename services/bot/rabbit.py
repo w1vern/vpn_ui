@@ -1,10 +1,19 @@
 
 
 from aiogram import Bot
-from faststream import Depends, FastStream
-from faststream.rabbit import RabbitBroker
+from faststream import (
+    Depends,
+    FastStream,
+)
+from faststream.rabbit import (
+    RabbitBroker,
+)
 
-from shared.infrastructure import RABBIT_URL, CodeToTG, tg_code_queue
+from shared.infrastructure import (
+    RABBIT_URL,
+    CodeToTG,
+    tg_code_queue,
+)
 
 from .bot import get_bot
 

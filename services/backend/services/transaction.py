@@ -1,11 +1,21 @@
 
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from shared.database import TransactionRepository
+from shared.database import (
+    TransactionRepository,
+)
 
-from ..schemas import UserSchema
-from .depends import get_session, get_transaction_repo, get_user
+from ..schemas import (
+    UserSchema,
+)
+from .depends import (
+    get_session,
+    get_transaction_repo,
+    get_user,
+)
 
 
 class TransactionService:

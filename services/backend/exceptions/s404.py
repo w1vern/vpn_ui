@@ -1,5 +1,7 @@
 
-from .base import BaseCustomHTTPException
+from .base import (
+    BaseCustomHTTPException,
+)
 
 
 class ServerNotFoundException(BaseCustomHTTPException):

@@ -1,5 +1,7 @@
 
-from .base import BaseCustomHTTPException
+from .base import (
+    BaseCustomHTTPException,
+)
 
 
 class AccessTokenMissingException(BaseCustomHTTPException):
@@ -76,3 +78,8 @@ class TooSoonToSendCodeException(BaseCustomHTTPException):
 class AuthIntegrityException(BaseCustomHTTPException):
     def __init__(self) -> None:
         super().__init__(401, "Authentication integrity check failed. Contact administrator.")
+
+
+class RequestClientException(BaseCustomHTTPException):
+    def __init__(self) -> None:
+        super().__init__(401, "Request client not found")

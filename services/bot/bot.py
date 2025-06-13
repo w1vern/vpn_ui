@@ -1,7 +1,12 @@
 
-from aiogram import Bot, Dispatcher
+from aiogram import (
+    Bot,
+    Dispatcher,
+)
 
-from shared.config import env_config
+from shared.config import (
+    env_config,
+)
 
 # from .handlers import router
 # from .lifecycle import register_lifecycle

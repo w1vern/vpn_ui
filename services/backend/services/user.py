@@ -1,11 +1,21 @@
 
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from shared.database import UserRepository
+from shared.database import (
+    UserRepository,
+)
 
-from ..schemas import UserSchema
-from .depends import get_session, get_user, get_user_repo
+from ..schemas import (
+    UserSchema,
+)
+from .depends import (
+    get_session,
+    get_user,
+    get_user_repo,
+)
 
 
 class UserService:

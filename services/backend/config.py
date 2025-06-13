@@ -1,5 +1,7 @@
 
-from shared.config import env_config
+from shared.config import (
+    env_config,
+)
 
 SECRET = env_config.backend.secret
 

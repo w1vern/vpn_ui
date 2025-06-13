@@ -1,11 +1,21 @@
 
 import contextlib
-from typing import Any, AsyncGenerator, AsyncIterator
+from typing import (
+    Any,
+    AsyncGenerator,
+    AsyncIterator,
+)
 
-from sqlalchemy.ext.asyncio import (AsyncConnection, AsyncSession,
-                                    async_sessionmaker, create_async_engine)
+from sqlalchemy.ext.asyncio import (
+    AsyncConnection,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
-from shared.config import env_config
+from shared.config import (
+    env_config,
+)
 
 from .models.base import Base
 

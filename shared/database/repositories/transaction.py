@@ -1,12 +1,24 @@
 
-from datetime import UTC, datetime
+from datetime import (
+    UTC,
+    datetime,
+)
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from ..enums import TransactionType
-from ..models import Transaction, User
-from .base import BaseRepository
+from ..enums import (
+    TransactionType,
+)
+from ..models import (
+    Transaction,
+    User,
+)
+from .base import (
+    BaseRepository,
+)
 
 
 class TransactionRepository(BaseRepository[Transaction]):

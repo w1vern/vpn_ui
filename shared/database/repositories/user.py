@@ -3,11 +3,23 @@ import secrets
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from ..enums import Rights, RightsType, Settings, SettingsType
-from ..models import Tariff, User
-from .base import BaseRepository
+from ..enums import (
+    Rights,
+    RightsType,
+    Settings,
+    SettingsType,
+)
+from ..models import (
+    Tariff,
+    User,
+)
+from .base import (
+    BaseRepository,
+)
 
 
 class UserRepository(BaseRepository[User]):

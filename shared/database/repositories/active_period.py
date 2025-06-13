@@ -1,12 +1,24 @@
 
 import uuid
-from datetime import UTC, datetime
+from datetime import (
+    UTC,
+    datetime,
+)
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from ..models import ActivePeriod, Tariff, Transaction, User
-from .base import BaseRepository
+from ..models import (
+    ActivePeriod,
+    Tariff,
+    Transaction,
+    User,
+)
+from .base import (
+    BaseRepository,
+)
 
 
 class ActivePeriodRepository(BaseRepository):

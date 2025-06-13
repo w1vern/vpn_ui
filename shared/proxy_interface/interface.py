@@ -2,9 +2,14 @@
 
 import abc
 
-from shared.database.models.user import User
+from shared.database.models.user import (
+    User,
+)
 
-from .models import AccessConfig, AccessType
+from .models import (
+    AccessConfig,
+    AccessType,
+)
 
 
 class ProxyInterface(abc.ABC):

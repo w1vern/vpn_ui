@@ -1,14 +1,23 @@
 
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from shared.database import (ActivePeriodRepository,
-                             MessageForTicketRepository, PanelServerRepository,
-                             ServerRepository, ServerUserInboundRepository,
-                             TariffRepository, TelegramMessageRepository,
-                             TgBotTokenRepository, TicketRepository,
-                             TransactionRepository, UserRepository,
-                             session_manager)
+from shared.database import (
+    ActivePeriodRepository,
+    MessageForTicketRepository,
+    PanelServerRepository,
+    ServerRepository,
+    ServerUserInboundRepository,
+    TariffRepository,
+    TelegramMessageRepository,
+    TgBotTokenRepository,
+    TicketRepository,
+    TransactionRepository,
+    UserRepository,
+    session_manager,
+)
 
 
 async def get_session(session: AsyncSession = Depends(session_manager.session)

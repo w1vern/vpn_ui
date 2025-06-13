@@ -3,9 +3,14 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+)
 
-from shared.database import User
+from shared.database import (
+    User,
+)
 
 
 class UserSettingsSchema(BaseModel):

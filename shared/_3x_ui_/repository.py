@@ -4,10 +4,17 @@ import json
 import uuid
 from typing import Any
 
-from shared.database.models.user import User
-from shared.proxy_interface import ProxyType, VpnType
+from shared.database.models.user import (
+    User,
+)
+from shared.proxy_interface import (
+    ProxyType,
+    VpnType,
+)
 
-from .session_manager import ServerSession
+from .session_manager import (
+    ServerSession,
+)
 
 
 class GlobalSettings:

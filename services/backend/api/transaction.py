@@ -3,14 +3,29 @@
 import uuid
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+)
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
 
-from shared.database import (TransactionRepository, TransactionType,
-                             UserRepository, session_manager)
+from shared.database import (
+    TransactionRepository,
+    TransactionType,
+    UserRepository,
+    session_manager,
+)
 
-from ..depends.user import get_user
-from ..schemas import Transaction, UserSchema
+from ..depends.user import (
+    get_user,
+)
+from ..schemas import (
+    Transaction,
+    UserSchema,
+)
 
 router = APIRouter(prefix="/transaction", tags=["transaction"])
 

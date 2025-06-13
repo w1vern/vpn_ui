@@ -1,8 +1,9 @@
 [project]
 name = "vpn-ui"
 version = "0.1.0"
-description = ""
 authors = [{ name = "w1vern", email = "bndvvl@gmail.com" }]
+readme = "README.md"
+license = "MIT"
 requires-python = ">=3.13"
 
 dependencies = [
@@ -23,10 +24,13 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
-    "cli-tools",
-    "isort>=6.0.1",
-]
+dev = ["cli-tools", "isort>=6.0.1"]
 
 [tool.uv.sources]
 cli-tools = { git = "https://github.com/w1vern/cli_tools" }
+
+[tool.isort]
+profile = "black"
+line_length = 70
+multi_line_output = 3
+include_trailing_comma = false

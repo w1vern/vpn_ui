@@ -1,14 +1,27 @@
 
-from datetime import UTC, datetime
+from datetime import (
+    UTC,
+    datetime,
+)
 
-from fastapi import Cookie, Depends, HTTPException
+from fastapi import (
+    Cookie,
+    Depends,
+    HTTPException,
+)
 from redis.asyncio import Redis
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import User, UserRepository, session_manager
-from shared.infrastructure import RedisType, get_redis_client
+from .database import get_user_repo
+from shared.database import User, UserRepository
 
-from ...schemas.user import UserSchema
+from ...exceptions import NotControlPanelUserException, SendFeedbackToAdminException
+
+from shared.infrastructure import (
+    RedisType,
+    get_redis_client,
+)
+
+from ...schemas import UserSchema
 from ...token import AccessToken
 
 
@@ -26,14 +39,15 @@ async def get_user(access_token: str | None = Cookie(default=None),
         raise HTTPException(status_code=401, detail="access token invalidated")
     if not access.user:
         raise HTTPException(status_code=401, detail="access token damaged")
+    if access.user.rights.is_control_panel_user is False:
+        raise NotControlPanelUserException()
     return access.user
 
 
-async def get_db_user(user: UserSchema = Depends(get_user),
-                      session: AsyncSession = Depends(session_manager.session)
+async def get_db_user(user: UserSchema,
+                      ur: UserRepository
                       ) -> User:
-    ur = UserRepository(session)
     user_db = await ur.get_by_id(user.id)
     if user_db is None:
-        raise HTTPException(status_code=401, detail="send feedback to admin")
+        raise SendFeedbackToAdminException()
     return user_db
