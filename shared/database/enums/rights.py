@@ -1,8 +1,8 @@
 
-import enum
+from enum import Enum
 
 
-class Rights(enum.Enum):
+class Rights(Enum):
     is_admin_rights_editor = 0b1 << 0
     is_member_rights_editor = 0b1 << 1
     is_users_editor = 0b1 << 2

@@ -59,7 +59,6 @@ class AntiSpamService:
         key = f"{RedisType.tg_code}:{tg_id}"
         ttl = await self.redis.ttl(key)
         if ttl > 0:
-            # вычисляем "сколько еще ждать"
             gap = Config.tg_code_gap - Config.tg_code_lifetime + ttl
             if gap > 0:
                 raise TooSoonToSendCodeException(gap)

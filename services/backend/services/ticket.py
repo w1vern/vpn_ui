@@ -44,4 +44,4 @@ class TicketService:
     async def create(self,
                      new_ticket: NewTicketSchema
                      ) -> None:
-        if self.user_schema.is
+        pass
