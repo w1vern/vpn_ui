@@ -1,23 +1,22 @@
 
 from uuid import UUID
+
 from fastapi import (
     APIRouter,
     Depends,
 )
 
-from ..services import TicketService
-
-from ..response import SuccessResponse
 from shared.database import (
     session_manager,
 )
 
-
+from ..response import SuccessResponse
 from ..schemas import (
     NewTicketSchema,
     TicketMessageCreateSchema,
     TicketSchema
 )
+from ..services import TicketService
 
 router = APIRouter(prefix="/ticket", tags=["ticket"])
 

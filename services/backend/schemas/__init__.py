@@ -9,8 +9,8 @@ from .tg import TgAuth, TgId
 from .ticket import (
     NewTicketSchema,
     TicketMessageCreateSchema,
-    TicketSchema,
-    TicketMessageSchema
+    TicketMessageSchema,
+    TicketSchema
 )
 from .transaction import (
     TransactionSchema,

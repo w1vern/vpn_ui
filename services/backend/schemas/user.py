@@ -23,6 +23,7 @@ class UserSettingsSchema(BaseModel):
 
 class UserRightsSchema(BaseModel):
     is_server_editor: bool
+    is_user_editor: bool
     is_transaction_editor: bool
     is_active_period_editor: bool
     is_tariff_editor: bool

@@ -1,7 +1,5 @@
 
-from .base import (
-    BaseCustomHTTPException,
-)
+from .base import BaseCustomHTTPException
 
 
 class NotControlPanelUserException(BaseCustomHTTPException):
@@ -27,3 +25,8 @@ class AdminRightsEditNotAllowedException(BaseCustomHTTPException):
 class MemberRightsEditNotAllowedException(BaseCustomHTTPException):
     def __init__(self) -> None:
         super().__init__(403, "You cannot edit member rights")
+
+
+class UserNotTransactionEditorException(BaseCustomHTTPException):
+    def __init__(self) -> None:
+        super().__init__(403, "User is not a transaction editor")

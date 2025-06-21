@@ -3,6 +3,7 @@
 from uuid import UUID
 
 from pydantic import BaseModel
+
 from shared.database import PanelServer
 
 

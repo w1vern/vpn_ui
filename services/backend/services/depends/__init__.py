@@ -13,7 +13,7 @@ from .database import (
     get_transaction_repo,
     get_user_repo,
 )
-from .user import get_user, get_db_user
+from .user import get_db_user, get_user
 
 __all__ = [
     'get_session',

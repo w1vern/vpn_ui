@@ -1,21 +1,26 @@
 
+from datetime import datetime
+
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (
     TransactionRepository,
+    TransactionType,
     UserRepository
 )
 
-from ..schemas import (
-    UserSchema,
-    TransactionSchema
+from ..exceptions import (
+    TransactionTypeNotFoundException,
+    UserNotFoundException,
+    UserNotTransactionEditorException,
 )
+from ..schemas import TransactionSchema, UserSchema
 from .depends import (
+    get_db_user,
     get_session,
     get_transaction_repo,
-    get_user,
-    get_db_user
+    get_user
 )
 
 
@@ -44,4 +49,20 @@ class TransactionService:
     async def create(self,
                      transaction_to_create: TransactionSchema
                      ) -> None:
-        
+        if self.user_schema.rights.is_transaction_editor is False:
+            raise UserNotTransactionEditorException
+        tr_user = await self.ur.get_by_id(transaction_to_create.user_id)
+        if tr_user is None:
+            raise UserNotFoundException()
+        date = None
+        if not transaction_to_create.date is None:
+            date = datetime.fromisoformat(transaction_to_create.date)
+        type: TransactionType = getattr(
+            TransactionType, transaction_to_create.transaction_type)
+        if type is None:
+            raise TransactionTypeNotFoundException()
+        await self.tr.create(tr_user, transaction_to_create.amount, date, type.value)
+
+    async def all(self) -> list[TransactionSchema]:
+        return [TransactionSchema.from_db(t)
+                for t in await self.tr.get_all()]

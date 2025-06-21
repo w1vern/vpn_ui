@@ -11,18 +11,19 @@ from fastapi import (
 )
 from redis.asyncio import Redis
 
-from .database import get_user_repo
 from shared.database import User, UserRepository
-
-from ...exceptions import NotControlPanelUserException, SendFeedbackToAdminException
-
 from shared.infrastructure import (
     RedisType,
     get_redis_client,
 )
 
+from ...exceptions import (
+    NotControlPanelUserException,
+    SendFeedbackToAdminException
+)
 from ...schemas import UserSchema
 from ...token import AccessToken
+from .database import get_user_repo
 
 
 async def get_user(access_token: str | None = Cookie(default=None),

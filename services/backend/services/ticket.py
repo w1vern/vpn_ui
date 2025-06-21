@@ -1,31 +1,31 @@
 
 from uuid import UUID
+
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..exceptions import TicketNotFoundException
 from shared.database import (
+    MessageForTicketRepository,
+    MessageTicketType,
+    Ticket,
     TicketRepository,
     UserRepository,
-    MessageForTicketRepository,
-    Ticket,
-    MessageTicketType,
 )
 
+from ..exceptions import TicketNotFoundException
 from ..schemas import (
-    UserSchema,
-    TicketSchema,
-    TicketMessageSchema,
     TicketMessageCreateSchema,
+    TicketMessageSchema,
+    TicketSchema,
+    UserSchema,
 )
-
 from .depends import (
+    get_db_user,
+    get_message_repo,
     get_session,
     get_ticket_repo,
     get_user,
-    get_db_user,
-    get_user_repo,
-    get_message_repo
+    get_user_repo
 )
 
 

@@ -1,8 +1,10 @@
 
 
 from uuid import UUID
+
 from pydantic import BaseModel
-from shared.database import Ticket, MessageForTicket
+
+from shared.database import MessageForTicket, Ticket
 
 
 class NewTicketSchema(BaseModel):
