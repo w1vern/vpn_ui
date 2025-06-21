@@ -8,10 +8,11 @@ from fastapi import (
     Depends,
     HTTPException,
 )
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..response import SuccessResponse
+
+from ..services import TransactionService
 from shared.database import (
     TransactionRepository,
     TransactionType,
@@ -19,11 +20,8 @@ from shared.database import (
     session_manager,
 )
 
-from ..depends.user import (
-    get_user,
-)
 from ..schemas import (
-    Transaction,
+    TransactionSchema,
     UserSchema,
 )
 
@@ -34,11 +32,10 @@ router = APIRouter(prefix="/transaction", tags=["transaction"])
     path="",
     summary="Create a new transaction"
 )
-async def create_transaction(transaction_to_create: Transaction,
-                             user: UserSchema = Depends(get_user),
-                             session: AsyncSession = Depends(
-                                 session_manager.session)
-                             ):
+async def create_transaction(transaction_to_create: TransactionSchema,
+                             transaction_service: TransactionService = Depends(
+                                 TransactionService.depends)
+                             ) -> SuccessResponse:
     if user.rights.is_control_panel_user is False:
         raise HTTPException(status_code=403, detail="no rights")
     if user.rights.is_transaction_editor is False:
@@ -66,13 +63,13 @@ async def create_transaction(transaction_to_create: Transaction,
 async def get_all_transactions(user: UserSchema = Depends(get_user),
                                session: AsyncSession = Depends(
                                    session_manager.session)
-                               ) -> list[Transaction]:
+                               ) -> list[TransactionSchema]:
     if user.rights.is_control_panel_user is False:
         raise HTTPException(status_code=403, detail="no rights")
     tr = TransactionRepository(session)
     transactions = await tr.get_all()
-    tr_to_send: list[Transaction] = []
+    tr_to_send: list[TransactionSchema] = []
     for transaction in transactions:
-        tr_to_send.append(Transaction(user_id=str(transaction.user_id), amount=transaction.amount,
+        tr_to_send.append(TransactionSchema(user_id=str(transaction.user_id), amount=transaction.amount,
                                       date=transaction.date.isoformat(), type=TransactionType(transaction.transaction_type).name))
     return tr_to_send

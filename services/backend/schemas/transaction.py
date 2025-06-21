@@ -1,12 +1,10 @@
 
 
-
-
 from pydantic import BaseModel
 
 
-class Transaction(BaseModel):
+class TransactionSchema(BaseModel):
     user_id: str
     amount: float
-    type: str
-    date: str | None
+    transaction_type: str
+    date: str | None = None

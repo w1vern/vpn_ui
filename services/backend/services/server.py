@@ -12,7 +12,6 @@ from shared.database import (
 )
 
 from ..exceptions import (
-    NotControlPanelUserException,
     NotServerEditorException,
     ServerNotFoundException
 )
