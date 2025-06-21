@@ -17,7 +17,7 @@ from ..exceptions import (
 )
 from ..schemas import TransactionSchema, UserSchema
 from .depends import (
-    get_db_user,
+    get_user_repo,
     get_session,
     get_transaction_repo,
     get_user
@@ -41,7 +41,7 @@ class TransactionService:
                 session: AsyncSession = Depends(get_session),
                 tr: TransactionRepository = Depends(
                     get_transaction_repo),
-                ur: UserRepository = Depends(get_db_user),
+                ur: UserRepository = Depends(get_user_repo),
                 user_schema: UserSchema = Depends(get_user)
                 ) -> 'TransactionService':
         return cls(session, tr, ur, user_schema)
