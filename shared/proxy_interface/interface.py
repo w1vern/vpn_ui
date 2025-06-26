@@ -2,9 +2,7 @@
 
 import abc
 
-from shared.database.models.user import (
-    User,
-)
+from shared.database.models.user import User
 
 from .models import (
     AccessConfig,
@@ -29,6 +27,7 @@ class ProxyInterface(abc.ABC):
                          enable: bool,
                          access_type: AccessType | None = None,
                          ) -> None: ...
+
     @abc.abstractmethod
     async def delete(self, user: User, access_type: AccessType) -> None: ...
 

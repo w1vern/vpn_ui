@@ -5,9 +5,7 @@ from faststream import (
     Depends,
     FastStream,
 )
-from faststream.rabbit import (
-    RabbitBroker,
-)
+from faststream.rabbit import RabbitBroker
 
 from shared.infrastructure import (
     RABBIT_URL,
