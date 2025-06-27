@@ -23,7 +23,6 @@ from ...exceptions import (
 )
 from ...schemas import UserSchema
 from ...token import AccessToken
-from .database import get_user_repo
 
 
 async def get_user(access_token: str | None = Cookie(default=None),
