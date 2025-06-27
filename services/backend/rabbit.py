@@ -19,4 +19,5 @@ def get_broker() -> RabbitBroker:
 
 
 async def send_tg_code(data: CodeToTG, broker: RabbitBroker) -> None:
+    print(data)
     await broker.publish(data, tg_code_queue)

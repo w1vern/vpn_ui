@@ -1,6 +1,6 @@
 
 
-import uuid
+from uuid import UUID
 from datetime import datetime
 
 from pydantic import (
@@ -8,9 +8,7 @@ from pydantic import (
     ConfigDict,
 )
 
-from shared.database import (
-    User,
-)
+from shared.database import User
 
 
 class UserSettingsSchema(BaseModel):
@@ -36,7 +34,7 @@ class UserRightsSchema(BaseModel):
 
 
 class UserSchema(BaseModel):
-    id: uuid.UUID
+    id: UUID
     telegram_id: int
     telegram_username: str
     balance: float
@@ -46,7 +44,7 @@ class UserSchema(BaseModel):
 
     model_config = ConfigDict(
         json_encoders={
-            uuid.UUID: lambda v: str(v),
+            UUID: lambda v: str(v),
             datetime: lambda v: v.isoformat()
         },
         from_attributes=True
@@ -86,6 +84,5 @@ class EditUserRightsSchema(BaseModel):
 
 class EditUserSchema(BaseModel):
     telegram_id: int | None
-    created_date: str | None
     rights: EditUserRightsSchema | None
     settings: EditUserSettingsSchema | None

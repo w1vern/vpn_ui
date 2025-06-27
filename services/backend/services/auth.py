@@ -2,7 +2,7 @@
 import random
 from datetime import UTC, datetime
 
-from fastapi import Depends, Response
+from fastapi import Depends
 from faststream.rabbit import RabbitBroker
 from redis.asyncio import Redis
 
@@ -53,9 +53,8 @@ class AuthService:
         return f"{random.randint(0, 999999):06}"
 
     async def login(self,
-                    tg_auth: TgAuth,
-                    response: Response
-                    ) -> None:
+                    tg_auth: TgAuth
+                    ) -> tuple[str, str]:
 
         await self.anti_spam.increment_ip_attempts()
         await self.anti_spam.check_login_lock(tg_auth.tg_id)
@@ -75,18 +74,14 @@ class AuthService:
 
         await self.redis.delete(f"{RedisType.tg_code}:{user.telegram_id}")
 
-        refresh = RefreshToken(user_id=user.id, secret=user.secret)
-        access = AccessToken(user)
+        refresh = RefreshToken(user_id=user.id, secret=user.secret).to_token()
+        access = AccessToken(user).to_token()
 
-        response.set_cookie("refresh_token", refresh.to_token(),
-                            max_age=Config.refresh_token_lifetime, httponly=True)
-        response.set_cookie("access_token", access.to_token(),
-                            max_age=Config.access_token_lifetime, httponly=True)
+        return refresh, access
 
     async def refresh(self,
                       refresh_token: str | None,
-                      response: Response
-                      ) -> None:
+                      ) -> str:
         if refresh_token is None:
             raise RefreshTokenMissingException()
 
@@ -100,15 +95,10 @@ class AuthService:
         if not user or user.secret != refresh.secret:
             raise RefreshTokenInvalidException()
 
-        access = AccessToken(user, now)
-        response.set_cookie("access_token", access.to_token(),
-                            max_age=Config.access_token_lifetime, httponly=True)
-
-    async def logout(self,
-                     response: Response
-                     ) -> None:
-        response.delete_cookie("refresh_token")
-        response.delete_cookie("access_token")
+        access = AccessToken(user, now).to_token()
+        return access
+        
+        
 
     async def send_code(self,
                         tg_id: TgId,

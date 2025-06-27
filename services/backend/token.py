@@ -1,6 +1,6 @@
 
 
-import uuid
+from uuid import UUID
 from datetime import (
     UTC,
     datetime,
@@ -20,16 +20,17 @@ from .schemas import UserSchema
 
 
 def decode_jwt(token: str) -> dict[str, Any]:
-    return jwt.decode(  # type: ignore
+    return jwt.decode(
         token,
         key=SECRET,
         algorithms=[Config.algorithm])
 
 
 def encode_jwt(payload: dict[str, Any]) -> str:
-    return jwt.encode(  # type: ignore
+    return jwt.encode(
         payload,
-        key=SECRET)
+        key=SECRET,
+        algorithm=Config.algorithm)
 
 
 class AccessToken:
@@ -71,7 +72,7 @@ class AccessToken:
 
 class RefreshToken:
     def __init__(self,
-                 user_id: uuid.UUID | str,
+                 user_id: UUID | str,
                  secret: str,
                  created_date: datetime | str | None = None,
                  lifetime: timedelta | float | None = None
@@ -90,7 +91,7 @@ class RefreshToken:
         else:
             self.lifetime = lifetime
         if isinstance(user_id, str):
-            self.user_id = uuid.UUID(user_id)
+            self.user_id = UUID(user_id)
         else:
             self.user_id = user_id
 

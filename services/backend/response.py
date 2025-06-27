@@ -1,7 +1,5 @@
 
-from fastapi.responses import (
-    JSONResponse,
-)
+from fastapi.responses import JSONResponse
 
 
 class SuccessResponse(JSONResponse):

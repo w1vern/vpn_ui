@@ -10,6 +10,6 @@ class Config:
     refresh_token_lifetime = 3600 * 24 * 30
     tg_code_gap = 20
     login_gap = 20
-    ip_buffer = 10
+    ip_buffer = 100000#10
     ip_buffer_lifetime = 60*60*24
     algorithm = "HS256"

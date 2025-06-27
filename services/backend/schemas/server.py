@@ -43,7 +43,7 @@ class ServerToEditSchema(BaseModel):
     country_code: str | None
     is_available: bool | None
     display_name: str | None
-    created_date: str | None
+    starting_date: str | None
     closing_date: str | None
 
     panel_path: str | None

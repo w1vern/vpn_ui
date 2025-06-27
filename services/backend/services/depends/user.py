@@ -7,7 +7,6 @@ from datetime import (
 from fastapi import (
     Cookie,
     Depends,
-    HTTPException,
 )
 from redis.asyncio import Redis
 
@@ -19,7 +18,11 @@ from shared.infrastructure import (
 
 from ...exceptions import (
     NotControlPanelUserException,
-    SendFeedbackToAdminException
+    SendFeedbackToAdminException,
+    AccessTokenMissingException,
+    AccessTokenExpiredException,
+    AccessTokenInvalidatedException,
+    AccessTokenCorruptedException
 )
 from ...schemas import UserSchema
 from ...token import AccessToken
@@ -29,16 +32,15 @@ async def get_user(access_token: str | None = Cookie(default=None),
                    redis: Redis = Depends(get_redis_client)
                    ) -> UserSchema:
     if access_token is None:
-        raise HTTPException(
-            status_code=401, detail="access token doesn't exist")
+        raise AccessTokenMissingException()
     access = AccessToken.from_token(access_token)
     current_time = datetime.now(UTC).replace(tzinfo=None)
     if access.created_date > current_time or access.created_date + access.lifetime < current_time:
-        raise HTTPException(status_code=401, detail="access token expired")
-    if redis.exists(f"{RedisType.invalidated_access_token}:{access.user.id}"):
-        raise HTTPException(status_code=401, detail="access token invalidated")
+        raise AccessTokenExpiredException()
+    if await redis.exists(f"{RedisType.invalidated_access_token}:{access.user.id}"):
+        raise AccessTokenInvalidatedException()
     if not access.user:
-        raise HTTPException(status_code=401, detail="access token damaged")
+        raise AccessTokenCorruptedException()
     if access.user.rights.is_control_panel_user is False:
         raise NotControlPanelUserException()
     return access.user
