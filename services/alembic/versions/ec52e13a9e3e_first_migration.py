@@ -1,20 +1,18 @@
 """first migration
 
-Revision ID: 4a9dcf9d4b72
+Revision ID: ec52e13a9e3e
 Revises: 
-Create Date: 2025-06-13 22:00:59.878469
+Create Date: 2025-06-28 11:33:38.133564
 
 """
-from typing import (
-    Sequence,
-    Union,
-)
+from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = '4a9dcf9d4b72'
+revision: str = 'ec52e13a9e3e'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -40,6 +38,7 @@ def upgrade() -> None:
     sa.Column('price', sa.Float(), nullable=False),
     sa.Column('price_of_traffic_reset', sa.Float(), nullable=False),
     sa.Column('traffic', sa.Integer(), nullable=False),
+    sa.Column('is_special', sa.Boolean(), nullable=False),
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('created_date', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('deleted_date', sa.DateTime(), nullable=True),

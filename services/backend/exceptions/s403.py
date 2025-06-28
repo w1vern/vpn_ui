@@ -21,6 +21,10 @@ class MemberRightsEditNotAllowedException(BaseCustomHTTPException):
     def __init__(self) -> None:
         super().__init__(403, "You cannot edit member rights")
 
+class MemberSettingsEditNotAllowedException(BaseCustomHTTPException):
+    def __init__(self) -> None:
+        super().__init__(403, "You cannot edit member settings")
+
 
 class UserNotTransactionEditorException(BaseCustomHTTPException):
     def __init__(self) -> None:
