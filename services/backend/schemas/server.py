@@ -39,19 +39,19 @@ class ServerSchema(BaseModel):
 
 
 class ServerToEditSchema(BaseModel):
-    ip: str | None
-    country_code: str | None
-    is_available: bool | None
-    display_name: str | None
-    starting_date: str | None
-    closing_date: str | None
+    ip: str | None = None
+    country_code: str | None = None
+    is_available: bool | None = None
+    display_name: str | None = None
+    starting_date: str | None = None
+    closing_date: str | None = None
 
-    panel_path: str | None
-    login: str | None
-    password: str | None
+    panel_path: str | None = None
+    login: str | None = None
+    password: str | None = None
 
 
-class ServerToCreateSchema(BaseModel):
+class CreateServerSchema(BaseModel):
     ip: str
     panel_path: str
     country_code: str

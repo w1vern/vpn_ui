@@ -3,11 +3,10 @@ from aiogram import (
     Bot,
     Dispatcher,
 )
-from .lifecycle import register_lifecycle
-
 
 from shared.config import env_config
 
+from .lifecycle import register_lifecycle
 
 bot = Bot(token=env_config.bot.token)
 dp = Dispatcher()

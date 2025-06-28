@@ -1,7 +1,7 @@
 
 
-from uuid import UUID
 from datetime import datetime
+from uuid import UUID
 
 from pydantic import (
     BaseModel,
@@ -9,6 +9,8 @@ from pydantic import (
 )
 
 from shared.database import User
+
+from .tariff import TariffSchema
 
 
 class UserSettingsSchema(BaseModel):
@@ -42,6 +44,8 @@ class UserSchema(BaseModel):
     rights: UserRightsSchema
     settings: UserSettingsSchema
 
+    tariff: TariffSchema
+
     model_config = ConfigDict(
         json_encoders={
             UUID: lambda v: str(v),
@@ -56,6 +60,7 @@ class UserSchema(BaseModel):
         rights = UserRightsSchema.model_validate(user)
         return UserSchema(
             id=user.id,
+            tariff=TariffSchema.from_db(user.tariff),
             telegram_id=user.telegram_id,
             telegram_username=user.telegram_username,
             balance=user.balance,
@@ -66,23 +71,25 @@ class UserSchema(BaseModel):
 
 
 class EditUserSettingsSchema(BaseModel):
-    auto_pay: bool | None
-    is_active: bool | None
-    get_traffic_notifications: bool | None
+    auto_pay: bool | None = None
+    is_active: bool | None = None
+    get_traffic_notifications: bool | None = None
 
 
 class EditUserRightsSchema(BaseModel):
-    is_server_editor: bool | None
-    is_transaction_editor: bool | None
-    is_active_period_editor: bool | None
-    is_tariff_editor: bool | None
-    is_member_rights_editor: bool | None
-    is_admin_rights_editor: bool | None
-    is_control_panel_user: bool | None
-    is_verified: bool | None
+    is_server_editor: bool | None = None
+    is_user_editor: bool | None = None
+    is_transaction_editor: bool | None = None
+    is_active_period_editor: bool | None = None
+    is_tariff_editor: bool | None = None
+    is_member_rights_editor: bool | None = None
+    is_admin_rights_editor: bool | None = None
+    is_control_panel_user: bool | None = None
+    is_verified: bool | None = None
 
 
 class EditUserSchema(BaseModel):
-    telegram_id: int | None
-    rights: EditUserRightsSchema | None
-    settings: EditUserSettingsSchema | None
+    telegram_id: int | None = None
+    tariff_id: UUID | None = None
+    rights: EditUserRightsSchema | None = None
+    settings: EditUserSettingsSchema | None = None

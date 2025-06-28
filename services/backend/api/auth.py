@@ -7,7 +7,6 @@ from fastapi import (
 )
 
 from ..config import Config
-
 from ..response import SuccessResponse
 from ..schemas import TgAuth, TgId
 from ..services import AuthService

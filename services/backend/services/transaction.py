@@ -17,10 +17,10 @@ from ..exceptions import (
 )
 from ..schemas import TransactionSchema, UserSchema
 from .depends import (
-    get_user_repo,
     get_session,
     get_transaction_repo,
-    get_user
+    get_user,
+    get_user_repo
 )
 
 

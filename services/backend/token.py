@@ -1,12 +1,12 @@
 
 
-from uuid import UUID
 from datetime import (
     UTC,
     datetime,
     timedelta,
 )
 from typing import Any
+from uuid import UUID
 
 import jwt
 

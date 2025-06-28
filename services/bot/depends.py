@@ -1,20 +1,22 @@
 
 
 from uuid import UUID
+
+from aiogram.types import Message
+from fast_depends import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from shared.database import (
+    User,
+    UserRepository,
+    session_manager,
+)
+
 from .exceptions import (
     MessageUserIsNoneException,
     MessageUsernameIsNoneException,
     UserNotFoundException
 )
-from shared.database import (
-    UserRepository,
-    User,
-    session_manager,
-)
-
-from aiogram.types import Message
-from fast_depends import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserInfo:

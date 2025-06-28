@@ -1,10 +1,11 @@
 
 
 from .server import (
+    CreateServerSchema,
     ServerSchema,
-    ServerToCreateSchema,
     ServerToEditSchema,
 )
+from .tariff import CreateTariffSchema, EditTariffSchema, TariffSchema
 from .tg import TgAuth, TgId
 from .ticket import (
     NewTicketSchema,
@@ -27,7 +28,7 @@ from .user import (
 __all__ = [
     "ServerToEditSchema",
     "ServerSchema",
-    "ServerToCreateSchema",
+    "CreateServerSchema",
 
     "TgAuth",
 
@@ -45,4 +46,8 @@ __all__ = [
     "UserRightsSchema",
     "UserSchema",
     "UserSettingsSchema",
+
+    "TariffSchema",
+    "CreateTariffSchema",
+    "EditTariffSchema"
 ]

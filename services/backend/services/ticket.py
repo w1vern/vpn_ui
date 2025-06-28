@@ -20,7 +20,6 @@ from ..schemas import (
     UserSchema,
 )
 from .depends import (
-    get_db_user,
     get_message_repo,
     get_session,
     get_ticket_repo,

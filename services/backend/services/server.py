@@ -16,8 +16,8 @@ from ..exceptions import (
     ServerNotFoundException
 )
 from ..schemas import (
+    CreateServerSchema,
     ServerSchema,
-    ServerToCreateSchema,
     ServerToEditSchema,
     UserSchema
 )
@@ -58,7 +58,7 @@ class ServerService:
         return [ServerSchema.from_db(s) for s in await self.psr.get_all()]
 
     async def create(self,
-                     server_to_create: ServerToCreateSchema
+                     server_to_create: CreateServerSchema
                      ) -> None:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
@@ -91,8 +91,8 @@ class ServerService:
             await self.sr.set_country_code(server, server_to_edit.country_code)
         if server_to_edit.display_name is not None:
             await self.sr.set_display_name(server, server_to_edit.display_name)
-        if server_to_edit.created_date is not None:
-            await self.sr.set_created_date(server, datetime.fromisoformat(server_to_edit.created_date))
+        if server_to_edit.starting_date is not None:
+            await self.sr.set_created_date(server, datetime.fromisoformat(server_to_edit.starting_date))
         if server_to_edit.closing_date is not None:
             await self.sr.set_closing_date(server, datetime.fromisoformat(server_to_edit.closing_date))
         if server_to_edit.is_available is not None:

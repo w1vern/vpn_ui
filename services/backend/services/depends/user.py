@@ -17,12 +17,12 @@ from shared.infrastructure import (
 )
 
 from ...exceptions import (
-    NotControlPanelUserException,
-    SendFeedbackToAdminException,
-    AccessTokenMissingException,
+    AccessTokenCorruptedException,
     AccessTokenExpiredException,
     AccessTokenInvalidatedException,
-    AccessTokenCorruptedException
+    AccessTokenMissingException,
+    NotControlPanelUserException,
+    SendFeedbackToAdminException
 )
 from ...schemas import UserSchema
 from ...token import AccessToken

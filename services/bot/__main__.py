@@ -2,6 +2,7 @@
 import asyncio
 
 from .bot import bot, dp
+
 # from .rabbit import app
 
 

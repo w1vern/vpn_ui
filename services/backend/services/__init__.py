@@ -1,14 +1,9 @@
 
 from .auth import AuthService
-from .server import (
-    ServerService,
-)
-from .ticket import (
-    TicketService,
-)
-from .transaction import (
-    TransactionService,
-)
+from .server import ServerService
+from .tariff import TariffService
+from .ticket import TicketService
+from .transaction import TransactionService
 from .user import UserService
 
 __all__ = [
@@ -16,5 +11,6 @@ __all__ = [
     'ServerService',
     'TicketService',
     'TransactionService',
-    'UserService'
+    'UserService',
+    'TariffService'
 ]

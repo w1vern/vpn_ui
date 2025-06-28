@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends
 
 from ..response import SuccessResponse
 from ..schemas import (
+    CreateServerSchema,
     ServerSchema,
-    ServerToCreateSchema,
     ServerToEditSchema,
 )
 from ..services import ServerService
@@ -28,7 +28,7 @@ async def get_all(server_service: ServerService = Depends(ServerService.depends)
     path="",
     summary="Create a new server",
 )
-async def create_server(server_to_create: ServerToCreateSchema,
+async def create_server(server_to_create: CreateServerSchema,
                         server_service: ServerService = Depends(
                             ServerService.depends)
                         ) -> SuccessResponse:

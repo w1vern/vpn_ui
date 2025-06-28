@@ -3,14 +3,15 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import ReplyKeyboardRemove
-from fast_depends import inject, Depends
+from fast_depends import Depends, inject
 
 from shared.database import UserRepository
+
 from .config import env_config
+from .depends import get_user_repo
 
 # from .keyboards import main_menu_keyboard
 from .states import AppState
-from .depends import get_user_repo
 
 
 def register_lifecycle(dp: Dispatcher, bot: Bot) -> None:
