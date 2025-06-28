@@ -12,17 +12,18 @@ router = Router()
 async def cmd_start(message: types.Message,
                     state: FSMContext,
                     ) -> None:
-    await message.answer(f"hello, your rank: {user.rank}")
-    await to_main_menu(message, state, user, session)
+    pass
+    #await to_main_menu(message, state, user, session)
 
 
 @router.message()
 async def handle_button(message: types.Message,
                         state: FSMContext,
                         ) -> None:
-    await get_func(
+    pass
+    """ await get_func(
         await state.get_state(),
         message.text)(message,
                       state,
                       user,
-                      session)
+                      session) """
