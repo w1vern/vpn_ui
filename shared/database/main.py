@@ -86,7 +86,8 @@ DATABASE_URL = get_db_url(
     env_config.db.password,
     env_config.db.ip,
     env_config.db.port,
-    env_config.db.name)
+    env_config.db.name
+)
 
 session_manager = DatabaseSessionManager(DATABASE_URL,
                                          {"echo": False})

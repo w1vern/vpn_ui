@@ -10,7 +10,7 @@ from shared.database import UserRepository
 from .config import env_config
 from .depends import get_user_repo
 
-# from .keyboards import main_menu_keyboard
+from .keyboards import main_menu_keyboard
 from .states import AppState
 
 
@@ -24,7 +24,7 @@ def register_lifecycle(dp: Dispatcher, bot: Bot) -> None:
             state = FSMContext(storage=dp.storage, key=StorageKey(
                 bot.id, user.telegram_id, user.telegram_id))
             await state.set_state(AppState.main_menu)
-            # await bot.send_message(chat_id=user.telegram_id, text="bot startup", reply_markup=main_menu_keyboard(user))
+            await bot.send_message(chat_id=user.telegram_id, text="bot startup", reply_markup=main_menu_keyboard())
 
     @dp.shutdown()
     @inject
