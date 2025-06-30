@@ -4,10 +4,10 @@ from fastapi import APIRouter
 
 from .auth import router as auth_router
 from .server import router as server_router
+from .tariff import router as tariff_router
 from .ticket import router as ticket_router
 from .transaction import router as transaction_router
 from .user import router as user_router
-from .tariff import router as tariff_router
 
 router = APIRouter(prefix="/api")
 router.include_router(auth_router)

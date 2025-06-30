@@ -1,7 +1,7 @@
 
 from typing import Protocol
 
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class StaticButton():
@@ -33,23 +33,19 @@ def get_keyboard_size(values: list[str]
 
 
 def create_keyboard(values: list[str],
-                    placeholder: str = "",
                     keyboard_size: GetKeyboardSizeFunction = get_keyboard_size
-                    ) -> ReplyKeyboardMarkup:
+                    ) -> InlineKeyboardMarkup:
     markup = keyboard_size(values)
-    keyboard: list[list[KeyboardButton]] = []
+    keyboard: list[list[InlineKeyboardButton]] = []
     index = 0
     for i in range(len(markup)):
         keyboard.append([])
         for _ in range(markup[i]):
-            keyboard[i].append(KeyboardButton(text=values[index]))
+            keyboard[i].append(InlineKeyboardButton(text=values[index],
+                                                    callback_data=values[index]))
             index += 1
 
-    return ReplyKeyboardMarkup(
-        keyboard=keyboard,
-        resize_keyboard=True,
-        input_field_placeholder=placeholder
-    )
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
 
 class StaticButtons:
@@ -60,7 +56,7 @@ class StaticButtons:
     todo_note = StaticButton("need more buttons there")
 
 
-def main_menu_keyboard() -> ReplyKeyboardMarkup:
+def main_menu_keyboard() -> InlineKeyboardMarkup:
     values: list[str] = []
     values.append(StaticButtons.to_settings_menu.text)
     values.append(StaticButtons.to_inbounds_menu.text)
@@ -68,13 +64,13 @@ def main_menu_keyboard() -> ReplyKeyboardMarkup:
     return create_keyboard(values)
 
 
-def settings_keyboard() -> ReplyKeyboardMarkup:
+def settings_keyboard() -> InlineKeyboardMarkup:
     return create_keyboard([StaticButtons.todo_note.text, StaticButtons.to_main_menu.text])
 
 
-def inbounds_keyboard() -> ReplyKeyboardMarkup:
+def inbounds_keyboard() -> InlineKeyboardMarkup:
     return create_keyboard([StaticButtons.todo_note.text, StaticButtons.to_main_menu.text])
 
 
-def tickets_keyboard() -> ReplyKeyboardMarkup:
+def tickets_keyboard() -> InlineKeyboardMarkup:
     return create_keyboard([StaticButtons.todo_note.text, StaticButtons.to_main_menu.text])
