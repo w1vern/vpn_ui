@@ -1,7 +1,9 @@
 
 
+from typing import Awaitable, Protocol
 from uuid import UUID
 
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from fast_depends import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,6 +19,14 @@ from .exceptions import (
     MessageUsernameIsNoneException,
     UserNotFoundException
 )
+
+
+class Handler(Protocol):
+    def __call__(self,
+                 message: Message,
+                 state: FSMContext
+                 ) -> Awaitable[None]:
+        ...
 
 
 class UserInfo:

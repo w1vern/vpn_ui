@@ -22,5 +22,6 @@ class MyState(State):
 class AppState(StatesGroup):
     main_menu = MyState("main_menu")
     ticket = MyState("ticket", main_menu)
-    connections_menu = MyState("connections_menu", main_menu)
+    inbounds_menu = MyState("connections_menu", main_menu)
+    settings_menu = MyState("settings_menu", main_menu)
     info_menu = MyState("info_menu", main_menu)
