@@ -5,17 +5,16 @@ from fastapi import (
 )
 from redis.asyncio import Redis
 
-from shared.infrastructure import (
-    RedisType,
-    get_redis_client,
-)
-
 from ..config import Config
 from ..exceptions import (
     LoginLockedException,
     RequestClientException,
     TooManyAttemptsFromIPException,
     TooSoonToSendCodeException,
+)
+from ..redis import (
+    RedisType,
+    get_redis_client,
 )
 
 

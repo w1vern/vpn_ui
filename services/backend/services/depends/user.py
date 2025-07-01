@@ -11,10 +11,6 @@ from fastapi import (
 from redis.asyncio import Redis
 
 from shared.database import User, UserRepository
-from shared.infrastructure import (
-    RedisType,
-    get_redis_client,
-)
 
 from ...exceptions import (
     AccessTokenCorruptedException,
@@ -23,6 +19,10 @@ from ...exceptions import (
     AccessTokenMissingException,
     NotControlPanelUserException,
     SendFeedbackToAdminException
+)
+from ...redis import (
+    RedisType,
+    get_redis_client,
 )
 from ...schemas import UserSchema
 from ...token import AccessToken

@@ -1,11 +1,11 @@
 
-
 from typing import Awaitable, Protocol
 from uuid import UUID
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from fast_depends import Depends
+from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (
@@ -19,6 +19,8 @@ from .exceptions import (
     MessageUsernameIsNoneException,
     UserNotFoundException
 )
+from .redis import RedisType, get_redis_client
+from .states import MyState
 
 
 class Handler(Protocol):
@@ -71,3 +73,10 @@ async def get_user(user_info: UserInfo = Depends(get_user_info),
             await ur.update_telegram_username(user, user_info.username)
         return user
     raise UserNotFoundException()
+
+
+async def get_state(user_info: UserInfo = Depends(get_user_info),
+                    redis: Redis = Depends(get_redis_client)
+                    ) -> MyState:
+    state = await redis.get(f"{RedisType.state}:{user_info.id}")
+    return MyState.from_str(state)

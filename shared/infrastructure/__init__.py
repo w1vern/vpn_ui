@@ -4,7 +4,12 @@ from .rabbit import (
     CodeToTG,
     tg_code_queue,
 )
-from .redis import (
-    RedisType,
-    get_redis_client,
-)
+from .redis import get_redis_client
+
+__all__ = [
+    'RABBIT_URL',
+    'CodeToTG',
+    'tg_code_queue',
+    
+    'get_redis_client'
+]
