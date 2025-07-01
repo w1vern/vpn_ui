@@ -7,11 +7,7 @@ from faststream.rabbit import RabbitBroker
 from redis.asyncio import Redis
 
 from shared.database import UserRepository
-from shared.infrastructure import (
-    CodeToTG,
-    RedisType,
-    get_redis_client,
-)
+from shared.infrastructure import CodeToTG
 
 from ..config import Config
 from ..exceptions import (
@@ -23,6 +19,7 @@ from ..exceptions import (
     UserNotFoundException,
 )
 from ..rabbit import get_broker, send_tg_code
+from ..redis import RedisType, get_redis_client
 from ..schemas import TgAuth, TgId
 from ..token import AccessToken, RefreshToken
 from .anti_spam import AntiSpamService
@@ -97,8 +94,6 @@ class AuthService:
 
         access = AccessToken(user, now).to_token()
         return access
-        
-        
 
     async def send_code(self,
                         tg_id: TgId,

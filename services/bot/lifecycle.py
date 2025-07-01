@@ -2,12 +2,10 @@
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
-from aiogram.types import ReplyKeyboardRemove
 from fast_depends import Depends, inject
 
 from shared.database import UserRepository
 
-from .config import env_config
 from .depends import get_user_repo
 from .keyboards import main_menu_keyboard
 from .states import AppState
@@ -31,8 +29,7 @@ def register_lifecycle(dp: Dispatcher, bot: Bot) -> None:
 
     @dp.shutdown()
     @inject
-    async def on_shutdown(state: FSMContext,
-                          ur: UserRepository = Depends(get_user_repo)
+    async def on_shutdown(ur: UserRepository = Depends(get_user_repo)
                           ) -> None:
         """ for user in await ur.get_all():
             pass

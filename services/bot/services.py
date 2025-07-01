@@ -1,38 +1,40 @@
 
 from aiogram import types
-from aiogram.fsm.context import FSMContext
-from bot.states import AppState
+from fast_depends import Depends
+from redis.asyncio import Redis
 
-from .depends import Handler
+from .depends import Handler, get_state
 from .keyboards import (
     StaticButtons,
     main_menu_keyboard,
     settings_keyboard
 )
+from .redis import get_redis_client
+from .states import AppStates, MyState
 
 
 async def to_main_menu(message: types.Message,
-                       state: FSMContext,
+                       state: MyState = Depends(get_state)
                        ) -> None:
-    await state.set_state(AppState.main_menu)
+    await state.set_state(AppStates.main_menu)
     await message.answer(text="use keyboard", reply_markup=main_menu_keyboard())
 
 
 async def need_more_buttons_note(message: types.Message,
-                                 state: FSMContext,
+                                 state: MyState = Depends(get_state)
                                  ) -> None:
     await message.answer(text="chose another button")
 
 
 async def edit_settings(message: types.Message,
-                        state: FSMContext,
+                        redis: Redis = Depends(get_redis_client)
                         ) -> None:
-    await state.set_state(AppState.settings_menu)
+    await state.set_state(AppStates.settings_menu)
     await message.answer(text="use keyboard", reply_markup=settings_keyboard())
 
 
 async def incorrect_input(message: types.Message,
-                          state: FSMContext,
+                          state: MyState = Depends(get_state)
                           ) -> None:
     await message.answer(text="error, use keyboard")
 
@@ -53,8 +55,8 @@ def get_func(current_state: str | None,
 
 
 behavioral_dict: dict[str, Handler] = {
-    f"{AppState.main_menu.state}/{StaticButtons.to_settings_menu.text}": edit_settings,
-    f"{AppState.settings_menu.state}": incorrect_input,
-    f"{AppState.settings_menu.state}/{StaticButtons.todo_note.text}": need_more_buttons_note,
-    f"{AppState.settings_menu.state}/{StaticButtons.to_main_menu.text}": to_main_menu
+    f"{AppStates.main_menu.to_str}/{StaticButtons.to_settings_menu.text}": edit_settings,
+    f"{AppStates.settings_menu.to_str}": incorrect_input,
+    f"{AppStates.settings_menu.to_str}/{StaticButtons.todo_note.text}": need_more_buttons_note,
+    f"{AppStates.settings_menu.to_str}/{StaticButtons.to_main_menu.text}": to_main_menu
 }

@@ -1,5 +1,4 @@
 
-
 from aiogram import Bot
 from faststream import (
     Depends,
