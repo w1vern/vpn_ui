@@ -22,3 +22,7 @@ class MessageUsernameIsNoneException(BaseException):
 class IncorrectStateException(BaseException):
     def __init__(self, state: str):
         super().__init__(f"Incorrect state: {state}")
+
+class MessageTextIsNoneException(BaseException):
+    def __init__(self):
+        super().__init__("Message.text is None")

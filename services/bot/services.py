@@ -1,16 +1,56 @@
 
-from aiogram import types
 from fast_depends import Depends
 from redis.asyncio import Redis
 
-from .depends import Handler, get_state
-from .keyboards import (
+from .buttons import (
+    Button,
     StaticButtons,
     main_menu_keyboard,
     settings_keyboard
 )
+from .depends import (
+    Handler,
+    UserInfo,
+    get_state,
+    get_user_info
+)
 from .redis import get_redis_client
 from .states import AppStates, MyState
+
+
+class Output:
+    text: str | None
+    buttons: list[Button] | None
+    user_info: UserInfo
+
+
+class Service():
+    def __init__(self,
+                 user_info: UserInfo,
+                 state: MyState
+                 ) -> None:
+        self.user_info = user_info
+        self.state = state
+
+    @classmethod
+    def depends(cls,
+                user_info: UserInfo = Depends(get_user_info),
+                state: MyState = Depends(get_state)
+                ) -> 'Service':
+        return cls(user_info, state)
+
+    async def keyboard_handler(self,
+                               input: str
+                               ) -> Output:
+        pass
+
+    async def chat_handler(self,
+                           input: str
+                           ) -> Output:
+        pass
+
+    async def start_handler(self) -> Output:
+        pass
 
 
 async def to_main_menu(message: types.Message,
