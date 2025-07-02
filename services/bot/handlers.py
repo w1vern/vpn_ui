@@ -1,11 +1,15 @@
 
-from aiogram import Router
+from aiogram import Bot, Router
 from aiogram.filters import Command
-from aiogram.types import CallbackQuery, InaccessibleMessage, Message
+from aiogram.types import (
+    CallbackQuery,
+    InaccessibleMessage,
+    Message,
+    InlineKeyboardMarkup
+)
 from fast_depends import Depends, inject
 from redis.asyncio import Redis
 
-from .utils import edit_message
 from .exceptions import MessageTextIsNoneException
 from .keyboard import create_keyboard
 from .redis import RedisType, get_redis_client
@@ -13,6 +17,22 @@ from .services import Output, Service
 from .bot import get_bot
 
 router = Router()
+
+
+async def edit_message(bot: Bot,
+                       chat_id: int,
+                       message_id: int,
+                       new_text: str | None,
+                       new_keyboard: InlineKeyboardMarkup | None,
+                       ) -> None:
+    if not new_text is None:
+        await bot.edit_message_text(new_text,
+                                    chat_id=chat_id,
+                                    message_id=message_id)
+    if not new_keyboard is None:
+        await bot.edit_message_reply_markup(chat_id=chat_id,
+                                            message_id=message_id,
+                                            reply_markup=new_keyboard)
 
 
 @inject

@@ -1,5 +1,4 @@
 
-from typing import Awaitable, Protocol
 from uuid import UUID
 
 from aiogram.types import Message
@@ -20,13 +19,6 @@ from .exceptions import (
 )
 from .redis import RedisType, get_redis_client
 from .states import MyState
-
-
-class Handler(Protocol):
-    def __call__(self,
-                 message: Message,
-                 ) -> Awaitable[None]:
-        ...
 
 
 class UserInfo:
