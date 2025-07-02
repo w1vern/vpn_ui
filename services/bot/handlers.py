@@ -5,11 +5,12 @@ from aiogram.types import CallbackQuery, InaccessibleMessage, Message
 from fast_depends import Depends, inject
 from redis.asyncio import Redis
 
-from .bot import edit_message
+from .utils import edit_message
 from .exceptions import MessageTextIsNoneException
 from .keyboard import create_keyboard
 from .redis import RedisType, get_redis_client
 from .services import Output, Service
+from .bot import get_bot
 
 router = Router()
 
@@ -20,7 +21,8 @@ async def update_inline(new_state: Output,
                         ) -> None:
     message_id = await redis.get(f"{RedisType.main_message}:{new_state.user_info.id}")
     chat_id = new_state.user_info.id
-    await edit_message(chat_id,
+    await edit_message(get_bot(),
+                       chat_id,
                        message_id,
                        new_state.text,
                        create_keyboard(new_state.buttons)
