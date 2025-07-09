@@ -12,15 +12,15 @@ class MyState():
 
     @property
     def to_str(self) -> str:
-        if self._parent:
+        if not self._parent is None:
             return f"{self._parent.to_str}/{self._state}"
         return self._state
-    
+
     @classmethod
     def from_str(cls, state: str) -> 'MyState':
         last_state = state.split("/")[-1]
-        for key in AppStates.__dict__:
-            if AppStates.__dict__[key].to_str == last_state:
+        for key, value in user_attrs.items():
+            if value.to_str == last_state:
                 return AppStates.__dict__[key]
         raise IncorrectStateException(state)
 
@@ -31,3 +31,10 @@ class AppStates():
     inbounds_menu = MyState("connections_menu", main_menu)
     settings_menu = MyState("settings_menu", main_menu)
     info_menu = MyState("info_menu", main_menu)
+
+
+user_attrs = {
+    key: value
+    for key, value in AppStates.__dict__.items()
+    if not key.startswith('__') and not callable(value)
+}

@@ -1,20 +1,27 @@
 
 from aiogram import Bot, Router
+from aiogram.exceptions import TelegramAPIError
 from aiogram.filters import Command
 from aiogram.types import (
     CallbackQuery,
+    ErrorEvent,
     InaccessibleMessage,
-    Message,
-    InlineKeyboardMarkup
+    InlineKeyboardMarkup,
+    Message
 )
 from fast_depends import Depends, inject
 from redis.asyncio import Redis
 
-from .exceptions import MessageTextIsNoneException
+from .bot import get_bot
+from .depends import UserInfo
+from .exceptions import (
+    BaseCustomException,
+    MessageTextIsNoneException,
+    SendFeedbackToAdminException
+)
 from .keyboard import create_keyboard
 from .redis import RedisType, get_redis_client
 from .services import Output, Service
-from .bot import get_bot
 
 router = Router()
 
@@ -37,11 +44,12 @@ async def edit_message(bot: Bot,
 
 @inject
 async def update_inline(new_state: Output,
-                        redis: Redis = Depends(get_redis_client)
+                        redis: Redis = Depends(get_redis_client),
+                        bot: Bot = Depends(get_bot)
                         ) -> None:
     message_id = await redis.get(f"{RedisType.main_message}:{new_state.user_info.id}")
     chat_id = new_state.user_info.id
-    await edit_message(get_bot(),
+    await edit_message(bot,
                        chat_id,
                        message_id,
                        new_state.text,
@@ -54,6 +62,7 @@ async def update_inline(new_state: Output,
 async def cmd_start(message: Message,
                     service: Service = Depends(Service.depends)
                     ) -> None:
+    print("aboba1")
     await message.delete()
     await update_inline(await service.start_handler())
 
@@ -63,6 +72,8 @@ async def cmd_start(message: Message,
 async def handle_text(message: Message,
                       service: Service = Depends(Service.depends)
                       ) -> None:
+    print(message.from_user.id)
+    print("aboba2")
     await message.delete()
     if message.text is None:
         raise MessageTextIsNoneException()
@@ -74,8 +85,41 @@ async def handle_text(message: Message,
 async def handle_inline_button(callback_query: CallbackQuery,
                                service: Service = Depends(Service.depends)
                                ) -> None:
+    print("aboba3")
     if callback_query.message is None \
         or isinstance(callback_query.message, InaccessibleMessage) \
             or callback_query.message.text is None:
         raise MessageTextIsNoneException()
     await update_inline(await service.keyboard_handler(callback_query.message.text))
+
+
+@router.errors()
+async def error_handler(event: ErrorEvent) -> None:
+    print("aboba4")
+    exception = event.exception
+    if event.update.message is None:
+        if event.update.callback_query is None \
+            or event.update.callback_query.message is None \
+            or isinstance(event.update.callback_query.message, InaccessibleMessage) \
+                or event.update.callback_query.message.from_user is None \
+                or event.update.callback_query.message.from_user.username is None:
+            raise SendFeedbackToAdminException()
+        id = event.update.callback_query.message.from_user.id
+        username = event.update.callback_query.message.from_user.username
+    else:
+        if event.update.message.from_user is None \
+                or event.update.message.from_user.username is None:
+            raise SendFeedbackToAdminException()
+        id = event.update.message.from_user.id
+        username = event.update.message.from_user.username
+    user_info = UserInfo(id, username)
+    print(user_info.id)
+    new_state = Output(None, None, user_info)
+    if isinstance(exception, BaseCustomException):
+        new_state.text = exception.detail
+    elif isinstance(exception, TelegramAPIError):
+        new_state.text = "telegram api error"
+    else:
+        new_state.text = "unknown error"
+    await update_inline(new_state)
+    raise exception

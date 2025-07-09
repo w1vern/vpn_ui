@@ -1,22 +1,19 @@
 
 from typing import Awaitable, Protocol
+
 from aiogram import Bot
 from fast_depends import Depends
 from redis.asyncio import Redis
 
 from .bot import get_bot
-
 from .buttons import (
     Button,
     StaticButtons,
     main_menu_keyboard,
     settings_keyboard
 )
-from .depends import (
-    UserInfo,
-    get_state,
-    get_user_info
-)
+from .depends import UserInfo, get_state, get_user_info
+from .exceptions import UserNotFoundException
 from .redis import RedisType, get_redis_client
 from .states import AppStates, MyState
 
@@ -71,7 +68,7 @@ class Service():
         pass
 
     async def start_handler(self) -> Output:
-        pass
+        raise UserNotFoundException()
 
     async def __set_state(self,
                           state: MyState,
@@ -85,7 +82,7 @@ class Service():
         return Output("main menu", main_menu_keyboard(), self.user_info)
 
 
-async def need_more_buttons_note(message: types.Message,
+""" async def need_more_buttons_note(message: types.Message,
                                  state: MyState = Depends(get_state)
                                  ) -> None:
     await message.answer(text="chose another button")
@@ -124,4 +121,4 @@ behavioral_dict: dict[str, Handler] = {
     f"{AppStates.settings_menu.to_str}": incorrect_input,
     f"{AppStates.settings_menu.to_str}/{StaticButtons.todo_note.text}": need_more_buttons_note,
     f"{AppStates.settings_menu.to_str}/{StaticButtons.to_main_menu.text}": to_main_menu
-}
+} """
