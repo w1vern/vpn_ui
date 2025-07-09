@@ -1,5 +1,4 @@
 
-import logging
 from aiogram import Bot, Router
 from aiogram.exceptions import TelegramAPIError
 from aiogram.filters import Command
@@ -23,6 +22,9 @@ from .exceptions import (
 from .keyboard import create_keyboard
 from .redis import RedisType, get_redis_client
 from .services import Output, Service
+from shared.infrastructure import setup_logger
+
+logger = setup_logger(__name__)
 
 router = Router()
 
@@ -49,7 +51,7 @@ async def update_inline(new_state: Output,
                         bot: Bot = Depends(get_bot)
                         ) -> None:
     message_id = await redis.get(f"{RedisType.main_message}:{new_state.user_info.id}")
-    logging.debug(f"message_id: {message_id}")
+    logger.debug(f"message_id: {message_id}")
     chat_id = new_state.user_info.id
     await edit_message(bot,
                        chat_id,

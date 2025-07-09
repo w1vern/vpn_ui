@@ -1,5 +1,4 @@
 
-import logging
 from aiogram import Bot, Dispatcher
 from fast_depends import Depends, inject
 from redis.asyncio import Redis
@@ -11,7 +10,9 @@ from .depends import get_user_repo
 from .keyboard import create_keyboard
 from .redis import RedisType, get_redis_client
 from .states import AppStates
+from shared.infrastructure import setup_logger
 
+logger = setup_logger(__name__)
 
 def register_lifecycle(dp: Dispatcher,
                        bot: Bot
@@ -31,7 +32,7 @@ def register_lifecycle(dp: Dispatcher,
                 text="bot startup",
                 reply_markup=create_keyboard(main_menu_keyboard()))
             await redis.set(f"{RedisType.main_message}:{user.telegram_id}", message.message_id)
-            logging.debug(f"message_id: {message.message_id}")
+            logger.debug(f"message_id: {message.message_id}")
             await redis.set(f"{RedisType.state}:{user.telegram_id}", AppStates.main_menu.to_str)
 
     @dp.shutdown()
