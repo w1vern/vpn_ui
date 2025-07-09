@@ -1,5 +1,4 @@
 
-import logging
 import os
 
 from pydantic import BaseModel
@@ -7,6 +6,10 @@ from pydantic_settings import (
     BaseSettings,
     SettingsConfigDict,
 )
+
+from shared.infrastructure import setup_logger
+
+logger = setup_logger(__name__)
 
 
 class DBSettings(BaseModel):
@@ -74,4 +77,4 @@ if env_config.bot.superuser == 0:
     raise ValueError("env parameters not set")
 
 if __name__ == "__main__":
-    logging.debug(env_config.model_dump_json(indent=2))
+    logger.debug(env_config.model_dump_json(indent=2))

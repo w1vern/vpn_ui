@@ -1,5 +1,8 @@
 
 from shared.config import env_config
+from shared.infrastructure import setup_logger
+
+logger = setup_logger(__name__)
 
 SECRET = env_config.backend.secret
 

@@ -1,6 +1,5 @@
 
 import asyncio
-import logging
 from datetime import (
     UTC,
     datetime,
@@ -20,6 +19,9 @@ from shared.database import (
     UserRepository,
     session_manager,
 )
+from shared.infrastructure import setup_logger
+
+logger = setup_logger(__name__)
 
 default_users: list[dict[str, Any]] = [
     {
@@ -75,8 +77,8 @@ async def wait_for_table(table_name: str, retries: int = 30, delay: int = 1) -> 
                 if exists:
                     return
         except Exception as e:
-            logging.error(f"[!] Error connecting to DB: {e}")
-        logging.info(
+            logger.error(f"[!] Error connecting to DB: {e}")
+        logger.info(
             f"[{attempt + 1}/{retries}] Waiting for table '{table_name}'...")
         await asyncio.sleep(delay)
     raise TimeoutError(f"Timed out waiting for table '{table_name}'")
@@ -88,7 +90,7 @@ async def main() -> None:
         ur = UserRepository(session)
         users = await ur.get_all()
         if len(users) > 0:
-            logging.info("database is not empty")
+            logger.info("database is not empty")
             return
         tr = TariffRepository(session)
         _ = None
@@ -115,7 +117,7 @@ async def main() -> None:
                 login=pserver["login"],
                 password=pserver["password"])
 
-        logging.info("database is filled")
+        logger.info("database is filled")
 
 if __name__ == "__main__":
     asyncio.run(main())

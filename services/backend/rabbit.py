@@ -1,6 +1,5 @@
 
 
-import logging
 from faststream.rabbit import (
     RabbitBroker,
     fastapi,
@@ -12,6 +11,8 @@ from shared.infrastructure import (
     tg_code_queue,
 )
 
+from .config import logger
+
 router = fastapi.RabbitRouter(RABBIT_URL)
 
 
@@ -20,5 +21,5 @@ def get_broker() -> RabbitBroker:
 
 
 async def send_tg_code(data: CodeToTG, broker: RabbitBroker) -> None:
-    logging.debug(data)
+    logger.debug(data)
     await broker.publish(data, tg_code_queue)

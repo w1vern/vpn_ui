@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.database import UserRepository
 
 from ..exceptions import (
-    UserNotFoundException,
-    MemberRightsEditNotAllowedException,
     AdminRightsEditNotAllowedException,
-    MemberSettingsEditNotAllowedException
+    MemberRightsEditNotAllowedException,
+    MemberSettingsEditNotAllowedException,
+    UserNotFoundException
 )
 from ..schemas import EditUserSchema, UserSchema
 from .depends import (
