@@ -3,7 +3,6 @@ from aiogram import Bot, Dispatcher
 
 from shared.config import env_config
 
-
 bot = Bot(token=env_config.bot.token)
 dp = Dispatcher()
 

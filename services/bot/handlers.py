@@ -1,4 +1,5 @@
 
+import logging
 from aiogram import Bot, Router
 from aiogram.exceptions import TelegramAPIError
 from aiogram.filters import Command
@@ -48,6 +49,7 @@ async def update_inline(new_state: Output,
                         bot: Bot = Depends(get_bot)
                         ) -> None:
     message_id = await redis.get(f"{RedisType.main_message}:{new_state.user_info.id}")
+    logging.debug(f"message_id: {message_id}")
     chat_id = new_state.user_info.id
     await edit_message(bot,
                        chat_id,
@@ -62,7 +64,6 @@ async def update_inline(new_state: Output,
 async def cmd_start(message: Message,
                     service: Service = Depends(Service.depends)
                     ) -> None:
-    print("aboba1")
     await message.delete()
     await update_inline(await service.start_handler())
 
@@ -72,8 +73,6 @@ async def cmd_start(message: Message,
 async def handle_text(message: Message,
                       service: Service = Depends(Service.depends)
                       ) -> None:
-    print(message.from_user.id)
-    print("aboba2")
     await message.delete()
     if message.text is None:
         raise MessageTextIsNoneException()
@@ -85,7 +84,6 @@ async def handle_text(message: Message,
 async def handle_inline_button(callback_query: CallbackQuery,
                                service: Service = Depends(Service.depends)
                                ) -> None:
-    print("aboba3")
     if callback_query.message is None \
         or isinstance(callback_query.message, InaccessibleMessage) \
             or callback_query.message.text is None:
@@ -95,7 +93,6 @@ async def handle_inline_button(callback_query: CallbackQuery,
 
 @router.errors()
 async def error_handler(event: ErrorEvent) -> None:
-    print("aboba4")
     exception = event.exception
     if event.update.message is None:
         if event.update.callback_query is None \
@@ -113,7 +110,6 @@ async def error_handler(event: ErrorEvent) -> None:
         id = event.update.message.from_user.id
         username = event.update.message.from_user.username
     user_info = UserInfo(id, username)
-    print(user_info.id)
     new_state = Output(None, None, user_info)
     if isinstance(exception, BaseCustomException):
         new_state.text = exception.detail

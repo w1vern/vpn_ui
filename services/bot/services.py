@@ -60,12 +60,12 @@ class Service():
     async def keyboard_handler(self,
                                input: str
                                ) -> Output:
-        pass
+        return Output(None, None, self.user_info)
 
     async def chat_handler(self,
                            input: str
                            ) -> Output:
-        pass
+        return Output(None, None, self.user_info)
 
     async def start_handler(self) -> Output:
         raise UserNotFoundException()

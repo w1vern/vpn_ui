@@ -2,9 +2,9 @@
 import asyncio
 
 from .bot import bot, dp
-from .rabbit import app
 from .handlers import router
 from .lifecycle import register_lifecycle
+from .rabbit import app
 
 
 async def main():
