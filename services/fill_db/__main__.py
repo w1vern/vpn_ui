@@ -1,18 +1,16 @@
 
 import asyncio
+import logging
 from datetime import (
     UTC,
     datetime,
     timedelta,
 )
 from typing import Any
-from uuid import UUID
 
 from sqlalchemy import text
 
-from shared.config import (
-    env_config,
-)
+from shared.config import env_config
 from shared.database import (
     PanelServerRepository,
     RightsType,
@@ -77,8 +75,9 @@ async def wait_for_table(table_name: str, retries: int = 30, delay: int = 1) -> 
                 if exists:
                     return
         except Exception as e:
-            print(f"[!] Error connecting to DB: {e}")
-        print(f"[{attempt + 1}/{retries}] Waiting for table '{table_name}'...")
+            logging.error(f"[!] Error connecting to DB: {e}")
+        logging.info(
+            f"[{attempt + 1}/{retries}] Waiting for table '{table_name}'...")
         await asyncio.sleep(delay)
     raise TimeoutError(f"Timed out waiting for table '{table_name}'")
 
@@ -89,7 +88,7 @@ async def main() -> None:
         ur = UserRepository(session)
         users = await ur.get_all()
         if len(users) > 0:
-            print("database is not empty")
+            logging.info("database is not empty")
             return
         tr = TariffRepository(session)
         _ = None
@@ -116,7 +115,7 @@ async def main() -> None:
                 login=pserver["login"],
                 password=pserver["password"])
 
-        print("database is filled")
+        logging.info("database is filled")
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -1,4 +1,5 @@
 
+import logging
 import os
 
 from pydantic import BaseModel
@@ -73,4 +74,4 @@ if env_config.bot.superuser == 0:
     raise ValueError("env parameters not set")
 
 if __name__ == "__main__":
-    print(env_config.model_dump_json(indent=2))
+    logging.debug(env_config.model_dump_json(indent=2))
