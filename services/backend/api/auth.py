@@ -2,8 +2,7 @@
 from fastapi import (
     APIRouter,
     Cookie,
-    Depends,
-    Response,
+    Depends
 )
 
 from ..config import Config

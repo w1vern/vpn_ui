@@ -8,9 +8,8 @@ from redis.asyncio import Redis
 from .bot import get_bot
 from .buttons import (
     Button,
-    StaticButtons,
     main_menu_keyboard,
-    settings_keyboard
+    
 )
 from .depends import UserInfo, get_state, get_user_info
 from .exceptions import UserNotFoundException

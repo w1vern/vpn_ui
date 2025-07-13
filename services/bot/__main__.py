@@ -11,10 +11,10 @@ async def main():
     register_lifecycle(dp, bot)
     dp.include_router(router)
     bot_task = asyncio.create_task(dp.start_polling(bot))
-    # broker_task = asyncio.create_task(app.run())
+    broker_task = asyncio.create_task(app.run())
     await asyncio.gather(
         bot_task,
-        # broker_task
+        broker_task
     )
 
 if __name__ == "__main__":

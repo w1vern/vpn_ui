@@ -5,7 +5,6 @@ from aiogram.filters import Command
 from aiogram.types import (
     CallbackQuery,
     ErrorEvent,
-    InaccessibleMessage,
     InlineKeyboardMarkup,
     Message
 )
@@ -86,25 +85,22 @@ async def handle_text(message: Message,
 async def handle_inline_button(callback_query: CallbackQuery,
                                service: Service = Depends(Service.depends)
                                ) -> None:
-    if callback_query.message is None \
-        or isinstance(callback_query.message, InaccessibleMessage) \
-            or callback_query.message.text is None:
+    if callback_query.data is None:
         raise MessageTextIsNoneException()
-    await update_inline(await service.keyboard_handler(callback_query.message.text))
+    logger.debug(callback_query.data)
+    await update_inline(await service.keyboard_handler(callback_query.data))
 
 
-#@router.errors()
+# @router.errors()
 async def error_handler(event: ErrorEvent) -> None:
     exception = event.exception
     if event.update.message is None:
         if event.update.callback_query is None \
-            or event.update.callback_query.message is None \
-            or isinstance(event.update.callback_query.message, InaccessibleMessage) \
-                or event.update.callback_query.message.from_user is None \
-                or event.update.callback_query.message.from_user.username is None:
+                or event.update.callback_query.from_user is None \
+                or event.update.callback_query.from_user.username is None:
             raise SendFeedbackToAdminException()
-        id = event.update.callback_query.message.from_user.id
-        username = event.update.callback_query.message.from_user.username
+        id = event.update.callback_query.from_user.id
+        username = event.update.callback_query.from_user.username
     else:
         if event.update.message.from_user is None \
                 or event.update.message.from_user.username is None:

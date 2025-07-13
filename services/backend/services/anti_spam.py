@@ -1,7 +1,7 @@
 
 from fastapi import (
     Depends,
-    Request,
+    Request
 )
 from redis.asyncio import Redis
 
@@ -10,11 +10,11 @@ from ..exceptions import (
     LoginLockedException,
     RequestClientException,
     TooManyAttemptsFromIPException,
-    TooSoonToSendCodeException,
+    TooSoonToSendCodeException
 )
 from ..redis import (
     RedisType,
-    get_redis_client,
+    get_redis_client
 )
 
 

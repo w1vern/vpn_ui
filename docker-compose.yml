@@ -21,6 +21,14 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c log_statement=all
+      -c log_duration=on
+      -c log_min_duration_statement=0
+      -c logging_collector=off
+      -c client_min_messages=log
+      -c log_error_verbosity=default
 
   redis:
     image: redis:7

@@ -23,6 +23,7 @@ from .exceptions import (
 )
 from .redis import RedisType, get_redis_client
 from .states import MyState
+from .buttons import Button
 
 
 class UserInfo:
@@ -31,6 +32,21 @@ class UserInfo:
                  ) -> None:
         self.id = id
         self.username = username
+
+
+class MainMessage():
+    def __init__(self,
+                 id: int,
+                 text: str,
+                 buttons: list[Button]
+                 ) -> None:
+        self.id = id
+        self.text = text
+        self.buttons = buttons
+
+    def to_str(self) -> str:
+        return 
+
 
 
 async def get_user_repo(session: AsyncSession = Depends(session_manager.session)
@@ -85,3 +101,9 @@ async def get_state(user_info: UserInfo = Depends(get_user_info),
                     ) -> MyState:
     state = await redis.get(f"{RedisType.state.value}:{user_info.id}")
     return MyState.from_str(state)
+
+
+async def get_main_message(user_info: UserInfo = Depends(get_user_info),
+                           redis: Redis = Depends(get_redis_client)
+                           ) -> int:
+    return int(await redis.get(f"{RedisType.main_message.value}:{user_info.id}"))

@@ -46,7 +46,7 @@ class AuthService:
                 ) -> 'AuthService':
         return cls(ur, redis, broker, anti_spam)
 
-    async def _create_code(self) -> str:
+    async def __create_code(self) -> str:
         return f"{random.randint(0, 999999):06}"
 
     async def login(self,
@@ -106,7 +106,7 @@ class AuthService:
 
         await self.anti_spam.check_tg_code_gap(user.telegram_id)
 
-        code = await self._create_code()
+        code = await self.__create_code()
         await self.redis.set(f"{RedisType.tg_code.value}:{user.telegram_id}",
                              code, ex=Config.tg_code_lifetime)
 
