@@ -37,7 +37,7 @@ async def get_user(access_token: str | None = Cookie(default=None),
     current_time = datetime.now(UTC).replace(tzinfo=None)
     if access.created_date > current_time or access.created_date + access.lifetime < current_time:
         raise AccessTokenExpiredException()
-    if await redis.exists(f"{RedisType.invalidated_access_token}:{access.user.id}"):
+    if await redis.exists(f"{RedisType.invalidated_access_token.value}:{access.user.id}"):
         raise AccessTokenInvalidatedException()
     if not access.user:
         raise AccessTokenCorruptedException()

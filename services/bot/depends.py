@@ -1,7 +1,10 @@
 
 from uuid import UUID
 
-from aiogram.types import Message
+from aiogram.types import (
+    Message,
+    CallbackQuery
+)
 from fast_depends import Depends
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,12 +12,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.database import (
     User,
     UserRepository,
-    session_manager,
+    session_manager
 )
 
 from .exceptions import (
     MessageUserIsNoneException,
     MessageUsernameIsNoneException,
+    SendFeedbackToAdminException,
     UserNotFoundException
 )
 from .redis import RedisType, get_redis_client
@@ -22,7 +26,9 @@ from .states import MyState
 
 
 class UserInfo:
-    def __init__(self, id: int, username: str):
+    def __init__(self, id: int,
+                 username: str
+                 ) -> None:
         self.id = id
         self.username = username
 
@@ -32,13 +38,22 @@ async def get_user_repo(session: AsyncSession = Depends(session_manager.session)
     return UserRepository(session)
 
 
-async def get_user_info(message: Message) -> UserInfo:
-    if not message.from_user:
+async def get_user_info(message: Message | None = None,
+                        callback_query: CallbackQuery | None = None
+                        ) -> UserInfo:
+    if message is None:
+        if not callback_query is None:
+            data = callback_query
+        else:
+            raise SendFeedbackToAdminException()
+    else:
+        data = message
+    if not data.from_user:
         raise MessageUserIsNoneException()
-    if not message.from_user.username:
+    if not data.from_user.username:
         raise MessageUsernameIsNoneException()
-    return UserInfo(message.from_user.id,
-                    message.from_user.username)
+    return UserInfo(data.from_user.id,
+                    data.from_user.username)
 
 
 async def create_user(user_info: UserInfo = Depends(get_user_info),
@@ -68,5 +83,5 @@ async def get_user(user_info: UserInfo = Depends(get_user_info),
 async def get_state(user_info: UserInfo = Depends(get_user_info),
                     redis: Redis = Depends(get_redis_client)
                     ) -> MyState:
-    state = await redis.get(f"{RedisType.state}:{user_info.id}")
+    state = await redis.get(f"{RedisType.state.value}:{user_info.id}")
     return MyState.from_str(state)

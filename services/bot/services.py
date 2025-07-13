@@ -16,6 +16,9 @@ from .depends import UserInfo, get_state, get_user_info
 from .exceptions import UserNotFoundException
 from .redis import RedisType, get_redis_client
 from .states import AppStates, MyState
+from shared.infrastructure import setup_logger
+
+logger = setup_logger(__name__)
 
 
 class Output:
@@ -73,7 +76,7 @@ class Service():
     async def __set_state(self,
                           state: MyState,
                           ) -> None:
-        await self.redis.set(f"{RedisType.state}:{self.user_info.id}", state.to_str)
+        await self.redis.set(f"{RedisType.state.value}:{self.user_info.id}", state.to_str)
 
     async def __to_main_menu(self,
                              input: str

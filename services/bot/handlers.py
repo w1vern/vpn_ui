@@ -50,7 +50,7 @@ async def update_inline(new_state: Output,
                         redis: Redis = Depends(get_redis_client),
                         bot: Bot = Depends(get_bot)
                         ) -> None:
-    message_id = await redis.get(f"{RedisType.main_message}:{new_state.user_info.id}")
+    message_id = await redis.get(f"{RedisType.main_message.value}:{new_state.user_info.id}")
     logger.debug(f"message_id: {message_id}")
     chat_id = new_state.user_info.id
     await edit_message(bot,
@@ -93,7 +93,7 @@ async def handle_inline_button(callback_query: CallbackQuery,
     await update_inline(await service.keyboard_handler(callback_query.message.text))
 
 
-@router.errors()
+#@router.errors()
 async def error_handler(event: ErrorEvent) -> None:
     exception = event.exception
     if event.update.message is None:

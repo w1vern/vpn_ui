@@ -56,7 +56,7 @@ class AuthService:
         await self.anti_spam.increment_ip_attempts()
         await self.anti_spam.check_login_lock(tg_auth.tg_id)
 
-        tg_code = await self.redis.get(f"{RedisType.tg_code}:{tg_auth.tg_id}")
+        tg_code = await self.redis.get(f"{RedisType.tg_code.value}:{tg_auth.tg_id}")
         if tg_code is None:
             raise CodeNotFoundException()
 
@@ -65,11 +65,11 @@ class AuthService:
             raise UserNotFoundException()
 
         if tg_auth.tg_code != tg_code:
-            await self.redis.set(f"{RedisType.incorrect_credentials}:{tg_auth.tg_id}", 0,
+            await self.redis.set(f"{RedisType.incorrect_credentials.value}:{tg_auth.tg_id}", 0,
                                  ex=Config.login_gap)
             raise InvalidCredentialsException()
 
-        await self.redis.delete(f"{RedisType.tg_code}:{user.telegram_id}")
+        await self.redis.delete(f"{RedisType.tg_code.value}:{user.telegram_id}")
 
         refresh = RefreshToken(user_id=user.id, secret=user.secret).to_token()
         access = AccessToken(user).to_token()
@@ -107,7 +107,7 @@ class AuthService:
         await self.anti_spam.check_tg_code_gap(user.telegram_id)
 
         code = await self._create_code()
-        await self.redis.set(f"{RedisType.tg_code}:{user.telegram_id}",
+        await self.redis.set(f"{RedisType.tg_code.value}:{user.telegram_id}",
                              code, ex=Config.tg_code_lifetime)
 
         await send_tg_code(CodeToTG(tg_id=user.telegram_id,

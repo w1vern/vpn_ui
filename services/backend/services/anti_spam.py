@@ -36,7 +36,7 @@ class AntiSpamService:
         return cls(request.client.host, redis)
 
     async def increment_ip_attempts(self) -> None:
-        key = f"{RedisType.incorrect_credentials_ip}:{self.ip}"
+        key = f"{RedisType.incorrect_credentials_ip.value}:{self.ip}"
         value = await self.redis.get(key)
         counter = int(value) if value else 0
         counter += 1
@@ -47,7 +47,7 @@ class AntiSpamService:
     async def check_login_lock(self,
                                tg_id: int
                                ) -> None:
-        key = f"{RedisType.invalidated_access_token}:{tg_id}"
+        key = f"{RedisType.invalidated_access_token.value}:{tg_id}"
         ttl = await self.redis.ttl(key)
         if ttl > 0:
             raise LoginLockedException(ttl)
@@ -55,7 +55,7 @@ class AntiSpamService:
     async def check_tg_code_gap(self,
                                 tg_id: int
                                 ) -> None:
-        key = f"{RedisType.tg_code}:{tg_id}"
+        key = f"{RedisType.tg_code.value}:{tg_id}"
         ttl = await self.redis.ttl(key)
         if ttl > 0:
             gap = Config.tg_code_gap - Config.tg_code_lifetime + ttl

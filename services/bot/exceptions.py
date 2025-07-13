@@ -50,3 +50,4 @@ class SendFeedbackToAdminException(BaseCustomException):
             "Please contact the administrator for assistance.",
             "\n\nAdditional information:\n",
             message]))
+
