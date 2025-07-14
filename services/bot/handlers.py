@@ -11,6 +11,8 @@ from aiogram.types import (
 from fast_depends import Depends, inject
 from redis.asyncio import Redis
 
+from shared.infrastructure import setup_logger
+
 from .bot import get_bot
 from .depends import UserInfo
 from .exceptions import (
@@ -21,7 +23,6 @@ from .exceptions import (
 from .keyboard import create_keyboard
 from .redis import RedisType, get_redis_client
 from .services import Output, Service
-from shared.infrastructure import setup_logger
 
 logger = setup_logger(__name__)
 
@@ -49,7 +50,7 @@ async def update_inline(new_state: Output,
                         redis: Redis = Depends(get_redis_client),
                         bot: Bot = Depends(get_bot)
                         ) -> None:
-    message_id = await redis.get(f"{RedisType.main_message.value}:{new_state.user_info.id}")
+    message_id = await redis.get(f"{RedisType.main_message_id.value}:{new_state.user_info.id}")
     logger.debug(f"message_id: {message_id}")
     chat_id = new_state.user_info.id
     await edit_message(bot,

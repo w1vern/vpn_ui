@@ -5,13 +5,13 @@ from fast_depends import Depends, inject
 from redis.asyncio import Redis
 
 from shared.database import UserRepository
+from shared.infrastructure import setup_logger
 
 from .buttons import main_menu_keyboard
 from .depends import get_user_repo
 from .keyboard import create_keyboard
 from .redis import RedisType, get_redis_client
 from .states import AppStates
-from shared.infrastructure import setup_logger
 
 logger = setup_logger(__name__)
 
@@ -26,7 +26,7 @@ def register_lifecycle(dp: Dispatcher,
                          ) -> None:
         users = await ur.get_all()
         for user in users:
-            prev_message = await redis.get(f"{RedisType.main_message.value}:{user.telegram_id}")
+            prev_message = await redis.get(f"{RedisType.main_message_id.value}:{user.telegram_id}")
             if prev_message is not None:
                 try:
                     await bot.delete_message(chat_id=user.telegram_id, message_id=int(prev_message))
@@ -36,7 +36,7 @@ def register_lifecycle(dp: Dispatcher,
                 chat_id=user.telegram_id,
                 text="bot startup",
                 reply_markup=create_keyboard(main_menu_keyboard()))
-            await redis.set(f"{RedisType.main_message.value}:{user.telegram_id}", message.message_id)
+            await redis.set(f"{RedisType.main_message_id.value}:{user.telegram_id}", message.message_id)
             logger.debug(f"message_id: {message.message_id}")
             await redis.set(f"{RedisType.state.value}:{user.telegram_id}", AppStates.main_menu.to_str)
 
@@ -47,7 +47,7 @@ def register_lifecycle(dp: Dispatcher,
                           ) -> None:
         users = await ur.get_all()
         for user in users:
-            message_id = await redis.get(f"{RedisType.main_message.value}:{user.telegram_id}")
+            message_id = await redis.get(f"{RedisType.main_message_id.value}:{user.telegram_id}")
             await bot.edit_message_text(
                 chat_id=user.telegram_id,
                 message_id=message_id,

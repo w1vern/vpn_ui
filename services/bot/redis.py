@@ -7,6 +7,7 @@ from shared.infrastructure import get_redis_client as gr
 
 
 class RedisType(str, Enum):
+    main_message_id = "main_message_id"
     main_message = "main_message"
     state = "state"
 

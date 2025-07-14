@@ -1,20 +1,15 @@
 
+import json
 from uuid import UUID
 
-from aiogram.types import (
-    Message,
-    CallbackQuery
-)
+from aiogram.types import CallbackQuery, Message
 from fast_depends import Depends
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import (
-    User,
-    UserRepository,
-    session_manager
-)
+from shared.database import User, UserRepository, session_manager
 
+from .buttons import Button
 from .exceptions import (
     MessageUserIsNoneException,
     MessageUsernameIsNoneException,
@@ -23,7 +18,6 @@ from .exceptions import (
 )
 from .redis import RedisType, get_redis_client
 from .states import MyState
-from .buttons import Button
 
 
 class UserInfo:
@@ -45,8 +39,21 @@ class MainMessage():
         self.buttons = buttons
 
     def to_str(self) -> str:
-        return 
-
+        return json.dumps({
+            "id": self.id,
+            "text": self.text,
+            "buttons": [{
+                "text": button.text,
+                "only_for_admin": button.only_for_admin
+            } for button in self.buttons]
+        })
+    
+    @classmethod
+    def from_str(cls, s: str) -> "MainMessage":
+        data = json.loads(s)
+        return cls(data["id"],
+                   data["text"],
+                   [Button(button["text"], button["only_for_admin"]) for button in data["buttons"]])
 
 
 async def get_user_repo(session: AsyncSession = Depends(session_manager.session)
@@ -105,5 +112,5 @@ async def get_state(user_info: UserInfo = Depends(get_user_info),
 
 async def get_main_message(user_info: UserInfo = Depends(get_user_info),
                            redis: Redis = Depends(get_redis_client)
-                           ) -> int:
-    return int(await redis.get(f"{RedisType.main_message.value}:{user_info.id}"))
+                           ) -> MainMessage:
+    return MainMessage.from_str(await redis.get(f"{RedisType.main_message.value}:{user_info.id}"))

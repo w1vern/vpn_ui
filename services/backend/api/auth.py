@@ -1,9 +1,5 @@
 
-from fastapi import (
-    APIRouter,
-    Cookie,
-    Depends
-)
+from fastapi import APIRouter, Cookie, Depends
 
 from ..config import Config
 from ..response import SuccessResponse

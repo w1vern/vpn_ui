@@ -1,8 +1,5 @@
 
-from fastapi import (
-    Depends,
-    Request
-)
+from fastapi import Depends, Request
 from redis.asyncio import Redis
 
 from ..config import Config
@@ -12,10 +9,7 @@ from ..exceptions import (
     TooManyAttemptsFromIPException,
     TooSoonToSendCodeException
 )
-from ..redis import (
-    RedisType,
-    get_redis_client
-)
+from ..redis import RedisType, get_redis_client
 
 
 class AntiSpamService:
