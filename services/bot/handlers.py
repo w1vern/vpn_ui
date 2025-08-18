@@ -78,7 +78,7 @@ async def handle_text(message: Message,
     await message.delete()
     if message.text is None:
         raise MessageTextIsNoneException()
-    await update_inline(await service.chat_handler(message.text))
+    await update_inline(await service.chat_handler())
 
 
 @router.callback_query()
@@ -89,7 +89,7 @@ async def handle_inline_button(callback_query: CallbackQuery,
     if callback_query.data is None:
         raise MessageTextIsNoneException()
     logger.debug(callback_query.data)
-    await update_inline(await service.keyboard_handler(callback_query.data))
+    await update_inline(await service.keyboard_handler())
 
 
 # @router.errors()

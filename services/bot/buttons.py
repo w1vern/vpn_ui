@@ -1,15 +1,14 @@
 
-import json
 from typing import Protocol
 
 
 class Button():
     def __init__(self,
                  text: str,
-                 only_for_admin: bool = False,
+                 for_member: bool = True,
                  ) -> None:
         self.text = text
-        self.only_for_admin = only_for_admin
+        self.for_member = for_member
 
 
 class GetKeyboardSizeFunction(Protocol):
@@ -37,6 +36,7 @@ class StaticButtons:
     to_inbounds_menu = Button("inbounds menu")
     to_tickets_menu = Button("tickets menu")
     todo_note = Button("need more buttons there")
+    hide_notifications = Button("hide notifications")
 
 
 def main_menu_keyboard() -> list[Button]:

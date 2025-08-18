@@ -1,10 +1,12 @@
 
-from typing import Awaitable, Protocol
+from typing import Awaitable, Callable, Protocol
+from uuid import UUID
 
 from aiogram import Bot
 from fast_depends import Depends
 from redis.asyncio import Redis
 
+from ...shared.database.repositories.user import UserRepository
 from shared.infrastructure import setup_logger
 
 from .bot import get_bot
@@ -15,10 +17,13 @@ from .buttons import (
 )
 from .depends import (
     MainMessage,
+    Notification,
     UserInfo,
     get_main_message,
+    get_request_data,
     get_state,
-    get_user_info
+    get_user_info,
+    get_user_repo
 )
 from .exceptions import UserNotFoundException
 from .redis import RedisType, get_redis_client
@@ -38,26 +43,23 @@ class Output:
         self.user_info = user_info
 
 
-class Handler(Protocol):
-    def __call__(self,
-                 input: str,
-                 ) -> Awaitable[Output]:
-        ...
-
-
 class Service():
     def __init__(self,
                  user_info: UserInfo,
                  state: MyState,
                  main_message: MainMessage,
                  redis: Redis,
-                 bot: Bot
+                 bot: Bot,
+                 ur: UserRepository,
+                 input: str
                  ) -> None:
         self.user_info = user_info
         self.state = state
         self.main_message = main_message
         self.redis = redis
         self.bot = bot
+        self.ur = ur
+        self.input = input
 
     @classmethod
     def depends(cls,
@@ -65,65 +67,62 @@ class Service():
                 state: MyState = Depends(get_state),
                 redis: Redis = Depends(get_redis_client),
                 bot: Bot = Depends(get_bot),
-                main_message: MainMessage = Depends(get_main_message)
+                main_message: MainMessage = Depends(get_main_message),
+                input: str = Depends(get_request_data),
+                ur: UserRepository = Depends(get_user_repo)
                 ) -> 'Service':
-        return cls(user_info, state, main_message, redis, bot)
+        return cls(user_info, state, main_message, redis, bot, ur, input)
 
-    async def keyboard_handler(self,
-                               input: str
-                               ) -> Output:
+    async def keyboard_handler(self) -> Output:
         return Output(None, None, self.user_info)
 
-    async def chat_handler(self,
-                           input: str
-                           ) -> Output:
+    async def chat_handler(self) -> Output:
         return Output(None, None, self.user_info)
 
     async def start_handler(self) -> Output:
-        raise UserNotFoundException()
+        if await self.ur.get_by_telegram_id(self.user_info.id) is None:
+            user = await self.ur.create(self.user_info.id, self.user_info.username, UUID(int=0))
+            self.main_message.notifications.append(Notification("Welcome"))
+            await self.__to_main_menu()
+        else:
+            self.main_message.notifications.append(
+                Notification("Don't use start command"))
+        await self.__save_main_message()
+        return self.__output()
 
     async def __set_state(self,
                           state: MyState,
                           ) -> None:
         await self.redis.set(f"{RedisType.state.value}:{self.user_info.id}", state.to_str)
 
-    async def __set_main_message(self,
-                                 output: Output
-                                 ) -> None:
+    def __output(self) -> Output:
+        text = [note.text for note in self.main_message.notifications
+                ].append(self.main_message.text)
+        return Output(text, self.main_message.buttons, self.user_info)
+
+    async def __save_main_message(self) -> None:
         await self.redis.set(f"{RedisType.main_message.value}:{self.user_info.id}",
-                             MainMessage(
-                                 id=self.main_message.id,
-                                 text=self.main_message.text if output.text is None else output.text,
-                                 buttons=self.main_message.buttons if output.buttons is None else output.buttons
-        ).to_str())
+                             self.main_message.to_str())
 
-    async def __to_main_menu(self,
-                             input: str
-                             ) -> Output:
-        await self.__set_state(AppStates.main_menu)
-        return Output("main menu", main_menu_keyboard(), self.user_info)
-
-    async def __get_func(self) -> Handler:
-        pass
-
-    async def edit_settings(self, input: str) -> Output:
-        pass
-
-    async def incorrect_input(self, input: str) -> Output:
-        pass
-
-    async def need_more_buttons_note(self, input: str) -> Output:
-        pass
-
-    async def to_main_menu(self, input: str) -> Output:
-        pass
-
-    behavioral_dict: dict[str, Handler] = {
-        f"{AppStates.main_menu.to_str}/{StaticButtons.to_settings_menu.text}": edit_settings,
-        f"{AppStates.settings_menu.to_str}": incorrect_input,
-        f"{AppStates.settings_menu.to_str}/{StaticButtons.todo_note.text}": need_more_buttons_note,
-        f"{AppStates.settings_menu.to_str}/{StaticButtons.to_main_menu.text}": to_main_menu
+    behavioral_dict: dict[str, str] = {
+        f"{AppStates.settings_menu.to_str}/{StaticButtons.to_main_menu.text}": "__to_main_menu"
     }
+
+    async def __get_func(self) -> Callable[[], Awaitable[None]]:
+        func = self.behavioral_dict.get(f"{self.state.to_str}/{self.input}")
+        if not func:
+            func = self.behavioral_dict.get(self.state.to_str)
+        if not func:
+            func = "__incorrect_input"
+        return getattr(self, func)
+
+    async def __incorrect_input(self) -> None:
+        pass
+
+    async def __to_main_menu(self) -> None:
+        await self.__set_state(AppStates.main_menu)
+        self.main_message.text = "main menu"
+        self.main_message.buttons = main_menu_keyboard()
 
 
 """
@@ -141,3 +140,19 @@ def get_func(current_state: str | None,
         func = incorrect_input
     return func
 """
+
+"""     async def edit_settings(self, input: str) -> None:
+        pass
+
+    async def incorrect_input(self, input: str) -> None:
+        pass
+
+    async def need_more_buttons_note(self, input: str) -> None:
+        pass
+
+    async def to_main_menu(self, input: str) -> None:
+        pass """
+
+"""         f"{AppStates.main_menu.to_str}/{StaticButtons.to_settings_menu.text}": edit_settings,
+        f"{AppStates.settings_menu.to_str}": incorrect_input,
+        f"{AppStates.settings_menu.to_str}/{StaticButtons.todo_note.text}": need_more_buttons_note, """

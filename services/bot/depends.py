@@ -28,32 +28,43 @@ class UserInfo:
         self.username = username
 
 
+class Notification():
+    def __init__(self,
+                 text: str
+                 ) -> None:
+        self.text = text
+
+
 class MainMessage():
     def __init__(self,
                  id: int,
                  text: str,
+                 notifications: list[Notification],
                  buttons: list[Button]
                  ) -> None:
         self.id = id
         self.text = text
+        self.notifications = notifications
         self.buttons = buttons
 
     def to_str(self) -> str:
         return json.dumps({
             "id": self.id,
             "text": self.text,
+            "notifications": [{"text": notification.text} for notification in self.notifications],
             "buttons": [{
                 "text": button.text,
-                "only_for_admin": button.only_for_admin
+                "for_member": button.for_member
             } for button in self.buttons]
         })
-    
+
     @classmethod
     def from_str(cls, s: str) -> "MainMessage":
         data = json.loads(s)
         return cls(data["id"],
                    data["text"],
-                   [Button(button["text"], button["only_for_admin"]) for button in data["buttons"]])
+                   [Notification(notification["text"]) for notification in data["notifications"]],
+                   [Button(button["text"], button["for_member"]) for button in data["buttons"]])
 
 
 async def get_user_repo(session: AsyncSession = Depends(session_manager.session)
@@ -77,6 +88,21 @@ async def get_user_info(message: Message | None = None,
         raise MessageUsernameIsNoneException()
     return UserInfo(data.from_user.id,
                     data.from_user.username)
+
+async def get_request_data(message: Message | None = None,
+                   callback_query: CallbackQuery | None = None
+                   ) -> str:
+    if message is None:
+        if not callback_query is None:
+            data = callback_query.data
+        else:
+            raise SendFeedbackToAdminException()
+    else:
+        data = message.text
+    if data is None:
+        raise SendFeedbackToAdminException()
+    return data
+    
 
 
 async def create_user(user_info: UserInfo = Depends(get_user_info),
