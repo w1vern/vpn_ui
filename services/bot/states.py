@@ -10,6 +10,9 @@ class MyState():
         self._state = state
         self._parent = parent_state
 
+    def __str__(self) -> str:
+        return self.to_str
+
     @property
     def to_str(self) -> str:
         if not self._parent is None:

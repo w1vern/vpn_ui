@@ -105,7 +105,8 @@ class Service():
                              self.main_message.to_str())
 
     behavioral_dict: dict[str, str] = {
-        f"{AppStates.settings_menu.to_str}/{StaticButtons.to_main_menu.text}": "__to_main_menu"
+        f"{AppStates.settings_menu}/{StaticButtons.to_main_menu.text}": "__to_main_menu",
+        f"{AppStates.inbounds_menu}/{StaticButtons.to_main_menu.text}": "__to_main_menu"
     }
 
     async def __get_func(self) -> Callable[[], Awaitable[None]]:
@@ -123,36 +124,3 @@ class Service():
         await self.__set_state(AppStates.main_menu)
         self.main_message.text = "main menu"
         self.main_message.buttons = main_menu_keyboard()
-
-
-"""
-def get_func(current_state: str | None,
-             message: str | None
-             ) -> Handler:
-    if not current_state:
-        raise Exception("current state is None")
-    if not message:
-        raise Exception("message is None")
-    func = behavioral_dict.get(f"{current_state}/{message}")
-    if not func:
-        func = behavioral_dict.get(current_state)
-    if not func:
-        func = incorrect_input
-    return func
-"""
-
-"""     async def edit_settings(self, input: str) -> None:
-        pass
-
-    async def incorrect_input(self, input: str) -> None:
-        pass
-
-    async def need_more_buttons_note(self, input: str) -> None:
-        pass
-
-    async def to_main_menu(self, input: str) -> None:
-        pass """
-
-"""         f"{AppStates.main_menu.to_str}/{StaticButtons.to_settings_menu.text}": edit_settings,
-        f"{AppStates.settings_menu.to_str}": incorrect_input,
-        f"{AppStates.settings_menu.to_str}/{StaticButtons.todo_note.text}": need_more_buttons_note, """
