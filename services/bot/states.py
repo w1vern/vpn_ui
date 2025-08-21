@@ -1,5 +1,9 @@
 
+from shared.infrastructure import setup_logger
+
 from .exceptions import IncorrectStateException
+
+logger = setup_logger(__name__)
 
 
 class MyState():
@@ -21,19 +25,19 @@ class MyState():
 
     @classmethod
     def from_str(cls, state: str) -> 'MyState':
-        last_state = state.split("/")[-1]
         for key, value in user_attrs.items():
-            if value.to_str == last_state:
+            if value.to_str == state:
                 return AppStates.__dict__[key]
         raise IncorrectStateException(state)
 
 
 class AppStates():
     main_menu = MyState("main_menu")
-    ticket = MyState("ticket", main_menu)
-    inbounds_menu = MyState("connections_menu", main_menu)
+    ticket_menu = MyState("ticket_menu", main_menu)
+    inbounds_menu = MyState("inbounds_menu", main_menu)
     settings_menu = MyState("settings_menu", main_menu)
     info_menu = MyState("info_menu", main_menu)
+    transactions_menu = MyState("transactions_menu", main_menu)
 
 
 user_attrs = {

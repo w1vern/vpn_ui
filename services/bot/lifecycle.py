@@ -8,7 +8,7 @@ from shared.database import UserRepository
 from shared.infrastructure import setup_logger
 
 from .buttons import main_menu_keyboard
-from .depends import get_user_repo
+from .depends import MainMessage, get_user_repo
 from .keyboard import create_keyboard
 from .redis import RedisType, get_redis_client
 from .states import AppStates
@@ -38,6 +38,8 @@ def register_lifecycle(dp: Dispatcher,
                 reply_markup=create_keyboard(main_menu_keyboard()))
             await redis.set(f"{RedisType.main_message_id.value}:{user.telegram_id}", message.message_id)
             logger.debug(f"message_id: {message.message_id}")
+            main_message = MainMessage(user.telegram_id, "main menu", [], main_menu_keyboard())
+            await redis.set(f"{RedisType.main_message.value}:{user.telegram_id}", main_message.to_str())
             await redis.set(f"{RedisType.state.value}:{user.telegram_id}", AppStates.main_menu.to_str)
 
     @dp.shutdown()

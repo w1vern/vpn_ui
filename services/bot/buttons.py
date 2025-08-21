@@ -35,25 +35,28 @@ class StaticButtons:
     to_main_menu = Button("back to main menu")
     to_inbounds_menu = Button("inbounds menu")
     to_tickets_menu = Button("tickets menu")
-    todo_note = Button("need more buttons there")
+    to_transactions_menu = Button("transactions menu")
     hide_notifications = Button("hide notifications")
 
 
 def main_menu_keyboard() -> list[Button]:
     values: list[Button] = []
-    values.append(StaticButtons.to_settings_menu)
     values.append(StaticButtons.to_inbounds_menu)
-    values.append(StaticButtons.to_tickets_menu)
+    values.append(StaticButtons.to_transactions_menu)
     return values
 
 
-def settings_keyboard() -> list[Button]:
-    return [StaticButtons.todo_note, StaticButtons.to_main_menu]
-
-
 def inbounds_keyboard() -> list[Button]:
-    return [StaticButtons.todo_note, StaticButtons.to_main_menu]
+    return [StaticButtons.to_main_menu]
+
+
+def transactions_keyboard() -> list[Button]:
+    return [StaticButtons.to_main_menu]
+
+
+def settings_keyboard() -> list[Button]:
+    return [StaticButtons.to_main_menu]
 
 
 def tickets_keyboard() -> list[Button]:
-    return [StaticButtons.todo_note, StaticButtons.to_main_menu]
+    return [StaticButtons.to_main_menu]

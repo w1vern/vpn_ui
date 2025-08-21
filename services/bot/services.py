@@ -1,31 +1,42 @@
 
-from typing import Awaitable, Callable, Protocol
+from tkinter import Pack
+from typing import Awaitable, Callable
 from uuid import UUID
 
 from aiogram import Bot
 from fast_depends import Depends
 from redis.asyncio import Redis
 
-from ...shared.database.repositories.user import UserRepository
+from .exceptions import SendFeedbackToAdminException
+from shared.database import (
+    PanelServerRepository,
+    ServerRepository,
+    UserRepository,
+    TransactionRepository
+)
 from shared.infrastructure import setup_logger
 
 from .bot import get_bot
 from .buttons import (
     Button,
     StaticButtons,
+    inbounds_keyboard,
     main_menu_keyboard,
+    transactions_keyboard,
 )
 from .depends import (
     MainMessage,
     Notification,
     UserInfo,
     get_main_message,
+    get_panel_server_repo,
     get_request_data,
+    get_server_repo,
     get_state,
+    get_transaction_repo,
     get_user_info,
     get_user_repo
 )
-from .exceptions import UserNotFoundException
 from .redis import RedisType, get_redis_client
 from .states import AppStates, MyState
 
@@ -51,6 +62,9 @@ class Service():
                  redis: Redis,
                  bot: Bot,
                  ur: UserRepository,
+                 sr: ServerRepository,
+                 psr: PanelServerRepository,
+                 tr: TransactionRepository,
                  input: str
                  ) -> None:
         self.user_info = user_info
@@ -59,6 +73,9 @@ class Service():
         self.redis = redis
         self.bot = bot
         self.ur = ur
+        self.sr = sr
+        self.psr = psr
+        self.tr = tr
         self.input = input
 
     @classmethod
@@ -69,12 +86,19 @@ class Service():
                 bot: Bot = Depends(get_bot),
                 main_message: MainMessage = Depends(get_main_message),
                 input: str = Depends(get_request_data),
-                ur: UserRepository = Depends(get_user_repo)
+                ur: UserRepository = Depends(get_user_repo),
+                sr: ServerRepository = Depends(get_server_repo),
+                psr: PanelServerRepository = Depends(get_panel_server_repo),
+                tr: TransactionRepository = Depends(get_transaction_repo)
                 ) -> 'Service':
-        return cls(user_info, state, main_message, redis, bot, ur, input)
+        return cls(user_info, state, main_message, redis, bot, ur, sr, psr, tr, input)
 
     async def keyboard_handler(self) -> Output:
-        return Output(None, None, self.user_info)
+        func = self.__get_func()
+        await func()
+        logger.debug(self.input)
+        await self.__save_main_message()
+        return self.__output()
 
     async def chat_handler(self) -> Output:
         return Output(None, None, self.user_info)
@@ -96,8 +120,9 @@ class Service():
         await self.redis.set(f"{RedisType.state.value}:{self.user_info.id}", state.to_str)
 
     def __output(self) -> Output:
-        text = [note.text for note in self.main_message.notifications
-                ].append(self.main_message.text)
+        notes = [note.text for note in self.main_message.notifications]
+        notes.append(self.main_message.text)
+        text = "\n".join(notes)
         return Output(text, self.main_message.buttons, self.user_info)
 
     async def __save_main_message(self) -> None:
@@ -105,16 +130,20 @@ class Service():
                              self.main_message.to_str())
 
     behavioral_dict: dict[str, str] = {
-        f"{AppStates.settings_menu}/{StaticButtons.to_main_menu.text}": "__to_main_menu",
-        f"{AppStates.inbounds_menu}/{StaticButtons.to_main_menu.text}": "__to_main_menu"
+        # f"{AppStates.settings_menu}/{StaticButtons.to_main_menu.text}": "__to_main_menu",
+        f"{AppStates.inbounds_menu}/{StaticButtons.to_main_menu.text}": "_Service__to_main_menu",
+        f"{AppStates.transactions_menu}/{StaticButtons.to_main_menu.text}": "_Service__to_main_menu",
+        f"{AppStates.main_menu}/{StaticButtons.to_inbounds_menu.text}": "_Service__to_inbounds_menu",
+        f"{AppStates.main_menu}/{StaticButtons.to_transactions_menu.text}": "_Service__to_transactions_menu",
     }
 
-    async def __get_func(self) -> Callable[[], Awaitable[None]]:
+    def __get_func(self) -> Callable[[], Awaitable[None]]:
         func = self.behavioral_dict.get(f"{self.state.to_str}/{self.input}")
         if not func:
             func = self.behavioral_dict.get(self.state.to_str)
         if not func:
-            func = "__incorrect_input"
+            func = "_Service__incorrect_input"
+        logger.debug(func)
         return getattr(self, func)
 
     async def __incorrect_input(self) -> None:
@@ -124,3 +153,18 @@ class Service():
         await self.__set_state(AppStates.main_menu)
         self.main_message.text = "main menu"
         self.main_message.buttons = main_menu_keyboard()
+
+    async def __to_inbounds_menu(self) -> None:
+        await self.__set_state(AppStates.inbounds_menu)
+        self.main_message.text = "inbounds menu"
+        self.main_message.buttons = inbounds_keyboard()
+
+    async def __to_transactions_menu(self) -> None:
+        await self.__set_state(AppStates.transactions_menu)
+        user = await self.ur.get_by_telegram_id(self.user_info.id)
+        if user is None:
+            raise SendFeedbackToAdminException()
+        trns = await self.tr.get_by_user(user)
+        text = "\n".join([f"{trn.amount} - {trn.date}" for trn in trns])
+        self.main_message.text = f"transactions menu\nbalance: {user.balance}\n{text}"
+        self.main_message.buttons = transactions_keyboard()

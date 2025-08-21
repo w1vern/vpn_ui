@@ -62,6 +62,7 @@ class TransactionService:
         if type is None:
             raise TransactionTypeNotFoundException()
         await self.tr.create(tr_user, transaction_to_create.amount, date, type.value)
+        await self.ur.update_balance(tr_user, transaction_to_create.amount)
 
     async def all(self) -> list[TransactionSchema]:
         return [TransactionSchema.from_db(t)

@@ -7,7 +7,15 @@ from fast_depends import Depends
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import User, UserRepository, session_manager
+from shared.database import (
+    PanelServerRepository,
+    ServerRepository,
+    User,
+    UserRepository,
+    session_manager,
+    TransactionRepository
+)
+from shared.infrastructure import setup_logger
 
 from .buttons import Button
 from .exceptions import (
@@ -18,6 +26,8 @@ from .exceptions import (
 )
 from .redis import RedisType, get_redis_client
 from .states import MyState
+
+logger = setup_logger(__name__)
 
 
 class UserInfo:
@@ -61,15 +71,31 @@ class MainMessage():
     @classmethod
     def from_str(cls, s: str) -> "MainMessage":
         data = json.loads(s)
+        logger.debug(data)
         return cls(data["id"],
                    data["text"],
-                   [Notification(notification["text"]) for notification in data["notifications"]],
+                   [Notification(notification["text"])
+                    for notification in data["notifications"]],
                    [Button(button["text"], button["for_member"]) for button in data["buttons"]])
 
 
 async def get_user_repo(session: AsyncSession = Depends(session_manager.session)
                         ) -> UserRepository:
     return UserRepository(session)
+
+
+async def get_server_repo(session: AsyncSession = Depends(session_manager.session)
+                          ) -> ServerRepository:
+    return ServerRepository(session)
+
+
+async def get_panel_server_repo(session: AsyncSession = Depends(session_manager.session)
+                                ) -> PanelServerRepository:
+    return PanelServerRepository(session)
+
+async def get_transaction_repo(session: AsyncSession = Depends(session_manager.session)
+                               ) -> TransactionRepository:
+    return TransactionRepository(session)
 
 
 async def get_user_info(message: Message | None = None,
@@ -79,7 +105,8 @@ async def get_user_info(message: Message | None = None,
         if not callback_query is None:
             data = callback_query
         else:
-            raise SendFeedbackToAdminException()
+            #raise SendFeedbackToAdminException()
+            return UserInfo(0, "")
     else:
         data = message
     if not data.from_user:
@@ -89,20 +116,21 @@ async def get_user_info(message: Message | None = None,
     return UserInfo(data.from_user.id,
                     data.from_user.username)
 
+
 async def get_request_data(message: Message | None = None,
-                   callback_query: CallbackQuery | None = None
-                   ) -> str:
+                           callback_query: CallbackQuery | None = None
+                           ) -> str:
     if message is None:
         if not callback_query is None:
             data = callback_query.data
         else:
-            raise SendFeedbackToAdminException()
+            #raise SendFeedbackToAdminException()
+            return ""
     else:
         data = message.text
     if data is None:
         raise SendFeedbackToAdminException()
     return data
-    
 
 
 async def create_user(user_info: UserInfo = Depends(get_user_info),
@@ -139,4 +167,7 @@ async def get_state(user_info: UserInfo = Depends(get_user_info),
 async def get_main_message(user_info: UserInfo = Depends(get_user_info),
                            redis: Redis = Depends(get_redis_client)
                            ) -> MainMessage:
-    return MainMessage.from_str(await redis.get(f"{RedisType.main_message.value}:{user_info.id}"))
+    main_message = await redis.get(f"{RedisType.main_message.value}:{user_info.id}")
+    if main_message is None:
+        raise SendFeedbackToAdminException()
+    return MainMessage.from_str(main_message)
