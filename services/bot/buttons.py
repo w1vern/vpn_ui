@@ -1,14 +1,7 @@
 
 from typing import Protocol
 
-
-class Button():
-    def __init__(self,
-                 text: str,
-                 for_member: bool = True,
-                 ) -> None:
-        self.text = text
-        self.for_member = for_member
+from .models import Button
 
 
 class GetKeyboardSizeFunction(Protocol):

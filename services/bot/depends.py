@@ -1,5 +1,4 @@
 
-import json
 from uuid import UUID
 
 from aiogram.types import CallbackQuery, Message
@@ -10,73 +9,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from shared.database import (
     PanelServerRepository,
     ServerRepository,
+    TransactionRepository,
     User,
     UserRepository,
-    session_manager,
-    TransactionRepository
+    session_manager
 )
 from shared.infrastructure import setup_logger
 
-from .buttons import Button
 from .exceptions import (
     MessageUserIsNoneException,
     MessageUsernameIsNoneException,
     SendFeedbackToAdminException,
     UserNotFoundException
 )
+from .models import MainMessage, UserInfo
 from .redis import RedisType, get_redis_client
 from .states import MyState
 
 logger = setup_logger(__name__)
-
-
-class UserInfo:
-    def __init__(self, id: int,
-                 username: str
-                 ) -> None:
-        self.id = id
-        self.username = username
-
-
-class Notification():
-    def __init__(self,
-                 text: str
-                 ) -> None:
-        self.text = text
-
-
-class MainMessage():
-    def __init__(self,
-                 id: int,
-                 text: str,
-                 notifications: list[Notification],
-                 buttons: list[Button]
-                 ) -> None:
-        self.id = id
-        self.text = text
-        self.notifications = notifications
-        self.buttons = buttons
-
-    def to_str(self) -> str:
-        return json.dumps({
-            "id": self.id,
-            "text": self.text,
-            "notifications": [{"text": notification.text} for notification in self.notifications],
-            "buttons": [{
-                "text": button.text,
-                "for_member": button.for_member
-            } for button in self.buttons]
-        })
-
-    @classmethod
-    def from_str(cls, s: str) -> "MainMessage":
-        data = json.loads(s)
-        logger.debug(data)
-        return cls(data["id"],
-                   data["text"],
-                   [Notification(notification["text"])
-                    for notification in data["notifications"]],
-                   [Button(button["text"], button["for_member"]) for button in data["buttons"]])
 
 
 async def get_user_repo(session: AsyncSession = Depends(session_manager.session)
@@ -93,6 +43,7 @@ async def get_panel_server_repo(session: AsyncSession = Depends(session_manager.
                                 ) -> PanelServerRepository:
     return PanelServerRepository(session)
 
+
 async def get_transaction_repo(session: AsyncSession = Depends(session_manager.session)
                                ) -> TransactionRepository:
     return TransactionRepository(session)
@@ -105,7 +56,7 @@ async def get_user_info(message: Message | None = None,
         if not callback_query is None:
             data = callback_query
         else:
-            #raise SendFeedbackToAdminException()
+            # raise SendFeedbackToAdminException()
             return UserInfo(0, "")
     else:
         data = message
@@ -124,7 +75,7 @@ async def get_request_data(message: Message | None = None,
         if not callback_query is None:
             data = callback_query.data
         else:
-            #raise SendFeedbackToAdminException()
+            # raise SendFeedbackToAdminException()
             return ""
     else:
         data = message.text

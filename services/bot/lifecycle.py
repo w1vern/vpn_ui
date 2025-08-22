@@ -38,7 +38,7 @@ def register_lifecycle(dp: Dispatcher,
                 reply_markup=create_keyboard(main_menu_keyboard()))
             await redis.set(f"{RedisType.main_message_id.value}:{user.telegram_id}", message.message_id)
             logger.debug(f"message_id: {message.message_id}")
-            main_message = MainMessage(user.telegram_id, "main menu", [], main_menu_keyboard())
+            main_message = MainMessage("main menu", [], main_menu_keyboard())
             await redis.set(f"{RedisType.main_message.value}:{user.telegram_id}", main_message.to_str())
             await redis.set(f"{RedisType.state.value}:{user.telegram_id}", AppStates.main_menu.to_str)
 
