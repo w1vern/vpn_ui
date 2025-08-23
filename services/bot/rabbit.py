@@ -1,5 +1,4 @@
 
-from aiogram import Bot
 from fast_depends import Depends as Dp
 from fast_depends import inject
 from faststream import FastStream
@@ -11,7 +10,7 @@ from shared.infrastructure import (
     tg_code_queue,
 )
 
-from .bot import get_bot, update_message
+from .bot import update_message
 from .models import Notification
 from .services import Service
 
@@ -20,12 +19,17 @@ app = FastStream(broker)
 
 
 @broker.subscriber(tg_code_queue)
-@inject
-async def send_tg_code(data: CodeToTG,
-                       service: Service = Dp(Service.depends)
+async def send_tg_code(data: CodeToTG
                        ) -> None:
-    # await bot.send_message(chat_id=data.tg_id, text=data.code)
-    service.main_message.notifications.append(Notification(data.code))
-    await service.__save_main_message()
+    await tmp(data.tg_id, data.code)
+
+
+@inject
+async def tmp(id: int,
+              code: str,
+              service: Service = Dp(Service.depends)
+              ) -> None:
+    service.main_message.notifications.append(Notification(code))
+    await service.save_main_message()
     service.notify = True
-    await update_message(service.__output())
+    await update_message(service.output())

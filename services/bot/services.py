@@ -76,11 +76,11 @@ class Service():
         return cls(user_info, state, main_message, redis, ur, sr, psr, tr, input)
 
     async def keyboard_handler(self) -> Output:
-        func = self.__get_func()
+        func = self.get_func()
         await func()
         logger.debug(self.input)
-        await self.__save_main_message()
-        return self.__output()
+        await self.save_main_message()
+        return self.output()
 
     async def chat_handler(self) -> Output:
         return Output(None, None, self.user_info)
@@ -89,60 +89,60 @@ class Service():
         if await self.ur.get_by_telegram_id(self.user_info.id) is None:
             user = await self.ur.create(self.user_info.id, self.user_info.username, UUID(int=0))
             self.main_message.notifications.append(Notification("Welcome"))
-            await self.__to_main_menu()
+            await self.to_main_menu()
         else:
             self.main_message.notifications.append(
                 Notification("Don't use start command"))
-        await self.__save_main_message()
-        return self.__output()
+        await self.save_main_message()
+        return self.output()
 
-    async def __set_state(self,
+    async def set_state(self,
                           state: MyState,
                           ) -> None:
         await self.redis.set(f"{RedisType.state.value}:{self.user_info.id}", state.to_str)
 
-    def __output(self) -> Output:
+    def output(self) -> Output:
         notes = [note.text for note in self.main_message.notifications]
         notes.append(self.main_message.text)
         text = "\n".join(notes)
         return Output(text, self.main_message.buttons, self.user_info, self.notify)
 
-    async def __save_main_message(self) -> None:
+    async def save_main_message(self) -> None:
         await self.redis.set(f"{RedisType.main_message.value}:{self.user_info.id}",
                              self.main_message.to_str())
 
     behavioral_dict: dict[str, str] = {
         # f"{AppStates.settings_menu}/{StaticButtons.to_main_menu.text}": "__to_main_menu",
-        f"{AppStates.inbounds_menu}/{StaticButtons.to_main_menu.text}": "_Service__to_main_menu",
-        f"{AppStates.transactions_menu}/{StaticButtons.to_main_menu.text}": "_Service__to_main_menu",
-        f"{AppStates.main_menu}/{StaticButtons.to_inbounds_menu.text}": "_Service__to_inbounds_menu",
-        f"{AppStates.main_menu}/{StaticButtons.to_transactions_menu.text}": "_Service__to_transactions_menu",
+        f"{AppStates.inbounds_menu}/{StaticButtons.to_main_menu.text}": "to_main_menu",
+        f"{AppStates.transactions_menu}/{StaticButtons.to_main_menu.text}": "to_main_menu",
+        f"{AppStates.main_menu}/{StaticButtons.to_inbounds_menu.text}": "to_inbounds_menu",
+        f"{AppStates.main_menu}/{StaticButtons.to_transactions_menu.text}": "to_transactions_menu",
     }
 
-    def __get_func(self) -> Callable[[], Awaitable[None]]:
+    def get_func(self) -> Callable[[], Awaitable[None]]:
         func = self.behavioral_dict.get(f"{self.state.to_str}/{self.input}")
         if not func:
             func = self.behavioral_dict.get(self.state.to_str)
         if not func:
-            func = "_Service__incorrect_input"
+            func = "incorrect_input"
         logger.debug(func)
         return getattr(self, func)
 
-    async def __incorrect_input(self) -> None:
+    async def incorrect_input(self) -> None:
         pass
 
-    async def __to_main_menu(self) -> None:
-        await self.__set_state(AppStates.main_menu)
+    async def to_main_menu(self) -> None:
+        await self.set_state(AppStates.main_menu)
         self.main_message.text = "main menu"
         self.main_message.buttons = main_menu_keyboard()
 
-    async def __to_inbounds_menu(self) -> None:
-        await self.__set_state(AppStates.inbounds_menu)
+    async def to_inbounds_menu(self) -> None:
+        await self.set_state(AppStates.inbounds_menu)
         self.main_message.text = "inbounds menu"
         self.main_message.buttons = inbounds_keyboard()
 
-    async def __to_transactions_menu(self) -> None:
-        await self.__set_state(AppStates.transactions_menu)
+    async def to_transactions_menu(self) -> None:
+        await self.set_state(AppStates.transactions_menu)
         user = await self.ur.get_by_telegram_id(self.user_info.id)
         if user is None:
             raise SendFeedbackToAdminException()

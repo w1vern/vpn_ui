@@ -14,7 +14,7 @@ from shared.database import (
     UserRepository,
     session_manager
 )
-from shared.infrastructure import setup_logger
+from shared.infrastructure import setup_logger, CodeToTG
 
 from .exceptions import (
     MessageUserIsNoneException,
@@ -50,22 +50,26 @@ async def get_transaction_repo(session: AsyncSession = Depends(session_manager.s
 
 
 async def get_user_info(message: Message | None = None,
-                        callback_query: CallbackQuery | None = None
+                        callback_query: CallbackQuery | None = None,
+                        # data: CodeToTG | None = None,
+                        id: int | None = None
                         ) -> UserInfo:
-    if message is None:
-        if not callback_query is None:
-            data = callback_query
-        else:
-            # raise SendFeedbackToAdminException()
-            return UserInfo(0, "")
+    # if data is not None:
+    #    return UserInfo(data.tg_id, "")
+    if id is not None:
+        return UserInfo(id, "")
+    if message is not None:
+        tmp = message
+    elif callback_query is not None:
+        tmp = callback_query
     else:
-        data = message
-    if not data.from_user:
+        raise SendFeedbackToAdminException()
+    if not tmp.from_user:
         raise MessageUserIsNoneException()
-    if not data.from_user.username:
+    if not tmp.from_user.username:
         raise MessageUsernameIsNoneException()
-    return UserInfo(data.from_user.id,
-                    data.from_user.username)
+    return UserInfo(tmp.from_user.id,
+                    tmp.from_user.username)
 
 
 async def get_request_data(message: Message | None = None,

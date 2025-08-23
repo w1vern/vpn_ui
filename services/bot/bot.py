@@ -1,15 +1,14 @@
 
 from aiogram import Bot, Dispatcher
+from aiogram.exceptions import TelegramAPIError
 from aiogram.types import InlineKeyboardMarkup
 from fast_depends import Depends, inject
 from redis.asyncio import Redis
-from aiogram.exceptions import TelegramAPIError
 
-
-from .exceptions import SendFeedbackToAdminException
 from shared.config import env_config
 from shared.infrastructure import setup_logger
 
+from .exceptions import SendFeedbackToAdminException
 from .keyboard import create_keyboard
 from .models import Output
 from .redis import RedisType, get_redis_client
