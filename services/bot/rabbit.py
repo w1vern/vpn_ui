@@ -21,14 +21,14 @@ app = FastStream(broker)
 @broker.subscriber(tg_code_queue)
 async def send_tg_code(data: CodeToTG
                        ) -> None:
-    await tmp(data.tg_id, data.code)
+    await _(data.tg_id, data.code)
 
 
 @inject
-async def tmp(id: int,
-              code: str,
-              service: Service = Dp(Service.depends)
-              ) -> None:
+async def _(id: int,
+            code: str,
+            service: Service = Dp(Service.depends)
+            ) -> None:
     service.main_message.notifications.append(Notification(code))
     await service.save_main_message()
     service.notify = True

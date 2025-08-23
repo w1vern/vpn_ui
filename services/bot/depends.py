@@ -14,7 +14,7 @@ from shared.database import (
     UserRepository,
     session_manager
 )
-from shared.infrastructure import setup_logger, CodeToTG
+from shared.infrastructure import setup_logger  # , CodeToTG
 
 from .exceptions import (
     MessageUserIsNoneException,

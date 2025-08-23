@@ -41,9 +41,9 @@ async def edit_message(bot: Bot,
 
 @inject
 async def update_message(new_state: Output,
-                        redis: Redis = Depends(get_redis_client),
-                        bot: Bot = Depends(get_bot)
-                        ) -> None:
+                         redis: Redis = Depends(get_redis_client),
+                         bot: Bot = Depends(get_bot)
+                         ) -> None:
     message_id = int(await redis.get(f"{RedisType.main_message_id.value}:{new_state.user_info.id}"))
     logger.debug(f"message_id: {message_id}")
     chat_id = new_state.user_info.id
@@ -55,13 +55,17 @@ async def update_message(new_state: Output,
                            create_keyboard(new_state.buttons)
                            if new_state.buttons is not None else None)
     else:
-        try:
-            await bot.delete_message(chat_id=new_state.user_info.id, message_id=message_id)
-        except TelegramAPIError:
-            ...
+        if message_id is not None:
+            try:
+                await bot.delete_message(chat_id=new_state.user_info.id, message_id=message_id)
+            except TelegramAPIError:
+                ...
         if new_state.buttons is None or new_state.text is None:
             raise SendFeedbackToAdminException()
-        await bot.send_message(chat_id=chat_id,
-                               text=new_state.text,
-                               reply_markup=create_keyboard(new_state.buttons)
-                               )
+        message = await bot.send_message(chat_id=chat_id,
+                                         text=new_state.text,
+                                         reply_markup=create_keyboard(
+                                             new_state.buttons)
+                                         )
+        await redis.set(f"{RedisType.main_message_id.value}:{new_state.user_info.id}", message.message_id)
+        logger.debug(f"message_id: {message.message_id}")
