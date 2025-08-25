@@ -97,8 +97,8 @@ class Service():
         return self.output()
 
     async def set_state(self,
-                          state: MyState,
-                          ) -> None:
+                        state: MyState,
+                        ) -> None:
         await self.redis.set(f"{RedisType.state.value}:{self.user_info.id}", state.to_str)
 
     def output(self) -> Output:
