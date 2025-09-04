@@ -1,17 +1,18 @@
 
 
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
 
-from shared.database import Transaction
+from shared.database import Transaction, TransactionType
 
 
 class TransactionSchema(BaseModel):
     user_id: UUID
     amount: float
-    transaction_type: str
-    date: str | None = None
+    transaction_type: TransactionType
+    date: datetime | None = None
 
     @classmethod
     def from_db(cls,
@@ -20,6 +21,6 @@ class TransactionSchema(BaseModel):
         return cls(
             user_id=transaction.user_id,
             amount=transaction.amount,
-            transaction_type=transaction.transaction_type,
-            date=transaction.date.isoformat()
+            transaction_type=TransactionType(transaction.transaction_type),
+            date=transaction.date
         )

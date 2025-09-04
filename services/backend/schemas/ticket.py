@@ -1,5 +1,6 @@
 
 
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -33,7 +34,7 @@ class TicketSchema(BaseModel):
     id: UUID
     user_id: UUID
     title: str
-    opening_data: str
+    opening_data: datetime
     is_open: bool
     messages: list[TicketMessageSchema] | None = None
 
@@ -43,6 +44,6 @@ class TicketSchema(BaseModel):
             id=ticket.id,
             user_id=ticket.holder_id,
             title=ticket.title,
-            opening_data=ticket.opening_date.isoformat(),
+            opening_data=ticket.opening_date,
             is_open=ticket.is_open
         )

@@ -18,11 +18,11 @@ from ..schemas import (
 )
 from ..services import TicketService
 
-router = APIRouter(prefix="/ticket", tags=["ticket"])
+router = APIRouter(prefix="/tickets", tags=["tickets"])
 
 
 @router.post(
-    path="/new_message/{ticket_id}",
+    path="/{ticket_id}/messages",
     summary="Add a new message to an existing ticket"
 )
 async def new_message_ticket(ticket_id: UUID,
@@ -55,7 +55,7 @@ async def get_ticket(ticket_id: UUID,
 
 
 @router.patch(
-    path="/close_ticket/{ticket_id}",
+    path="/{ticket_id}/close",
     summary="Close an existing feedback ticket"
 )
 async def close_ticket(ticket_id: UUID,

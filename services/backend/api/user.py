@@ -5,6 +5,7 @@ from uuid import UUID
 from fastapi import (
     APIRouter,
     Depends,
+    Query,
 )
 
 from ..response import SuccessResponse
@@ -14,16 +15,22 @@ from ..schemas import (
 )
 from ..services import UserService
 
-router = APIRouter(prefix="/user", tags=["user"])
+router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get(
-    path="/all",
+    path="",
     summary="Get all users"
 )
-async def all(user_service: UserService = Depends(UserService.depends)
+async def all(offset: int | None = Query(None,
+                                         ge=0,
+                                         description="From which index to start"),
+              limit: int | None = Query(None,
+                                        ge=1,
+                                        description="Number of items to return"),
+              user_service: UserService = Depends(UserService.depends)
               ) -> list[UserSchema]:
-    return await user_service.all()
+    return await user_service.all(offset, limit)
 
 
 @router.patch(
@@ -38,7 +45,7 @@ async def edit_user(user_id: UUID,
 
 
 @router.get(
-    path="",
+    path="/me",
     summary="Get self info")
 async def get_self_info(user_service: UserService = Depends(UserService.depends)
                         ) -> UserSchema:

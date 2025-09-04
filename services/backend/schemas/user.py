@@ -40,17 +40,17 @@ class UserSchema(BaseModel):
     telegram_id: int
     telegram_username: str
     balance: float
-    created_date: str
+    created_date: datetime
     rights: UserRightsSchema
     settings: UserSettingsSchema
 
     tariff: TariffSchema
 
     model_config = ConfigDict(
-        json_encoders={
-            UUID: lambda v: str(v),
-            datetime: lambda v: v.isoformat()
-        },
+        # json_encoders={
+        #     UUID: lambda v: str(v),
+        #     datetime: lambda v: v.isoformat()
+        # },
         from_attributes=True
     )
 
@@ -64,7 +64,7 @@ class UserSchema(BaseModel):
             telegram_id=user.telegram_id,
             telegram_username=user.telegram_username,
             balance=user.balance,
-            created_date=user.created_date.isoformat(),
+            created_date=user.created_date,
             rights=rights,
             settings=settings
         )

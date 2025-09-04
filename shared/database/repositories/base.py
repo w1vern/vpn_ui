@@ -11,9 +11,8 @@ from typing import (
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)
+from sqlalchemy.sql import and_
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import Base
 
@@ -44,13 +43,26 @@ class BaseRepository(Generic[ModelType]):
         ).limit(1)
         return await self.session.scalar(stmt)
 
-    async def get_all(self) -> list[ModelType]:
-        stmt = select(self.model).where(self.model.deleted_date == None)
-        return list((await self.session.scalars(stmt)).all())
+    async def get_all(self,
+                      limit: int | None = None,
+                      offset: int | None = None,
+                      **kwargs
+                      ) -> list[ModelType]:
+        filters = [self.model.deleted_date.is_(None)]
 
-    async def get_all_filtered(self, **kwargs) -> list[ModelType]:
-        stmt = select(self.model).where(
-            self.model.deleted_date == None, **kwargs)
+        for field, value in kwargs.items():
+            if hasattr(self.model, field):
+                filters.append(getattr(self.model, field) == value)
+            else:
+                raise ValueError(
+                    f"Model {self.model.__name__} has no field '{field}'")
+
+        stmt = (
+            select(self.model)
+            .where(and_(*filters))
+            .limit(limit)
+            .offset(offset)
+        )
         return list((await self.session.scalars(stmt)).all())
 
     async def delete(self, instance: ModelType) -> None:

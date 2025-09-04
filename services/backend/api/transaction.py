@@ -1,14 +1,16 @@
 
+from uuid import UUID
 from fastapi import (
     APIRouter,
     Depends,
+    Query,
 )
 
 from ..response import SuccessResponse
 from ..schemas import TransactionSchema
 from ..services import TransactionService
 
-router = APIRouter(prefix="/transaction", tags=["transaction"])
+router = APIRouter(prefix="/transactions", tags=["transactions"])
 
 
 @router.post(
@@ -24,9 +26,17 @@ async def create(transaction_to_create: TransactionSchema,
 
 
 @router.get(
-    path="/all",
+    path="",
     summary="Get all transactions"
 )
-async def all(transaction_service: TransactionService = Depends(TransactionService.depends)
-              ) -> list[TransactionSchema]:
-    return await transaction_service.all()
+async def all(user_id: UUID | None = Query(None,
+                                           description="User id"),
+              limit: int | None = Query(None,
+                                        ge=1,
+                                        description="Number of items to return"),
+              offset: int | None = Query(None,
+                                         ge=0,
+                                         description="From which index to start"),
+              transaction_service: TransactionService = Depends(
+        TransactionService.depends)) -> list[TransactionSchema]:
+    return await transaction_service.all(user_id, limit, offset)

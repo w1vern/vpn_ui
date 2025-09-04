@@ -12,11 +12,11 @@ from ..schemas import (
 )
 from ..services import ServerService
 
-router = APIRouter(prefix="/server", tags=["server"])
+router = APIRouter(prefix="/servers", tags=["servers"])
 
 
 @router.get(
-    path="/all",
+    path="",
     summary="Get all servers"
 )
 async def get_all(server_service: ServerService = Depends(ServerService.depends)

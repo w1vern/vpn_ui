@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from uuid import UUID
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,8 +13,7 @@ from shared.database import (
 from ..exceptions import (
     TransactionTypeNotFoundException,
     UserNotFoundException,
-    UserNotTransactionEditorException,
-    InvalidDateFormatException
+    UserNotTransactionEditorException
 )
 from ..schemas import TransactionSchema, UserSchema
 from .depends import (
@@ -55,19 +54,22 @@ class TransactionService:
         tr_user = await self.ur.get_by_id(transaction_to_create.user_id)
         if tr_user is None:
             raise UserNotFoundException()
-        date = None
-        if not transaction_to_create.date is None:
-            try:
-                date = datetime.fromisoformat(transaction_to_create.date)
-            except ValueError:
-                raise InvalidDateFormatException()
         type: TransactionType = getattr(
             TransactionType, transaction_to_create.transaction_type)
         if type is None:
             raise TransactionTypeNotFoundException()
-        await self.tr.create(tr_user, transaction_to_create.amount, date, type.value)
+        if not transaction_to_create.date is None:
+            transaction_to_create.date.replace(tzinfo=None)
+        await self.tr.create(tr_user,
+                             transaction_to_create.amount,
+                             transaction_to_create.date,
+                             type.value)
         await self.ur.update_balance(tr_user, transaction_to_create.amount)
 
-    async def all(self) -> list[TransactionSchema]:
+    async def all(self,
+                  user_id: UUID | None,
+                  limit: int | None,
+                  offset: int | None
+                  ) -> list[TransactionSchema]:
         return [TransactionSchema.from_db(t)
-                for t in await self.tr.get_all()]
+                for t in await self.tr.get_all(limit, offset, user_id=user_id)]

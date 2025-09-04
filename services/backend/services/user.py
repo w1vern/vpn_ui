@@ -38,9 +38,12 @@ class UserService:
                 ) -> 'UserService':
         return cls(session, ur, user_schema)
 
-    async def all(self) -> list[UserSchema]:
+    async def all(self,
+                  limit: int | None,
+                  offset: int | None
+                  ) -> list[UserSchema]:
         return [UserSchema.from_db(u)
-                for u in await self.ur.get_all()]
+                for u in await self.ur.get_all(limit, offset)]
 
     async def edit(self,
                    user_id: UUID,

@@ -14,11 +14,11 @@ from ..schemas import (
 )
 from ..services import TariffService
 
-router = APIRouter(prefix="/tariff", tags=["tariff"])
+router = APIRouter(prefix="/tariffs", tags=["tariffs"])
 
 
 @router.get(
-    path="/all",
+    path="",
     summary="Get all tariffs"
 )
 async def all(tariff_service: TariffService = Depends(TariffService.depends)

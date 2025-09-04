@@ -1,5 +1,6 @@
 
 
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -13,8 +14,8 @@ class ServerSchema(BaseModel):
     country_code: str
     is_available: bool
     display_name: str
-    starting_date: str
-    closing_date: str
+    starting_date: datetime
+    closing_date: datetime
 
     panel_path: str
     login: str
@@ -30,8 +31,8 @@ class ServerSchema(BaseModel):
             ip=server.server.ip,
             country_code=server.server.country_code,
             is_available=server.server.is_available,
-            starting_date=server.server.starting_date.isoformat(),
-            closing_date=server.server.closing_date.isoformat(),
+            starting_date=server.server.starting_date,
+            closing_date=server.server.closing_date,
             panel_path=server.panel_path,
             login=server.login,
             password=server.password
@@ -43,8 +44,8 @@ class ServerToEditSchema(BaseModel):
     country_code: str | None = None
     is_available: bool | None = None
     display_name: str | None = None
-    starting_date: str | None = None
-    closing_date: str | None = None
+    starting_date: datetime | None = None
+    closing_date: datetime | None = None
 
     panel_path: str | None = None
     login: str | None = None
@@ -59,5 +60,5 @@ class CreateServerSchema(BaseModel):
     display_name: str
     login: str
     password: str
-    starting_date: str
-    closing_date: str
+    starting_date: datetime
+    closing_date: datetime
