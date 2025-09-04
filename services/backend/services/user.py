@@ -73,6 +73,10 @@ class UserService:
             if self.user_schema.rights.is_user_editor is False:
                 raise MemberRightsEditNotAllowedException()
             await self.ur.update_telegram_id(user, edited_user.telegram_id)
+        if edited_user.description is not None:
+            if self.user_schema.rights.is_user_editor is False:
+                raise MemberRightsEditNotAllowedException()
+            await self.ur.update_description(user, edited_user.description)
 
     async def get_self_info(self) -> UserSchema:
         return self.user_schema

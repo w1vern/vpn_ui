@@ -20,6 +20,7 @@ class ServerRepository(BaseRepository[Server]):
 
     async def create(self,
                      ip: str,
+                     description: str,
                      country_code: str,
                      display_name: str,
                      starting_date: datetime | None = None,
@@ -32,6 +33,7 @@ class ServerRepository(BaseRepository[Server]):
             closing_date = datetime.min
         return await self.universal_create(
             ip=ip,
+            description=description,
             country_code=country_code,
             is_available=is_available,
             display_name=display_name,
@@ -71,6 +73,13 @@ class ServerRepository(BaseRepository[Server]):
                      ip: str
                      ) -> None:
         server.ip = ip
+        await self.session.flush()
+
+    async def set_description(self,
+                              server: Server,
+                              description: str
+                              ) -> None:
+        server.description = description
         await self.session.flush()
 
     async def set_country_code(self,

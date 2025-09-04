@@ -11,6 +11,7 @@ from shared.database import Transaction, TransactionType
 class TransactionSchema(BaseModel):
     user_id: UUID
     amount: float
+    description: str
     transaction_type: TransactionType
     date: datetime | None = None
 
@@ -20,6 +21,7 @@ class TransactionSchema(BaseModel):
                 ) -> "TransactionSchema":
         return cls(
             user_id=transaction.user_id,
+            description=transaction.description,
             amount=transaction.amount,
             transaction_type=TransactionType(transaction.transaction_type),
             date=transaction.date

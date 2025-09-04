@@ -64,6 +64,7 @@ class ServerService:
         server_to_create.starting_date.replace(tzinfo=None)
         server_to_create.closing_date.replace(tzinfo=None)
         server = await self.sr.create(ip=server_to_create.ip,
+                                      description=server_to_create.description,
                                       country_code=server_to_create.country_code,
                                       is_available=server_to_create.is_available,
                                       display_name=server_to_create.display_name,
@@ -104,3 +105,5 @@ class ServerService:
             await self.psr.set_password(pserver, server_to_edit.password)
         if server_to_edit.panel_path is not None:
             await self.psr.set_panel_path(pserver, server_to_edit.panel_path)
+        if server_to_edit.description is not None:
+            await self.sr.set_description(server, server_to_edit.description)

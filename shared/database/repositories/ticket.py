@@ -5,23 +5,18 @@ from datetime import (
 )
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import (
     Ticket,
     User,
 )
-from .base import (
-    BaseRepository,
-)
+from .base import BaseRepository
 
 
 class TicketRepository(BaseRepository[Ticket]):
     def __init__(self, session: AsyncSession):
         super().__init__(session, Ticket)
-
 
     async def create(self,
                      title: str,

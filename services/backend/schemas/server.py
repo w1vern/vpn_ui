@@ -11,6 +11,7 @@ from shared.database import PanelServer
 class ServerSchema(BaseModel):
     id: UUID
     ip: str
+    description: str
     country_code: str
     is_available: bool
     display_name: str
@@ -27,6 +28,7 @@ class ServerSchema(BaseModel):
                 ) -> 'ServerSchema':
         return ServerSchema(
             id=server.id,
+            description=server.server.description,
             display_name=server.server.display_name,
             ip=server.server.ip,
             country_code=server.server.country_code,
@@ -41,6 +43,7 @@ class ServerSchema(BaseModel):
 
 class ServerToEditSchema(BaseModel):
     ip: str | None = None
+    description: str | None = None
     country_code: str | None = None
     is_available: bool | None = None
     display_name: str | None = None
@@ -54,6 +57,7 @@ class ServerToEditSchema(BaseModel):
 
 class CreateServerSchema(BaseModel):
     ip: str
+    description: str
     panel_path: str
     country_code: str
     is_available: bool

@@ -29,6 +29,7 @@ class UserRepository(BaseRepository[User]):
     async def create(self,
                      telegram_id: int,
                      telegram_username: str,
+                     description: str,
                      tariff_id: UUID,
                      balance: float = 0,
                      rights: int = RightsType.member.value,
@@ -37,6 +38,7 @@ class UserRepository(BaseRepository[User]):
         return await self.universal_create(
             telegram_id=telegram_id,
             tariff_id=tariff_id,
+            description=description,
             telegram_username=telegram_username,
             balance=balance,
             rights=rights,
@@ -96,4 +98,11 @@ class UserRepository(BaseRepository[User]):
                             new_tariff: Tariff
                             ) -> None:
         user.tariff_id = new_tariff.id
+        await self.session.flush()
+
+    async def update_description(self,
+                                 user: User,
+                                 new_description: str
+                                 ) -> None:
+        user.description = new_description
         await self.session.flush()

@@ -27,6 +27,7 @@ default_users: list[dict[str, Any]] = [
     {
         "telegram_id": env_config.bot.superuser,
         "telegram_username": "Admin",
+        "description": "",
         "balance": 0,
         "rights": RightsType.super_admin.value,
         "settings": SettingsType.default.value,
@@ -36,6 +37,7 @@ default_users: list[dict[str, Any]] = [
 default_tariffs: list[dict[str, Any]] = [
     {
         "name": "default",
+        "description": "",
         "duration": timedelta(days=1),
         "price": 3,
         "price_of_traffic_reset": 3,
@@ -46,6 +48,7 @@ default_tariffs: list[dict[str, Any]] = [
 default_servers: list[dict[str, Any]] = [
     {
         "ip": "localhost",
+        "description": "",
         "country_code": "ru",
         "is_available": True,
         "display_name": "test",

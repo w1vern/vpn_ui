@@ -5,20 +5,14 @@ from datetime import (
 )
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..enums import (
-    TransactionType,
-)
+from ..enums import TransactionType
 from ..models import (
     Transaction,
     User,
 )
-from .base import (
-    BaseRepository,
-)
+from .base import BaseRepository
 
 
 class TransactionRepository(BaseRepository[Transaction]):
@@ -28,6 +22,7 @@ class TransactionRepository(BaseRepository[Transaction]):
     async def create(self,
                      user: User,
                      amount: float,
+                     description: str,
                      date: datetime | None = None,
                      transaction_type: str = TransactionType.withdrawal.value
                      ) -> Transaction:
@@ -36,6 +31,7 @@ class TransactionRepository(BaseRepository[Transaction]):
         return await self.universal_create(
             user_id=user.id,
             amount=amount,
+            description=description,
             date=date,
             transaction_type=transaction_type)
 

@@ -61,7 +61,9 @@ class TariffService:
             duration=timedelta(seconds=create_tariff_schema.duration),
             price=create_tariff_schema.price,
             price_of_traffic_reset=create_tariff_schema.price_of_traffic_reset,
-            traffic=create_tariff_schema.traffic
+            traffic=create_tariff_schema.traffic,
+            description=create_tariff_schema.description,
+            is_special=create_tariff_schema.is_special
         )
 
     async def delete(self, tariff_id: UUID) -> None:
@@ -86,5 +88,7 @@ class TariffService:
             duration=duration,
             price=edited_tariff.price,
             price_of_traffic_reset=edited_tariff.price_of_traffic_reset,
-            traffic=edited_tariff.traffic
+            traffic=edited_tariff.traffic,
+            description=edited_tariff.description,
+            is_special=edited_tariff.is_special
         )

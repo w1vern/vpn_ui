@@ -62,6 +62,7 @@ class TransactionService:
             transaction_to_create.date.replace(tzinfo=None)
         await self.tr.create(tr_user,
                              transaction_to_create.amount,
+                             transaction_to_create.description,
                              transaction_to_create.date,
                              type.value)
         await self.ur.update_balance(tr_user, transaction_to_create.amount)
@@ -73,7 +74,7 @@ class TransactionService:
                   ) -> list[TransactionSchema]:
         return [TransactionSchema.from_db(t)
                 for t in await self.tr.get_all(limit, offset, user_id=user_id)]
-    
+
     async def count(self,
                     user_id: UUID | None
                     ) -> int:

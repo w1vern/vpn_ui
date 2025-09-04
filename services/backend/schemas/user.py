@@ -39,6 +39,7 @@ class UserSchema(BaseModel):
     id: UUID
     telegram_id: int
     telegram_username: str
+    description: str
     balance: float
     created_date: datetime
     rights: UserRightsSchema
@@ -65,6 +66,7 @@ class UserSchema(BaseModel):
             telegram_username=user.telegram_username,
             balance=user.balance,
             created_date=user.created_date,
+            description=user.description,
             rights=rights,
             settings=settings
         )
@@ -91,5 +93,6 @@ class EditUserRightsSchema(BaseModel):
 class EditUserSchema(BaseModel):
     telegram_id: int | None = None
     tariff_id: UUID | None = None
+    description: str | None = None
     rights: EditUserRightsSchema | None = None
     settings: EditUserSettingsSchema | None = None

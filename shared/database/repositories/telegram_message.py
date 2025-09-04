@@ -2,17 +2,13 @@
 from datetime import datetime
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import (
     TelegramMessage,
     User,
 )
-from .base import (
-    BaseRepository,
-)
+from .base import BaseRepository
 
 
 class TelegramMessageRepository(BaseRepository[TelegramMessage]):

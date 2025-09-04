@@ -89,7 +89,7 @@ async def get_request_data(message: Message | None = None,
     return data
 
 
-async def create_user(user_info: UserInfo = Depends(get_user_info),
+""" async def create_user(user_info: UserInfo = Depends(get_user_info),
                       ur: UserRepository = Depends(get_user_repo)
                       ) -> User:
 
@@ -98,8 +98,9 @@ async def create_user(user_info: UserInfo = Depends(get_user_info),
         return user
     user = await ur.create(user_info.id,
                            user_info.username,
+                           "",
                            UUID(int=0))
-    return user
+    return user """
 
 
 async def get_user(user_info: UserInfo = Depends(get_user_info),

@@ -10,6 +10,7 @@ from shared.database import Tariff
 class TariffSchema(BaseModel):
     id: UUID
     name: str
+    description: str
     duration: int
     price: float
     price_of_traffic_reset: float
@@ -23,6 +24,7 @@ class TariffSchema(BaseModel):
         return cls(
             id=tariff.id,
             name=tariff.name,
+            description=tariff.description,
             duration=tariff.duration.seconds,
             price=tariff.price,
             price_of_traffic_reset=tariff.price_of_traffic_reset,
@@ -34,6 +36,7 @@ class TariffSchema(BaseModel):
 class CreateTariffSchema(BaseModel):
     name: str
     duration: int
+    description: str
     price: float
     price_of_traffic_reset: float
     traffic: int
@@ -41,8 +44,10 @@ class CreateTariffSchema(BaseModel):
 
 class EditTariffSchema(BaseModel):
     name: str | None = None
+    description: str | None = None
     duration: int | None = None
     price: float | None = None
     price_of_traffic_reset: float | None = None
     traffic: int | None = None
+    is_special: bool | None = None
 

@@ -87,7 +87,10 @@ class Service():
 
     async def start_handler(self) -> Output:
         if await self.ur.get_by_telegram_id(self.user_info.id) is None:
-            user = await self.ur.create(self.user_info.id, self.user_info.username, UUID(int=0))
+            user = await self.ur.create(self.user_info.id,
+                                        self.user_info.username,
+                                        "",
+                                        UUID(int=0))
             self.main_message.notifications.append(Notification("Welcome"))
             await self.to_main_menu()
         else:
