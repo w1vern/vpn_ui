@@ -1,12 +1,8 @@
 
-from secrets import (
-    token_urlsafe,
-)
+from secrets import token_urlsafe
 from uuid import UUID
 
-from sqlalchemy import (
-    ForeignKey,
-)
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -27,6 +23,7 @@ class User(Base):
     telegram_id: Mapped[int] = mapped_column(unique=True, index=True)
     tariff_id: Mapped[UUID] = mapped_column(ForeignKey("tariffs.id"))
     telegram_username: Mapped[str] = mapped_column()
+    description: Mapped[str] = mapped_column()
     balance: Mapped[float] = mapped_column()
     rights: Mapped[int] = mapped_column()
     settings: Mapped[int] = mapped_column()

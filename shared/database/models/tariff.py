@@ -14,6 +14,7 @@ class Tariff(Base):
     __tablename__ = "tariffs"
 
     name: Mapped[str] = mapped_column(unique=True)
+    description: Mapped[str] = mapped_column()
     duration: Mapped[timedelta] = mapped_column()
     price: Mapped[float] = mapped_column()
     price_of_traffic_reset: Mapped[float] = mapped_column()
