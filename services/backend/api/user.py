@@ -32,6 +32,13 @@ async def all(offset: int | None = Query(None,
               ) -> list[UserSchema]:
     return await user_service.all(offset, limit)
 
+@router.get(
+    path="/count",
+    summary="Get users count"
+)
+async def count(user_service: UserService = Depends(UserService.depends)) -> int:
+    return await user_service.count()
+
 
 @router.patch(
     path="/{user_id}",

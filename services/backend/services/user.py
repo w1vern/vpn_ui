@@ -45,6 +45,9 @@ class UserService:
         return [UserSchema.from_db(u)
                 for u in await self.ur.get_all(limit, offset)]
 
+    async def count(self) -> int:
+        return await self.ur.count()
+
     async def edit(self,
                    user_id: UUID,
                    edited_user: EditUserSchema

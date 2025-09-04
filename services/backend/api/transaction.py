@@ -40,3 +40,13 @@ async def all(user_id: UUID | None = Query(None,
               transaction_service: TransactionService = Depends(
         TransactionService.depends)) -> list[TransactionSchema]:
     return await transaction_service.all(user_id, limit, offset)
+
+@router.get(
+    path="/count",
+    summary="Get transactions count"
+)
+async def count(user_id: UUID | None = Query(None,
+                                            description="User id"),
+                transaction_service: TransactionService = Depends(
+        TransactionService.depends)) -> int:
+    return await transaction_service.count(user_id)

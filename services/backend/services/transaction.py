@@ -73,3 +73,10 @@ class TransactionService:
                   ) -> list[TransactionSchema]:
         return [TransactionSchema.from_db(t)
                 for t in await self.tr.get_all(limit, offset, user_id=user_id)]
+    
+    async def count(self,
+                    user_id: UUID | None
+                    ) -> int:
+        if user_id is None:
+            return await self.tr.count()
+        return await self.tr.count(user_id=user_id)
