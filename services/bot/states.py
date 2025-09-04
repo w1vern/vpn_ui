@@ -15,18 +15,18 @@ class MyState():
         self._parent = parent_state
 
     def __str__(self) -> str:
-        return self.to_str
+        return self.string
 
     @property
-    def to_str(self) -> str:
+    def string(self) -> str:
         if not self._parent is None:
-            return f"{self._parent.to_str}/{self._state}"
+            return f"{self._parent.string}/{self._state}"
         return self._state
 
     @classmethod
     def from_str(cls, state: str) -> 'MyState':
         for key, value in user_attrs.items():
-            if value.to_str == state:
+            if value.string == state:
                 return AppStates.__dict__[key]
         raise IncorrectStateException(state)
 

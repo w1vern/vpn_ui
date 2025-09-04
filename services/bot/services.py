@@ -99,7 +99,7 @@ class Service():
     async def set_state(self,
                         state: MyState,
                         ) -> None:
-        await self.redis.set(f"{RedisType.state.value}:{self.user_info.id}", state.to_str)
+        await self.redis.set(f"{RedisType.state.value}:{self.user_info.id}", state.string)
 
     def output(self) -> Output:
         notes = [note.text for note in self.main_message.notifications]
@@ -120,9 +120,9 @@ class Service():
     }
 
     def get_func(self) -> Callable[[], Awaitable[None]]:
-        func = self.behavioral_dict.get(f"{self.state.to_str}/{self.input}")
+        func = self.behavioral_dict.get(f"{self.state.string}/{self.input}")
         if not func:
-            func = self.behavioral_dict.get(self.state.to_str)
+            func = self.behavioral_dict.get(self.state.string)
         if not func:
             func = "incorrect_input"
         logger.debug(func)

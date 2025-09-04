@@ -6,6 +6,7 @@ from fast_depends import Depends
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .buttons import main_menu_keyboard
 from shared.database import (
     PanelServerRepository,
     ServerRepository,
@@ -24,7 +25,7 @@ from .exceptions import (
 )
 from .models import MainMessage, UserInfo
 from .redis import RedisType, get_redis_client
-from .states import MyState
+from .states import AppStates, MyState
 
 logger = setup_logger(__name__)
 
@@ -116,6 +117,10 @@ async def get_state(user_info: UserInfo = Depends(get_user_info),
                     redis: Redis = Depends(get_redis_client)
                     ) -> MyState:
     state = await redis.get(f"{RedisType.state.value}:{user_info.id}")
+    if state is None:
+        state = AppStates.main_menu
+        await redis.set(f"{RedisType.state.value}:{user_info.id}", state.string)
+        return state
     return MyState.from_str(state)
 
 
@@ -124,5 +129,9 @@ async def get_main_message(user_info: UserInfo = Depends(get_user_info),
                            ) -> MainMessage:
     main_message = await redis.get(f"{RedisType.main_message.value}:{user_info.id}")
     if main_message is None:
-        raise SendFeedbackToAdminException()
+        main_message = MainMessage(text=AppStates.main_menu.string,
+                                   notifications=[],
+                                   buttons=main_menu_keyboard())
+        await redis.set(f"{RedisType.main_message.value}:{user_info.id}", main_message.to_str())
+        return main_message
     return MainMessage.from_str(main_message)
