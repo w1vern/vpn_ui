@@ -13,7 +13,8 @@ from shared.database import (
 
 from ..exceptions import (
     NotServerEditorException,
-    ServerNotFoundException
+    ServerNotFoundException,
+    InvalidDateFormatException
 )
 from ..schemas import (
     CreateServerSchema,
@@ -62,14 +63,20 @@ class ServerService:
                      ) -> None:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
+        try:
+            starting_date = datetime.fromisoformat(
+                server_to_create.starting_date)
+            closing_date = datetime.fromisoformat(
+                server_to_create.closing_date)
+        except ValueError:
+            raise InvalidDateFormatException()
+
         server = await self.sr.create(ip=server_to_create.ip,
                                       country_code=server_to_create.country_code,
                                       is_available=server_to_create.is_available,
                                       display_name=server_to_create.display_name,
-                                      starting_date=datetime.fromisoformat(
-                                          server_to_create.starting_date),
-                                      closing_date=datetime.fromisoformat(
-                                          server_to_create.closing_date))
+                                      starting_date=starting_date,
+                                      closing_date=closing_date)
         pserver = await self.psr.create(server=server,
                                         login=server_to_create.login,
                                         password=server_to_create.password,
@@ -92,9 +99,17 @@ class ServerService:
         if server_to_edit.display_name is not None:
             await self.sr.set_display_name(server, server_to_edit.display_name)
         if server_to_edit.starting_date is not None:
-            await self.sr.set_created_date(server, datetime.fromisoformat(server_to_edit.starting_date))
+            try:
+                date = datetime.fromisoformat(server_to_edit.starting_date)
+            except ValueError:
+                raise InvalidDateFormatException()
+            await self.sr.set_created_date(server, date)
         if server_to_edit.closing_date is not None:
-            await self.sr.set_closing_date(server, datetime.fromisoformat(server_to_edit.closing_date))
+            try:
+                date = datetime.fromisoformat(server_to_edit.closing_date)
+            except ValueError:
+                raise InvalidDateFormatException()
+            await self.sr.set_closing_date(server, date)
         if server_to_edit.is_available is not None:
             await self.sr.set_is_available(server, server_to_edit.is_available)
         if server_to_edit.login is not None:

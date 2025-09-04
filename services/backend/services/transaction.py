@@ -14,6 +14,7 @@ from ..exceptions import (
     TransactionTypeNotFoundException,
     UserNotFoundException,
     UserNotTransactionEditorException,
+    InvalidDateFormatException
 )
 from ..schemas import TransactionSchema, UserSchema
 from .depends import (
@@ -56,7 +57,10 @@ class TransactionService:
             raise UserNotFoundException()
         date = None
         if not transaction_to_create.date is None:
-            date = datetime.fromisoformat(transaction_to_create.date)
+            try:
+                date = datetime.fromisoformat(transaction_to_create.date)
+            except ValueError:
+                raise InvalidDateFormatException()
         type: TransactionType = getattr(
             TransactionType, transaction_to_create.transaction_type)
         if type is None:
