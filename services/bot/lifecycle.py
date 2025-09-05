@@ -7,8 +7,9 @@ from shared.infrastructure import setup_logger
 
 from .bot import update_message
 from .depends import get_user_repo
+from .i18n import I18nMessage, LanguageCodes, MessageKey
 from .models import Notification
-from .services import Service
+from .service import Service
 
 logger = setup_logger(__name__)
 
@@ -25,7 +26,8 @@ def register_lifecycle(dp: Dispatcher,
                     service: Service = Depends(Service.depends)
                     ) -> None:
             service.main_message.notifications.append(
-                Notification("bot startup"))
+                Notification(I18nMessage(MessageKey.bot_started
+                                     ).render(service.user_info.lang_code)))
             await service.save_main_message()
             service.notify = True
             await update_message(service.output())
@@ -42,7 +44,8 @@ def register_lifecycle(dp: Dispatcher,
                     service: Service = Depends(Service.depends)
                     ) -> None:
             service.main_message.notifications.append(
-                Notification("bot shutdown"))
+                Notification(I18nMessage(MessageKey.bot_stopped
+                                     ).render(service.user_info.lang_code)))
             await service.save_main_message()
             service.notify = True
             await update_message(service.output())

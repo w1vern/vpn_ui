@@ -7,9 +7,9 @@ from redis.asyncio import Redis
 from shared.database import (
     PanelServerRepository,
     ServerRepository,
+    TariffRepository,
     TransactionRepository,
-    UserRepository,
-    TariffRepository
+    UserRepository
 )
 from shared.infrastructure import setup_logger
 
@@ -25,12 +25,13 @@ from .depends import (
     get_request_data,
     get_server_repo,
     get_state,
+    get_tariff_repo,
     get_transaction_repo,
     get_user_info,
-    get_user_repo,
-    get_tariff_repo
+    get_user_repo
 )
 from .exceptions import SendFeedbackToAdminException
+from .i18n import I18nMessage, MessageKey
 from .models import MainMessage, Notification, Output, UserInfo
 from .redis import RedisType, get_redis_client
 from .states import AppStates, MyState
@@ -96,11 +97,13 @@ class Service():
                                         self.user_info.username,
                                         "",
                                         tariff.id)
-            self.main_message.notifications.append(Notification("Welcome"))
+            self.main_message.notifications.append(Notification(
+                I18nMessage(MessageKey.welcome_message).render(self.user_info.lang_code)))
             await self.to_main_menu()
         else:
             self.main_message.notifications.append(
-                Notification("Don't use start command"))
+                Notification(I18nMessage(MessageKey.dont_use_start_command
+                                         ).render(self.user_info.lang_code)))
         await self.save_main_message()
         return self.output()
 
@@ -113,40 +116,30 @@ class Service():
         notes = [note.text for note in self.main_message.notifications]
         notes.append(self.main_message.text)
         text = "\n".join(notes)
+        if len(self.main_message.notifications) > 0:
+            self.main_message.buttons.append(StaticButtons.read_notifications)
         return Output(text, self.main_message.buttons, self.user_info, self.notify)
 
     async def save_main_message(self) -> None:
         await self.redis.set(f"{RedisType.main_message.value}:{self.user_info.id}",
                              self.main_message.to_str())
 
-    behavioral_dict: dict[str, str] = {
-        # f"{AppStates.settings_menu}/{StaticButtons.to_main_menu.text}": "__to_main_menu",
-        f"{AppStates.inbounds_menu}/{StaticButtons.to_main_menu.text}": "to_main_menu",
-        f"{AppStates.transactions_menu}/{StaticButtons.to_main_menu.text}": "to_main_menu",
-        f"{AppStates.main_menu}/{StaticButtons.to_inbounds_menu.text}": "to_inbounds_menu",
-        f"{AppStates.main_menu}/{StaticButtons.to_transactions_menu.text}": "to_transactions_menu",
-    }
-
     def get_func(self) -> Callable[[], Awaitable[None]]:
-        func = self.behavioral_dict.get(f"{self.state.string}/{self.input}")
-        if not func:
-            func = self.behavioral_dict.get(self.state.string)
-        if not func:
-            func = "incorrect_input"
-        logger.debug(func)
-        return getattr(self, func)
+        return getattr(self, self.input)
 
     async def incorrect_input(self) -> None:
         pass
 
     async def to_main_menu(self) -> None:
         await self.set_state(AppStates.main_menu)
-        self.main_message.text = "main menu"
+        self.main_message.text = I18nMessage(MessageKey.main_menu
+                                             ).render(self.user_info.lang_code)
         self.main_message.buttons = main_menu_keyboard()
 
     async def to_inbounds_menu(self) -> None:
         await self.set_state(AppStates.inbounds_menu)
-        self.main_message.text = "inbounds menu"
+        self.main_message.text = I18nMessage(MessageKey.inbounds_menu
+                                             ).render(self.user_info.lang_code)
         self.main_message.buttons = inbounds_keyboard()
 
     async def to_transactions_menu(self) -> None:
@@ -157,5 +150,13 @@ class Service():
             raise SendFeedbackToAdminException()
         trns = await self.tr.get_by_user(user)
         text = "\n".join([f"{trn.amount} - {trn.date}" for trn in trns])
-        self.main_message.text = f"transactions menu\nbalance: {user.balance}\n{text}"
+        self.main_message.text = f"{I18nMessage(MessageKey.transactions_menu
+                                                ).render(self.user_info.lang_code
+                                                         )}\n{I18nMessage(MessageKey.balance
+                                                                          ).render(self.user_info.lang_code
+                                                                                   )}: {user.balance}\n{text}"
         self.main_message.buttons = transactions_keyboard()
+
+    async def read_notifications(self) -> None:
+        self.main_message.notifications.clear()
+        

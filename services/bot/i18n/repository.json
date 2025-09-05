@@ -1,0 +1,114 @@
+{
+    "to_main_menu": {
+        "en": "To main menu",
+        "ru": "перейти в главное меню"
+    },
+    "to_settings_menu": {
+        "en": "To settings menu",
+        "ru": "перейти в меню настроек"
+    },
+    "to_inbounds_menu": {
+        "en": "To inbounds menu",
+        "ru": "перейти в меню входящих"
+    },
+    "to_tickets_menu": {
+        "en": "To tickets menu",
+        "ru": "перейти в меню обращений"
+    },
+    "to_transactions_menu": {
+        "en": "To transactions menu",
+        "ru": "перейти в меню транзакции"
+    },
+    "hide_notifications": {
+        "en": "Hide notifications",
+        "ru": "Скрыть уведомления"
+    },
+    "read_notifications": {
+        "en": "Read notifications",
+        "ru": "Прочитать уведомления"
+    },
+    "message_user_is_none_exception": {
+        "en": "Error: Message from_user is None",
+        "ru": "Ошибка: Message from_user is None"
+    },
+    "user_not_found_exception": {
+        "en": "Error: User not found",
+        "ru": "Ошибка: Пользователь не найден"
+    },
+    "message_username_is_none_exception": {
+        "en": "Error: Message username is None",
+        "ru": "Ошибка: Message username is None"
+    },
+    "incorrect_state_exception": {
+        "en": "Error: Incorrect state: {state}",
+        "ru": "Ошибка: Некорректное состояние: {state}"
+    },
+    "message_text_is_none_exception": {
+        "en": "Error: Message text is None",
+        "ru": "Ошибка: Message text is None"
+    },
+    "send_feedback_to_admin_exception": {
+        "en": "Interesting error occurred.\nPlease contact the administrator for assistance.\n\nAdditional information:\n{additional_info}",
+        "ru": "Обнаружена странная ошибка.\nПожалуйста, свяжитесь с администратором для помощи.\n\nДополнительная информация:\n{additional_info}"
+    },
+    "telegram_api_error":
+    {
+        "en": "Telegram API error",
+        "ru": "Ошибка Telegram API"
+    },
+    "unknown_error":
+    {
+        "en": "Unknown error",
+        "ru": "Неизвестная ошибка"
+    },
+    "bot_started":
+    {
+        "en": "Bot started",
+        "ru": "Бот запущен"
+    },
+    "bot_stopped":
+    {
+        "en": "Bot stopped",
+        "ru": "Бот остановлен"
+    },
+    "welcome_message":
+    {
+        "en": "Welcome to the bot",
+        "ru": "Добро пожаловать в бота"
+    },
+    "dont_use_start_command":
+    {
+        "en": "Don't use start command",
+        "ru": "Не используйте команду start"
+    },
+    "settings_menu":
+    {
+        "en": "Settings menu",
+        "ru": "Меню настроек"
+    },
+    "inbounds_menu":
+    {
+        "en": "Inbounds menu",
+        "ru": "Меню подключений"
+    },
+    "tickets_menu":
+    {
+        "en": "Tickets menu",
+        "ru": "Меню обращений"
+    },
+    "transactions_menu":
+    {
+        "en": "Transactions menu",
+        "ru": "Меню транзакции"
+    },
+    "main_menu":
+    {
+        "en": "Main menu",
+        "ru": "Главное меню"
+    },
+    "balance":
+    {
+        "en": "Balance",
+        "ru": "Баланс"
+    }
+}

@@ -8,14 +8,14 @@ def setup_logger(name: str | None = None, level: int = logging.DEBUG) -> logging
     if logger.handlers:
         return logger
 
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(level)
 
     formatter = logging.Formatter(
         '%(asctime)s | %(levelname)-8s | %(name)s | %(message)s'
     )
 
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.DEBUG)
+    console_handler.setLevel(level)
     console_handler.setFormatter(formatter)
 
     logger.addHandler(console_handler)

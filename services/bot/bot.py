@@ -66,7 +66,8 @@ async def update_message(new_state: Output,
                                chat_id,
                                message_id,
                                new_state.text,
-                               create_keyboard(new_state.buttons)
+                               create_keyboard(
+                                   new_state.buttons, new_state.user_info.lang_code)
                                if new_state.buttons is not None else None)
             return
         else:
@@ -80,4 +81,4 @@ async def update_message(new_state: Output,
                        redis,
                        new_state.user_info.id,
                        new_state.text,
-                       create_keyboard(new_state.buttons))
+                       create_keyboard(new_state.buttons, new_state.user_info.lang_code))

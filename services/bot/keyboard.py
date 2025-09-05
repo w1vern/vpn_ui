@@ -6,10 +6,12 @@ from .buttons import (
     GetKeyboardSizeFunction,
     get_keyboard_size
 )
+from .i18n import LanguageCodes
 
 
 def create_keyboard(values: list[Button],
-                    keyboard_size: GetKeyboardSizeFunction = get_keyboard_size
+                    lang_code: LanguageCodes,
+                    keyboard_size: GetKeyboardSizeFunction = get_keyboard_size,
                     ) -> InlineKeyboardMarkup:
     markup = keyboard_size(values)
     keyboard: list[list[InlineKeyboardButton]] = []
@@ -17,8 +19,8 @@ def create_keyboard(values: list[Button],
     for i in range(len(markup)):
         keyboard.append([])
         for _ in range(markup[i]):
-            keyboard[i].append(InlineKeyboardButton(text=values[index].text,
-                                                    callback_data=values[index].text))
+            keyboard[i].append(InlineKeyboardButton(text=values[index].text.render(lang_code),
+                                                    callback_data=values[index].callback_data))
             index += 1
 
     return InlineKeyboardMarkup(inline_keyboard=keyboard)

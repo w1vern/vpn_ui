@@ -4,24 +4,26 @@ from fast_depends import Depends
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .buttons import main_menu_keyboard
 from shared.database import (
     PanelServerRepository,
     ServerRepository,
+    TariffRepository,
     TransactionRepository,
     User,
     UserRepository,
-    TariffRepository,
     session_manager
 )
 from shared.infrastructure import setup_logger  # , CodeToTG
 
+from .buttons import main_menu_keyboard
 from .exceptions import (
     MessageUserIsNoneException,
     MessageUsernameIsNoneException,
     SendFeedbackToAdminException,
     UserNotFoundException
 )
+from .i18n import I18nMessage as MyMessage
+from .i18n import LanguageCodes, MessageKey
 from .models import MainMessage, UserInfo
 from .redis import RedisType, get_redis_client
 from .states import AppStates, MyState
@@ -62,7 +64,7 @@ async def get_user_info(message: Message | None = None,
     # if data is not None:
     #    return UserInfo(data.tg_id, "")
     if id is not None:
-        return UserInfo(id, "")
+        return UserInfo(id, "", LanguageCodes.en)
     if message is not None:
         tmp = message
     elif callback_query is not None:
@@ -71,10 +73,17 @@ async def get_user_info(message: Message | None = None,
         raise SendFeedbackToAdminException()
     if not tmp.from_user:
         raise MessageUserIsNoneException()
-    if not tmp.from_user.username:
-        return UserInfo(tmp.from_user.id, "")
+    if tmp.from_user.username:
+        username = tmp.from_user.username
+    else:
+        username = ""
+    if tmp.from_user.language_code:
+        lang_code = LanguageCodes(tmp.from_user.language_code)
+    else:
+        lang_code = LanguageCodes.en
     return UserInfo(tmp.from_user.id,
-                    tmp.from_user.username)
+                    username,
+                    lang_code)
 
 
 async def get_request_data(message: Message | None = None,

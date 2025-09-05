@@ -13,8 +13,10 @@ from .exceptions import (
     MessageTextIsNoneException,
     SendFeedbackToAdminException
 )
+from .i18n import I18nMessage as MyMessage
+from .i18n import LanguageCodes, MessageKey
 from .models import UserInfo
-from .services import Output, Service
+from .service import Output, Service
 
 logger = setup_logger(__name__)
 
@@ -58,23 +60,33 @@ async def error_handler(event: ErrorEvent) -> None:
     if event.update.message is None:
         if event.update.callback_query is None \
                 or event.update.callback_query.from_user is None \
-                or event.update.callback_query.from_user.username is None:
+                or event.update.callback_query.from_user.username is None \
+                or event.update.callback_query.from_user.language_code is None:
             raise SendFeedbackToAdminException()
         id = event.update.callback_query.from_user.id
         username = event.update.callback_query.from_user.username
+        lang_code = LanguageCodes(event.update.callback_query.from_user.language_code)
     else:
         if event.update.message.from_user is None \
-                or event.update.message.from_user.username is None:
+                or event.update.message.from_user.username is None\
+                    or event.update.message.from_user.language_code is None:
             raise SendFeedbackToAdminException()
         id = event.update.message.from_user.id
         username = event.update.message.from_user.username
-    user_info = UserInfo(id, username)
+        lang_code = LanguageCodes(event.update.message.from_user.language_code)
+    user_info = UserInfo(id, username, lang_code)
     new_state = Output(None, None, user_info)
-    if isinstance(exception, BaseCustomException):
-        new_state.text = exception.detail
-    elif isinstance(exception, TelegramAPIError):
-        new_state.text = "telegram api error"
+    if event.update.message is None \
+            or event.update.message.from_user is None \
+            or event.update.message.from_user.language_code is None:
+        lang_code = LanguageCodes.en
     else:
-        new_state.text = "unknown error"
+        lang_code = LanguageCodes(event.update.message.from_user.language_code)
+    if isinstance(exception, BaseCustomException):
+        new_state.text = exception.detail.render(lang_code)
+    elif isinstance(exception, TelegramAPIError):
+        new_state.text = MyMessage(MessageKey.telegram_api_error).render(lang_code)
+    else:
+        new_state.text = MyMessage(MessageKey.unknown_error).render(lang_code)
     await update_message(new_state)
     raise exception

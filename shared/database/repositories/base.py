@@ -11,8 +11,8 @@ from typing import (
 from uuid import UUID
 
 from sqlalchemy import BinaryExpression, func, select
-from sqlalchemy.sql import and_
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import and_
 
 from ..models import Base
 

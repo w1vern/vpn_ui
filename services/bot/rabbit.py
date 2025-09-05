@@ -12,7 +12,7 @@ from shared.infrastructure import (
 
 from .bot import update_message
 from .models import Notification
-from .services import Service
+from .service import Service
 
 broker = RabbitBroker(RABBIT_URL)
 app = FastStream(broker)

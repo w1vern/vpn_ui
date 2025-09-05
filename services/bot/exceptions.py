@@ -2,34 +2,38 @@
 import inspect
 import traceback
 
+from .i18n import I18nMessage, MessageKey
+
 
 class BaseCustomException(Exception):
-    def __init__(self, detail: str):
+    def __init__(self, detail: I18nMessage):
         self.detail = detail
 
 
 class MessageUserIsNoneException(BaseCustomException):
     def __init__(self):
-        super().__init__("Message from_user is None")
+        super().__init__(I18nMessage(MessageKey.message_user_is_none_exception))
 
 
 class UserNotFoundException(BaseCustomException):
     def __init__(self):
-        super().__init__("User not found")
+        super().__init__(I18nMessage(MessageKey.user_not_found_exception))
 
 
 class MessageUsernameIsNoneException(BaseCustomException):
     def __init__(self):
-        super().__init__("Message from_user.username is None")
+        super().__init__(I18nMessage(MessageKey.message_username_is_none_exception))
 
 
 class IncorrectStateException(BaseCustomException):
     def __init__(self, state: str):
-        super().__init__(f"Incorrect state: {state}")
+        super().__init__(I18nMessage(MessageKey.incorrect_state_exception, state=state))
+
 
 class MessageTextIsNoneException(BaseCustomException):
     def __init__(self):
-        super().__init__("Message.text is None")
+        super().__init__(I18nMessage(MessageKey.message_text_is_none_exception))
+
 
 class SendFeedbackToAdminException(BaseCustomException):
     def __init__(self):
@@ -45,9 +49,6 @@ class SendFeedbackToAdminException(BaseCustomException):
         stack_trace = "".join(traceback.format_stack())
         message += f"Stack Trace:\n{stack_trace}"
 
-        super().__init__("".join([
-            "Interesting error occurred.",
-            "Please contact the administrator for assistance.",
-            "\n\nAdditional information:\n",
-            message]))
-
+        super().__init__(I18nMessage(
+            MessageKey.send_feedback_to_admin_exception,
+            additional_info=message))

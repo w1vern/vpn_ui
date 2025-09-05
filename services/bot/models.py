@@ -4,15 +4,19 @@ import json
 
 from shared.infrastructure import setup_logger
 
+from .i18n import I18nMessage, LanguageCodes, MessageKey
+
 logger = setup_logger(__name__)
 
 
 class UserInfo:
     def __init__(self, id: int,
-                 username: str
+                 username: str,
+                 lang_code: LanguageCodes
                  ) -> None:
         self.id = id
         self.username = username
+        self.lang_code = lang_code
 
 
 class Notification():
@@ -24,11 +28,15 @@ class Notification():
 
 class Button():
     def __init__(self,
-                 text: str,
+                 text: I18nMessage,
+                 callback_data: str,
                  for_member: bool = True,
+                 for_admin: bool = False
                  ) -> None:
         self.text = text
+        self.callback_data = callback_data
         self.for_member = for_member
+        self.for_admin = for_admin
 
 
 class Output:
@@ -59,8 +67,10 @@ class MainMessage():
             "text": self.text,
             "notifications": [{"text": notification.text} for notification in self.notifications],
             "buttons": [{
-                "text": button.text,
-                "for_member": button.for_member
+                "text": button.text.message_key.value,
+                "callback_data": button.callback_data,
+                "for_member": button.for_member,
+                "for_admin": button.for_admin
             } for button in self.buttons]
         })
 
@@ -71,4 +81,8 @@ class MainMessage():
         return cls(data["text"],
                    [Notification(notification["text"])
                     for notification in data["notifications"]],
-                   [Button(button["text"], button["for_member"]) for button in data["buttons"]])
+                   [Button(I18nMessage(MessageKey(button["text"])),
+                           button["callback_data"],
+                           button["for_member"],
+                           button["for_admin"]
+                           ) for button in data["buttons"]])

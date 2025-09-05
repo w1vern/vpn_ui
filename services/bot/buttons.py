@@ -1,6 +1,7 @@
 
 from typing import Protocol
 
+from .i18n import I18nMessage, MessageKey
 from .models import Button
 
 
@@ -24,12 +25,20 @@ def get_keyboard_size(values: list[Button]
 
 
 class StaticButtons:
-    to_settings_menu = Button("settings")
-    to_main_menu = Button("back to main menu")
-    to_inbounds_menu = Button("inbounds menu")
-    to_tickets_menu = Button("tickets menu")
-    to_transactions_menu = Button("transactions menu")
-    hide_notifications = Button("hide notifications")
+    to_settings_menu = Button(
+        I18nMessage(MessageKey.to_settings_menu), "to_settings_menu")
+    to_main_menu = Button(
+        I18nMessage(MessageKey.to_main_menu), "to_main_menu")
+    to_inbounds_menu = Button(
+        I18nMessage(MessageKey.to_inbounds_menu), "to_inbounds_menu")
+    to_tickets_menu = Button(
+        I18nMessage(MessageKey.to_tickets_menu), "to_tickets_menu")
+    to_transactions_menu = Button(
+        I18nMessage(MessageKey.to_transactions_menu), "to_transactions_menu")
+    hide_notifications = Button(
+        I18nMessage(MessageKey.hide_notifications), "hide_notifications")
+    read_notifications = Button(
+        I18nMessage(MessageKey.read_notifications), "read_notifications")
 
 
 def main_menu_keyboard() -> list[Button]:
