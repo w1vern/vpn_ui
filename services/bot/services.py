@@ -1,6 +1,5 @@
 
 from typing import Awaitable, Callable
-from uuid import UUID
 
 from fast_depends import Depends
 from redis.asyncio import Redis
@@ -9,7 +8,8 @@ from shared.database import (
     PanelServerRepository,
     ServerRepository,
     TransactionRepository,
-    UserRepository
+    UserRepository,
+    TariffRepository
 )
 from shared.infrastructure import setup_logger
 
@@ -27,7 +27,8 @@ from .depends import (
     get_state,
     get_transaction_repo,
     get_user_info,
-    get_user_repo
+    get_user_repo,
+    get_tariff_repo
 )
 from .exceptions import SendFeedbackToAdminException
 from .models import MainMessage, Notification, Output, UserInfo
@@ -45,6 +46,7 @@ class Service():
                  redis: Redis,
                  ur: UserRepository,
                  sr: ServerRepository,
+                 tfr: TariffRepository,
                  psr: PanelServerRepository,
                  tr: TransactionRepository,
                  input: str
@@ -55,6 +57,7 @@ class Service():
         self.redis = redis
         self.ur = ur
         self.sr = sr
+        self.tfr = tfr
         self.psr = psr
         self.tr = tr
         self.input = input
@@ -69,11 +72,12 @@ class Service():
                 main_message: MainMessage = Depends(get_main_message),
                 input: str = Depends(get_request_data),
                 ur: UserRepository = Depends(get_user_repo),
+                tfr: TariffRepository = Depends(get_tariff_repo),
                 sr: ServerRepository = Depends(get_server_repo),
                 psr: PanelServerRepository = Depends(get_panel_server_repo),
                 tr: TransactionRepository = Depends(get_transaction_repo)
                 ) -> 'Service':
-        return cls(user_info, state, main_message, redis, ur, sr, psr, tr, input)
+        return cls(user_info, state, main_message, redis, ur, sr, tfr, psr, tr, input)
 
     async def keyboard_handler(self) -> Output:
         func = self.get_func()
@@ -87,10 +91,11 @@ class Service():
 
     async def start_handler(self) -> Output:
         if await self.ur.get_by_telegram_id(self.user_info.id) is None:
+            tariff = (await self.tfr.get_all())[0]
             user = await self.ur.create(self.user_info.id,
                                         self.user_info.username,
                                         "",
-                                        UUID(int=0))
+                                        tariff.id)
             self.main_message.notifications.append(Notification("Welcome"))
             await self.to_main_menu()
         else:
@@ -147,6 +152,7 @@ class Service():
     async def to_transactions_menu(self) -> None:
         await self.set_state(AppStates.transactions_menu)
         user = await self.ur.get_by_telegram_id(self.user_info.id)
+        logger.debug(f"{self.user_info.id} - user tg id")
         if user is None:
             raise SendFeedbackToAdminException()
         trns = await self.tr.get_by_user(user)

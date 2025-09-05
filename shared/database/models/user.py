@@ -2,7 +2,7 @@
 from secrets import token_urlsafe
 from uuid import UUID
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import BigInteger, ForeignKey
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -20,7 +20,9 @@ from .tariff import Tariff
 class User(Base):
     __tablename__ = "users"
 
-    telegram_id: Mapped[int] = mapped_column(unique=True, index=True)
+    telegram_id: Mapped[int] = mapped_column(BigInteger,
+                                             unique=True,
+                                             index=True)
     tariff_id: Mapped[UUID] = mapped_column(ForeignKey("tariffs.id"))
     telegram_username: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column()

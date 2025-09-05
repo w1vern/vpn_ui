@@ -1,6 +1,4 @@
 
-from uuid import UUID
-
 from aiogram.types import CallbackQuery, Message
 from fast_depends import Depends
 from redis.asyncio import Redis
@@ -13,6 +11,7 @@ from shared.database import (
     TransactionRepository,
     User,
     UserRepository,
+    TariffRepository,
     session_manager
 )
 from shared.infrastructure import setup_logger  # , CodeToTG
@@ -33,6 +32,11 @@ logger = setup_logger(__name__)
 async def get_user_repo(session: AsyncSession = Depends(session_manager.session)
                         ) -> UserRepository:
     return UserRepository(session)
+
+
+async def get_tariff_repo(session: AsyncSession = Depends(session_manager.session)
+                          ) -> TariffRepository:
+    return TariffRepository(session)
 
 
 async def get_server_repo(session: AsyncSession = Depends(session_manager.session)
@@ -68,7 +72,7 @@ async def get_user_info(message: Message | None = None,
     if not tmp.from_user:
         raise MessageUserIsNoneException()
     if not tmp.from_user.username:
-        raise MessageUsernameIsNoneException()
+        return UserInfo(tmp.from_user.id, "")
     return UserInfo(tmp.from_user.id,
                     tmp.from_user.username)
 
