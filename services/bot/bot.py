@@ -58,8 +58,8 @@ async def update_message(new_state: Output,
                          bot: Bot = Depends(get_bot)
                          ) -> None:
     message_id: int | None = await redis.get(f"{RedisType.main_message_id.value}:{new_state.user_info.id}")
+    logger.debug(f"message_id: {message_id}")
     if not message_id is None:
-        logger.debug(f"message_id: {message_id}")
         chat_id = new_state.user_info.id
         if not new_state.notify:
             await edit_message(bot,

@@ -24,7 +24,6 @@ from .depends import (
     get_panel_server_repo,
     get_request_data,
     get_server_repo,
-    get_state,
     get_tariff_repo,
     get_transaction_repo,
     get_user_info,
@@ -34,7 +33,6 @@ from .exceptions import SendFeedbackToAdminException
 from .i18n import I18nMessage, MessageKey
 from .models import MainMessage, Notification, Output, UserInfo
 from .redis import RedisType, get_redis_client
-from .states import AppStates, MyState
 
 logger = setup_logger(__name__)
 
@@ -42,7 +40,6 @@ logger = setup_logger(__name__)
 class Service():
     def __init__(self,
                  user_info: UserInfo,
-                 state: MyState,
                  main_message: MainMessage,
                  redis: Redis,
                  ur: UserRepository,
@@ -53,7 +50,6 @@ class Service():
                  input: str
                  ) -> None:
         self.user_info = user_info
-        self.state = state
         self.main_message = main_message
         self.redis = redis
         self.ur = ur
@@ -68,7 +64,6 @@ class Service():
     @classmethod
     def depends(cls,
                 user_info: UserInfo = Depends(get_user_info),
-                state: MyState = Depends(get_state),
                 redis: Redis = Depends(get_redis_client),
                 main_message: MainMessage = Depends(get_main_message),
                 input: str = Depends(get_request_data),
@@ -78,7 +73,7 @@ class Service():
                 psr: PanelServerRepository = Depends(get_panel_server_repo),
                 tr: TransactionRepository = Depends(get_transaction_repo)
                 ) -> 'Service':
-        return cls(user_info, state, main_message, redis, ur, sr, tfr, psr, tr, input)
+        return cls(user_info, main_message, redis, ur, sr, tfr, psr, tr, input)
 
     async def keyboard_handler(self) -> Output:
         func = self.get_func()
@@ -107,11 +102,6 @@ class Service():
         await self.save_main_message()
         return self.output()
 
-    async def set_state(self,
-                        state: MyState,
-                        ) -> None:
-        await self.redis.set(f"{RedisType.state.value}:{self.user_info.id}", state.string)
-
     def output(self) -> Output:
         notes = [note.text for note in self.main_message.notifications]
         notes.append(self.main_message.text)
@@ -131,19 +121,16 @@ class Service():
         pass
 
     async def to_main_menu(self) -> None:
-        await self.set_state(AppStates.main_menu)
         self.main_message.text = I18nMessage(MessageKey.main_menu
                                              ).render(self.user_info.lang_code)
         self.main_message.buttons = main_menu_keyboard()
 
     async def to_inbounds_menu(self) -> None:
-        await self.set_state(AppStates.inbounds_menu)
         self.main_message.text = I18nMessage(MessageKey.inbounds_menu
                                              ).render(self.user_info.lang_code)
         self.main_message.buttons = inbounds_keyboard()
 
     async def to_transactions_menu(self) -> None:
-        await self.set_state(AppStates.transactions_menu)
         user = await self.ur.get_by_telegram_id(self.user_info.id)
         logger.debug(f"{self.user_info.id} - user tg id")
         if user is None:
@@ -159,4 +146,3 @@ class Service():
 
     async def read_notifications(self) -> None:
         self.main_message.notifications.clear()
-        

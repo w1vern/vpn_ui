@@ -1,6 +1,5 @@
 
 import json
-from typing import Any
 from importlib import resources
 
 from .enums import LanguageCodes, MessageKey
@@ -10,7 +9,7 @@ with resources.files(__package__).joinpath("repository.json").open("r", encoding
 
 
 class I18nMessage():
-    def __init__(self, message_key: MessageKey, **kwargs: dict[str, Any]) -> None:
+    def __init__(self, message_key: MessageKey, **kwargs) -> None:
         self.message_key = message_key
         self.kwargs = kwargs
 

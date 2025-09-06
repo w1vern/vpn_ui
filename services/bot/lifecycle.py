@@ -7,7 +7,7 @@ from shared.infrastructure import setup_logger
 
 from .bot import update_message
 from .depends import get_user_repo
-from .i18n import I18nMessage, LanguageCodes, MessageKey
+from .i18n import I18nMessage, MessageKey
 from .models import Notification
 from .service import Service
 
@@ -25,9 +25,10 @@ def register_lifecycle(dp: Dispatcher,
         async def _(id: int,
                     service: Service = Depends(Service.depends)
                     ) -> None:
+            logger.debug("on_startup")
             service.main_message.notifications.append(
                 Notification(I18nMessage(MessageKey.bot_started
-                                     ).render(service.user_info.lang_code)))
+                                         ).render(service.user_info.lang_code)))
             await service.save_main_message()
             service.notify = True
             await update_message(service.output())
@@ -45,7 +46,7 @@ def register_lifecycle(dp: Dispatcher,
                     ) -> None:
             service.main_message.notifications.append(
                 Notification(I18nMessage(MessageKey.bot_stopped
-                                     ).render(service.user_info.lang_code)))
+                                         ).render(service.user_info.lang_code)))
             await service.save_main_message()
             service.notify = True
             await update_message(service.output())

@@ -13,20 +13,17 @@ from shared.database import (
     UserRepository,
     session_manager
 )
-from shared.infrastructure import setup_logger  # , CodeToTG
+from shared.infrastructure import setup_logger
 
 from .buttons import main_menu_keyboard
 from .exceptions import (
     MessageUserIsNoneException,
-    MessageUsernameIsNoneException,
     SendFeedbackToAdminException,
     UserNotFoundException
 )
-from .i18n import I18nMessage as MyMessage
-from .i18n import LanguageCodes, MessageKey
+from .i18n import I18nMessage, LanguageCodes, MessageKey
 from .models import MainMessage, UserInfo
 from .redis import RedisType, get_redis_client
-from .states import AppStates, MyState
 
 logger = setup_logger(__name__)
 
@@ -58,11 +55,8 @@ async def get_transaction_repo(session: AsyncSession = Depends(session_manager.s
 
 async def get_user_info(message: Message | None = None,
                         callback_query: CallbackQuery | None = None,
-                        # data: CodeToTG | None = None,
                         id: int | None = None
                         ) -> UserInfo:
-    # if data is not None:
-    #    return UserInfo(data.tg_id, "")
     if id is not None:
         return UserInfo(id, "", LanguageCodes.en)
     if message is not None:
@@ -93,27 +87,12 @@ async def get_request_data(message: Message | None = None,
         if not callback_query is None:
             data = callback_query.data
         else:
-            # raise SendFeedbackToAdminException()
             return ""
     else:
         data = message.text
     if data is None:
         raise SendFeedbackToAdminException()
     return data
-
-
-""" async def create_user(user_info: UserInfo = Depends(get_user_info),
-                      ur: UserRepository = Depends(get_user_repo)
-                      ) -> User:
-
-    user = await ur.get_by_telegram_id(user_info.id)
-    if user:
-        return user
-    user = await ur.create(user_info.id,
-                           user_info.username,
-                           "",
-                           UUID(int=0))
-    return user """
 
 
 async def get_user(user_info: UserInfo = Depends(get_user_info),
@@ -127,23 +106,12 @@ async def get_user(user_info: UserInfo = Depends(get_user_info),
     raise UserNotFoundException()
 
 
-async def get_state(user_info: UserInfo = Depends(get_user_info),
-                    redis: Redis = Depends(get_redis_client)
-                    ) -> MyState:
-    state = await redis.get(f"{RedisType.state.value}:{user_info.id}")
-    if state is None:
-        state = AppStates.main_menu
-        await redis.set(f"{RedisType.state.value}:{user_info.id}", state.string)
-        return state
-    return MyState.from_str(state)
-
-
 async def get_main_message(user_info: UserInfo = Depends(get_user_info),
                            redis: Redis = Depends(get_redis_client)
                            ) -> MainMessage:
     main_message = await redis.get(f"{RedisType.main_message.value}:{user_info.id}")
     if main_message is None:
-        main_message = MainMessage(text=AppStates.main_menu.string,
+        main_message = MainMessage(text=I18nMessage(MessageKey.main_menu).render(user_info.lang_code),
                                    notifications=[],
                                    buttons=main_menu_keyboard())
         await redis.set(f"{RedisType.main_message.value}:{user_info.id}", main_message.to_str())
