@@ -6,8 +6,7 @@ from .buttons import (
     GetKeyboardSizeFunction,
     get_keyboard_size
 )
-from .i18n import LanguageCodes
-
+from shared.database import LanguageCodes
 
 def create_keyboard(values: list[Button],
                     lang_code: LanguageCodes,

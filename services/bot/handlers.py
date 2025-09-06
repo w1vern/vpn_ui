@@ -6,6 +6,7 @@ from aiogram.types import CallbackQuery, ErrorEvent, Message
 from fast_depends import Depends, inject
 
 from shared.infrastructure import setup_logger
+from shared.database import LanguageCodes
 
 from .bot import update_message
 from .exceptions import (
@@ -14,7 +15,7 @@ from .exceptions import (
     SendFeedbackToAdminException
 )
 from .i18n import I18nMessage as MyMessage
-from .i18n import LanguageCodes, MessageKey
+from .i18n import MessageKey
 from .models import UserInfo
 from .service import Output, Service
 

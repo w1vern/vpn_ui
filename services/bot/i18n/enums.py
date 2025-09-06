@@ -35,10 +35,3 @@ class MessageKey(str, Enum):
     main_menu = "main_menu"
 
     balance = "balance"
-
-
-
-
-class LanguageCodes(str, Enum):
-    en = "en"
-    ru = "ru"

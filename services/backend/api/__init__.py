@@ -3,16 +3,18 @@
 from fastapi import APIRouter
 
 from .auth import router as auth_router
-from .server import router as server_router
-from .tariff import router as tariff_router
-from .ticket import router as ticket_router
-from .transaction import router as transaction_router
-from .user import router as user_router
+from .server import router as servers_router
+from .tariff import router as tariffs_router
+from .ticket import router as tickets_router
+from .transaction import router as transactions_router
+from .user import router as users_router
+from .notifications import router as notifications_router
 
 router = APIRouter(prefix="/api")
 router.include_router(auth_router)
-router.include_router(server_router)
-router.include_router(ticket_router)
-router.include_router(transaction_router)
-router.include_router(user_router)
-router.include_router(tariff_router)
+router.include_router(servers_router)
+router.include_router(tickets_router)
+router.include_router(transactions_router)
+router.include_router(users_router)
+router.include_router(tariffs_router)
+router.include_router(notifications_router)

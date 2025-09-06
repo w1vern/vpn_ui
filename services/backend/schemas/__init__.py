@@ -13,9 +13,7 @@ from .ticket import (
     TicketMessageSchema,
     TicketSchema
 )
-from .transaction import (
-    TransactionSchema,
-)
+from .transaction import TransactionSchema
 from .user import (
     EditUserRightsSchema,
     EditUserSchema,
@@ -24,6 +22,7 @@ from .user import (
     UserSchema,
     UserSettingsSchema,
 )
+from .notification import Notification
 
 __all__ = [
     "ServerToEditSchema",

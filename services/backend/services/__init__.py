@@ -5,6 +5,7 @@ from .tariff import TariffService
 from .ticket import TicketService
 from .transaction import TransactionService
 from .user import UserService
+from .notification import NotificationService
 
 __all__ = [
     'AuthService',
@@ -12,5 +13,6 @@ __all__ = [
     'TicketService',
     'TransactionService',
     'UserService',
-    'TariffService'
+    'TariffService',
+    'NotificationService'
 ]

@@ -3,8 +3,9 @@
 import json
 
 from shared.infrastructure import setup_logger
+from shared.database import LanguageCodes
 
-from .i18n import I18nMessage, LanguageCodes, MessageKey
+from .i18n import I18nMessage, MessageKey
 
 logger = setup_logger(__name__)
 

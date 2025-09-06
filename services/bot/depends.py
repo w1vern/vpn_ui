@@ -11,7 +11,8 @@ from shared.database import (
     TransactionRepository,
     User,
     UserRepository,
-    session_manager
+    session_manager,
+    LanguageCodes
 )
 from shared.infrastructure import setup_logger
 
@@ -21,7 +22,7 @@ from .exceptions import (
     SendFeedbackToAdminException,
     UserNotFoundException
 )
-from .i18n import I18nMessage, LanguageCodes, MessageKey
+from .i18n import I18nMessage, MessageKey
 from .models import MainMessage, UserInfo
 from .redis import RedisType, get_redis_client
 
