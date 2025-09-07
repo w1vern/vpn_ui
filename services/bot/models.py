@@ -2,8 +2,8 @@
 
 import json
 
-from shared.infrastructure import setup_logger
 from shared.database import LanguageCodes
+from shared.infrastructure import setup_logger
 
 from .i18n import I18nMessage, MessageKey
 

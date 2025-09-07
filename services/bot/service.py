@@ -90,6 +90,7 @@ class Service():
             tariff = (await self.tfr.get_all())[0]
             user = await self.ur.create(self.user_info.id,
                                         self.user_info.username,
+                                        self.user_info.lang_code,
                                         "",
                                         tariff.id)
             self.main_message.notifications.append(Notification(

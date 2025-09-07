@@ -29,6 +29,7 @@ class UserRepository(BaseRepository[User]):
     async def create(self,
                      telegram_id: int,
                      telegram_username: str,
+                     telegram_language_code: str,
                      description: str,
                      tariff_id: UUID,
                      balance: float = 0,
@@ -40,6 +41,7 @@ class UserRepository(BaseRepository[User]):
             tariff_id=tariff_id,
             description=description,
             telegram_username=telegram_username,
+            telegram_language_code=telegram_language_code,
             balance=balance,
             rights=rights,
             settings=settings)
@@ -56,6 +58,13 @@ class UserRepository(BaseRepository[User]):
                                        new_tg_username: str
                                        ) -> None:
         user.telegram_username = new_tg_username
+        await self.session.flush()
+
+    async def update_telegram_language_code(self,
+                                            user: User,
+                                            new_tg_language_code: str
+                                            ) -> None:
+        user.telegram_language_code = new_tg_language_code
         await self.session.flush()
 
     async def update_telegram_id(self,

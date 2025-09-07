@@ -1,12 +1,14 @@
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+from shared.database import LanguageCodes
+
 from .buttons import (
     Button,
     GetKeyboardSizeFunction,
     get_keyboard_size
 )
-from shared.database import LanguageCodes
+
 
 def create_keyboard(values: list[Button],
                     lang_code: LanguageCodes,

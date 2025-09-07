@@ -6,7 +6,6 @@ from ..response import SuccessResponse
 from ..schemas import Notification
 from ..services import NotificationService
 
-
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 
 

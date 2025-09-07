@@ -1,17 +1,18 @@
 """first migration
 
-Revision ID: 7668ef483f3e
+Revision ID: b0e6b8518465
 Revises: 
-Create Date: 2025-09-05 08:35:28.949214
+Create Date: 2025-09-07 14:22:26.698332
 
 """
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = '7668ef483f3e'
+revision: str = 'b0e6b8518465'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -80,6 +81,7 @@ def upgrade() -> None:
     sa.Column('telegram_id', sa.BigInteger(), nullable=False),
     sa.Column('tariff_id', sa.Uuid(), nullable=False),
     sa.Column('telegram_username', sa.String(), nullable=False),
+    sa.Column('telegram_language_code', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=False),
     sa.Column('balance', sa.Float(), nullable=False),
     sa.Column('rights', sa.Integer(), nullable=False),

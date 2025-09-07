@@ -2,9 +2,9 @@
 import json
 from importlib import resources
 
-from .enums import MessageKey
-
 from shared.database import LanguageCodes
+
+from .enums import MessageKey
 
 with resources.files(__package__).joinpath("repository.json").open("r", encoding="utf-8") as f:
     CATALOG: dict[str, dict[str, str]] = json.load(f)

@@ -5,14 +5,14 @@ from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (
+    LanguageCodes,
     PanelServerRepository,
     ServerRepository,
     TariffRepository,
     TransactionRepository,
     User,
     UserRepository,
-    session_manager,
-    LanguageCodes
+    session_manager
 )
 from shared.infrastructure import setup_logger
 
@@ -56,10 +56,10 @@ async def get_transaction_repo(session: AsyncSession = Depends(session_manager.s
 
 async def get_user_info(message: Message | None = None,
                         callback_query: CallbackQuery | None = None,
-                        id: int | None = None
+                        user_info: UserInfo | None = None
                         ) -> UserInfo:
-    if id is not None:
-        return UserInfo(id, "", LanguageCodes.en)
+    if user_info is not None:
+        return user_info
     if message is not None:
         tmp = message
     elif callback_query is not None:

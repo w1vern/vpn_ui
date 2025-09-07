@@ -5,8 +5,8 @@ from aiogram.filters import Command
 from aiogram.types import CallbackQuery, ErrorEvent, Message
 from fast_depends import Depends, inject
 
-from shared.infrastructure import setup_logger
 from shared.database import LanguageCodes
+from shared.infrastructure import setup_logger
 
 from .bot import update_message
 from .exceptions import (

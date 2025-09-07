@@ -54,7 +54,7 @@ class TransactionService:
         tr_user = await self.ur.get_by_id(transaction_to_create.user_id)
         if tr_user is None:
             raise UserNotFoundException()
-        type: TransactionType = getattr(
+        type: TransactionType | None = getattr(
             TransactionType, transaction_to_create.transaction_type)
         if type is None:
             raise TransactionTypeNotFoundException()

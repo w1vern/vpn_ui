@@ -4,8 +4,8 @@ from .rabbit import (
     RABBIT_URL,
     CodeToTG,
     NotificationToTG,
-    tg_code_queue,
-    notification_queue
+    notification_queue,
+    tg_code_queue
 )
 from .redis import get_redis_client
 

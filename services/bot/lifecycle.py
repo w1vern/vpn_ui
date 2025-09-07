@@ -2,13 +2,13 @@
 from aiogram import Bot, Dispatcher
 from fast_depends import Depends, inject
 
-from shared.database import UserRepository
+from shared.database import UserRepository, LanguageCodes
 from shared.infrastructure import setup_logger
 
 from .bot import update_message
 from .depends import get_user_repo
 from .i18n import I18nMessage, MessageKey
-from .models import Notification
+from .models import Notification, UserInfo
 from .service import Service
 
 logger = setup_logger(__name__)
@@ -22,7 +22,7 @@ def register_lifecycle(dp: Dispatcher,
     async def on_startup(ur: UserRepository = Depends(get_user_repo)
                          ) -> None:
         @inject
-        async def _(id: int,
+        async def _(user_info: UserInfo,
                     service: Service = Depends(Service.depends)
                     ) -> None:
             logger.debug("on_startup")
@@ -34,14 +34,16 @@ def register_lifecycle(dp: Dispatcher,
             await update_message(service.output())
         users = await ur.get_all()
         for user in users:
-            await _(user.telegram_id)
+            await _(UserInfo(user.telegram_id,
+                             user.telegram_username,
+                             LanguageCodes(user.telegram_language_code)))
 
     @dp.shutdown()
     @inject
     async def on_shutdown(ur: UserRepository = Depends(get_user_repo)
                           ) -> None:
         @inject
-        async def _(id: int,
+        async def _(user_info: UserInfo,
                     service: Service = Depends(Service.depends)
                     ) -> None:
             service.main_message.notifications.append(
@@ -52,4 +54,6 @@ def register_lifecycle(dp: Dispatcher,
             await update_message(service.output())
         users = await ur.get_all()
         for user in users:
-            await _(user.telegram_id)
+            await _(UserInfo(user.telegram_id,
+                             user.telegram_username,
+                             LanguageCodes(user.telegram_language_code)))

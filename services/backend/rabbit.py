@@ -7,9 +7,9 @@ from faststream.rabbit import (
 from shared.infrastructure import (
     RABBIT_URL,
     CodeToTG,
-    tg_code_queue,
     NotificationToTG,
-    notification_queue
+    notification_queue,
+    tg_code_queue
 )
 
 from .config import logger

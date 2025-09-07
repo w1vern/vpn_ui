@@ -27,6 +27,7 @@ default_users: list[dict[str, Any]] = [
     {
         "telegram_id": env_config.bot.superuser,
         "telegram_username": "Admin",
+        "telegram_language_code": "en",
         "description": "",
         "balance": 0,
         "rights": RightsType.super_admin.value,

@@ -25,6 +25,7 @@ class User(Base):
                                              index=True)
     tariff_id: Mapped[UUID] = mapped_column(ForeignKey("tariffs.id"))
     telegram_username: Mapped[str] = mapped_column()
+    telegram_language_code: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column()
     balance: Mapped[float] = mapped_column()
     rights: Mapped[int] = mapped_column()

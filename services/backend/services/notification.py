@@ -3,15 +3,11 @@
 
 
 from fastapi import Depends
-
-from .depends import get_user
-
-from ..schemas import UserSchema
-
-from ..rabbit import get_broker
-from ..schemas import Notification
 from faststream.rabbit import RabbitBroker
 
+from ..rabbit import get_broker
+from ..schemas import Notification, UserSchema
+from .depends import get_user
 
 
 class NotificationService:

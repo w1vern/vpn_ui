@@ -1,5 +1,6 @@
 
 
+from .notification import Notification
 from .server import (
     CreateServerSchema,
     ServerSchema,
@@ -22,7 +23,6 @@ from .user import (
     UserSchema,
     UserSettingsSchema,
 )
-from .notification import Notification
 
 __all__ = [
     "ServerToEditSchema",

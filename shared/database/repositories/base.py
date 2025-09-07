@@ -5,6 +5,7 @@ from datetime import (
     datetime,
 )
 from typing import (
+    Any,
     Generic,
     TypeVar,
 )
@@ -43,7 +44,7 @@ class BaseRepository(Generic[ModelType]):
         ).limit(1)
         return await self.session.scalar(stmt)
 
-    def _build_filters(self, **kwargs) -> list[BinaryExpression]:
+    def _build_filters(self, **kwargs) -> list[BinaryExpression[bool]]:  
         filters = [self.model.deleted_date.is_(None)]
         for field, value in kwargs.items():
             if hasattr(self.model, field):
@@ -52,7 +53,6 @@ class BaseRepository(Generic[ModelType]):
                 raise ValueError(
                     f"Model {self.model.__name__} has no field '{field}'")
         return filters
-
     async def get_all(self,
                       limit: int | None = None,
                       offset: int | None = None,

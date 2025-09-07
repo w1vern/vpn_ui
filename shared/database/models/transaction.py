@@ -2,9 +2,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import (
-    ForeignKey,
-)
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
