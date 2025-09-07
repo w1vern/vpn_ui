@@ -2,7 +2,7 @@
 from aiogram import Bot, Dispatcher
 from fast_depends import Depends, inject
 
-from shared.database import UserRepository, LanguageCodes
+from shared.database import LanguageCodes, UserRepository
 from shared.infrastructure import setup_logger
 
 from .bot import update_message

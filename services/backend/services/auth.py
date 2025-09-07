@@ -7,7 +7,6 @@ from faststream.rabbit import RabbitBroker
 from redis.asyncio import Redis
 
 from shared.database import UserRepository
-from shared.infrastructure import CodeToTG
 
 from ..config import Config
 from ..exceptions import (
@@ -110,6 +109,4 @@ class AuthService:
         await self.redis.set(f"{RedisType.tg_code.value}:{user.telegram_id}",
                              code, ex=Config.tg_code_lifetime)
 
-        await send_tg_code(CodeToTG(tg_id=user.telegram_id,
-                                    code=code),
-                           self.broker)
+        await send_tg_code(code, user, self.broker)

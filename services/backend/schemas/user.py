@@ -8,7 +8,7 @@ from pydantic import (
     ConfigDict,
 )
 
-from shared.database import User
+from shared.database import LanguageCodes, User
 
 from .tariff import TariffSchema
 
@@ -39,6 +39,7 @@ class UserSchema(BaseModel):
     id: UUID
     telegram_id: int
     telegram_username: str
+    telegram_language_code: LanguageCodes
     description: str
     balance: float
     created_date: datetime
@@ -64,6 +65,7 @@ class UserSchema(BaseModel):
             tariff=TariffSchema.from_db(user.tariff),
             telegram_id=user.telegram_id,
             telegram_username=user.telegram_username,
+            telegram_language_code=LanguageCodes(user.telegram_language_code),
             balance=user.balance,
             created_date=user.created_date,
             description=user.description,

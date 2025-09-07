@@ -9,6 +9,7 @@ from shared.infrastructure import (
     RABBIT_URL,
     CodeToTG,
     NotificationToTG,
+    TgInfo,
     notification_queue,
     tg_code_queue
 )
@@ -21,29 +22,27 @@ broker = RabbitBroker(RABBIT_URL)
 app = FastStream(broker)
 
 
-@broker.subscriber(tg_code_queue)
-async def handle_tg_code(data: CodeToTG) -> None:
+async def handler(text: str,
+                  tg_info: TgInfo
+                  ) -> None:
     @inject
-    async def _(user_info: UserInfo,
-                data: str,
+    async def _(text: str,
+                user_info: UserInfo,
                 service: Service = Dp(Service.depends)
                 ) -> None:
-        service.main_message.notifications.append(Notification(data))
+        service.main_message.notifications.append(Notification(text))
         await service.save_main_message()
         service.notify = True
         await update_message(service.output())
-    await _(UserInfo(data.tg_info.tg_id,
-                     "",
-                     LanguageCodes(data.tg_info.tg_lang_code)
-                     ), data.code)
+    await _(text, UserInfo(tg_info.id, tg_info.username, tg_info.lang_code))
+
+
+@broker.subscriber(tg_code_queue)
+async def handle_tg_code(data: CodeToTG) -> None:
+    await handler(data.code, data.tg_info)
 
 
 @broker.subscriber(notification_queue)
 async def handle_notification(data: NotificationToTG) -> None:
-    @inject
-    async def _(user_info: UserInfo,
-                data: dict[LanguageCodes, str],
-                service: Service = Dp(Service.depends)
-                ) -> None:
-        pass
-    await _(data.tg_id, data.data)
+    text = data.data.get(data.tg_info.lang_code, LanguageCodes.en.value)
+    await handler(text, data.tg_info)

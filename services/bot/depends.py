@@ -103,6 +103,8 @@ async def get_user(user_info: UserInfo = Depends(get_user_info),
     if user:
         if user.telegram_username != user_info.username:
             await ur.update_telegram_username(user, user_info.username)
+        if user.telegram_language_code != user_info.lang_code:
+            await ur.update_telegram_language_code(user, user_info.lang_code)
         return user
     raise UserNotFoundException()
 
