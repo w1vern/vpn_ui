@@ -55,7 +55,7 @@ class Output:
 
 class MainMessage():
     def __init__(self,
-                 text: str,
+                 text: list[str],
                  notifications: list[Notification],
                  buttons: list[Button]
                  ) -> None:

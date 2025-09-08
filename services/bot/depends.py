@@ -114,7 +114,7 @@ async def get_main_message(user_info: UserInfo = Depends(get_user_info),
                            ) -> MainMessage:
     main_message = await redis.get(f"{RedisType.main_message.value}:{user_info.id}")
     if main_message is None:
-        main_message = MainMessage(text=I18nMessage(MessageKey.main_menu).render(user_info.lang_code),
+        main_message = MainMessage(text=[I18nMessage(MessageKey.main_menu).render(user_info.lang_code)],
                                    notifications=[],
                                    buttons=main_menu_keyboard())
         await redis.set(f"{RedisType.main_message.value}:{user_info.id}", main_message.to_str())

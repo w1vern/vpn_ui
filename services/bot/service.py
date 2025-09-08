@@ -31,7 +31,12 @@ from .depends import (
 )
 from .exceptions import SendFeedbackToAdminException
 from .i18n import I18nMessage, MessageKey
-from .models import MainMessage, Notification, Output, UserInfo
+from .models import (
+    MainMessage,
+    Notification,
+    Output,
+    UserInfo
+)
 from .redis import RedisType, get_redis_client
 
 logger = setup_logger(__name__)
@@ -104,9 +109,9 @@ class Service():
         return self.output()
 
     def output(self) -> Output:
-        notes = [note.text for note in self.main_message.notifications]
-        notes.append(self.main_message.text)
-        text = "\n".join(notes)
+        rows = [note.text for note in self.main_message.notifications]
+        rows += self.main_message.text
+        text = "\n".join(rows)
         if len(self.main_message.notifications) > 0:
             self.main_message.buttons.append(StaticButtons.read_notifications)
         return Output(text, self.main_message.buttons, self.user_info, self.notify)
@@ -122,13 +127,13 @@ class Service():
         pass
 
     async def to_main_menu(self) -> None:
-        self.main_message.text = I18nMessage(MessageKey.main_menu
-                                             ).render(self.user_info.lang_code)
+        self.main_message.text = [I18nMessage(MessageKey.main_menu
+                                              ).render(self.user_info.lang_code)]
         self.main_message.buttons = main_menu_keyboard()
 
     async def to_inbounds_menu(self) -> None:
-        self.main_message.text = I18nMessage(MessageKey.inbounds_menu
-                                             ).render(self.user_info.lang_code)
+        self.main_message.text = [I18nMessage(MessageKey.inbounds_menu
+                                              ).render(self.user_info.lang_code)]
         self.main_message.buttons = inbounds_keyboard()
 
     async def to_transactions_menu(self) -> None:
@@ -137,12 +142,14 @@ class Service():
         if user is None:
             raise SendFeedbackToAdminException()
         trns = await self.tr.get_by_user(user)
-        text = "\n".join([f"{trn.amount} - {trn.date}" for trn in trns])
-        self.main_message.text = f"{I18nMessage(MessageKey.transactions_menu
-                                                ).render(self.user_info.lang_code
-                                                         )}\n{I18nMessage(MessageKey.balance
-                                                                          ).render(self.user_info.lang_code
-                                                                                   )}: {user.balance}\n{text}"
+        self.main_message.text = [f"{I18nMessage(MessageKey.transactions_menu
+                                                 ).render(self.user_info.lang_code
+                                                          )}",
+                                  f"{I18nMessage(MessageKey.balance
+                                                 ).render(self.user_info.lang_code
+                                                          )}: {user.balance}"]
+        self.main_message.text += [
+            f"{trn.amount} - {trn.date}" for trn in trns]
         self.main_message.buttons = transactions_keyboard()
 
     async def read_notifications(self) -> None:
