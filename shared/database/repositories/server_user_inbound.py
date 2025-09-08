@@ -23,7 +23,7 @@ from .base import (
 
 class ServerUserInboundRepository(BaseRepository[ServerUserInbound]):
     def __init__(self, session: AsyncSession) -> None:
-        self.session = session
+        super().__init__(session, ServerUserInbound)
 
     async def create(self,
                      server: Server,
@@ -45,9 +45,9 @@ class ServerUserInboundRepository(BaseRepository[ServerUserInbound]):
                               ServerUserInbound.user_id == user.id)
         return list((await self.session.scalars(stmt)).all())
 
-    async def get_by_server_user_access_type(self, 
-                                             server: Server, 
-                                             user: User, 
+    async def get_by_server_user_access_type(self,
+                                             server: Server,
+                                             user: User,
                                              access_type: AccessType
                                              ) -> ServerUserInbound | None:
         stmt = select(ServerUserInbound

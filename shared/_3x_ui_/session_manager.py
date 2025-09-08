@@ -53,7 +53,7 @@ class ServerSession():
         return response
 
     def __get_api_path(self, endpoint: str) -> str:
-        return self.server.connection_string + "panel/api/inbounds/" + endpoint
+        return self.server.panel_url + "panel/api/inbounds/" + endpoint
 
     async def __is_auth(self) -> bool:
         response = await self.client.get(self.__get_api_path("list"))
@@ -63,7 +63,7 @@ class ServerSession():
 
     async def __auth(self) -> None:
         resp = await self.client.post(
-            self.server.connection_string + "login",
+            self.server.panel_url + "login",
             json={"username": self.server.login, "password": self.server.password})
         resp.raise_for_status()
 

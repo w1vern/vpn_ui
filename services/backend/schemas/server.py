@@ -18,7 +18,8 @@ class ServerSchema(BaseModel):
     starting_date: datetime
     closing_date: datetime
 
-    panel_path: str
+    panel_port: int
+    port_generator_port: int
     login: str
     password: str
 
@@ -35,7 +36,8 @@ class ServerSchema(BaseModel):
             is_available=server.server.is_available,
             starting_date=server.server.starting_date,
             closing_date=server.server.closing_date,
-            panel_path=server.panel_path,
+            panel_port=server.panel_port,
+            port_generator_port=server.port_generator_port,
             login=server.login,
             password=server.password
         )
@@ -50,7 +52,8 @@ class ServerToEditSchema(BaseModel):
     starting_date: datetime | None = None
     closing_date: datetime | None = None
 
-    panel_path: str | None = None
+    panel_port: int | None = None
+    port_generator_port: int | None = None
     login: str | None = None
     password: str | None = None
 
@@ -58,7 +61,8 @@ class ServerToEditSchema(BaseModel):
 class CreateServerSchema(BaseModel):
     ip: str
     description: str
-    panel_path: str
+    panel_port: int
+    port_generator_port: int
     country_code: str
     is_available: bool
     display_name: str

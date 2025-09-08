@@ -1,6 +1,5 @@
 
 
-
 import uuid
 
 from sqlalchemy import (
@@ -19,9 +18,11 @@ from .server import Server
 class PanelServer(Base):
     __tablename__ = 'panel_servers'
 
-    id: Mapped[uuid.UUID] = mapped_column(ForeignKey('servers.id'), primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey('servers.id'), primary_key=True)
 
-    panel_path: Mapped[str] = mapped_column()
+    panel_port: Mapped[int] = mapped_column()
+    port_generator_port: Mapped[int] = mapped_column()
     login: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()
     vless_id: Mapped[int] = mapped_column()
@@ -39,5 +40,9 @@ class PanelServer(Base):
     server: Mapped[Server] = relationship(lazy='selectin', foreign_keys=[id])
 
     @property
-    def connection_string(self):
-        return 'https://' + self.server.ip + '/' + self.panel_path + ''
+    def panel_url(self) -> str:
+        return f"http://{self.server.ip}:{self.panel_port}/"
+    
+    @property
+    def port_generator_url(self) -> str:
+        return f"http://{self.server.ip}:{self.port_generator_port}/"

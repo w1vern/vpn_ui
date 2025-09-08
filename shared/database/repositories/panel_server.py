@@ -23,7 +23,8 @@ class PanelServerRepository(BaseRepository[PanelServer]):
 
     async def create(self,
                      server: Server,
-                     panel_path: str = "",
+                     panel_port: int,
+                     port_generator_port: int,
                      login: str = "",
                      password: str = "",
                      vless_id: int = 0,
@@ -40,7 +41,8 @@ class PanelServerRepository(BaseRepository[PanelServer]):
                      ) -> PanelServer:
         return await self.universal_create(
             id=server.id,
-            panel_path=panel_path,
+            panel_port=panel_port,
+            port_generator_port=port_generator_port,
             login=login,
             password=password,
             vless_id=vless_id,
@@ -70,11 +72,18 @@ class PanelServerRepository(BaseRepository[PanelServer]):
         server.password = password
         await self.session.flush()
 
-    async def set_panel_path(self,
+    async def set_panel_port(self,
                              server: PanelServer,
-                             panel_path: str
+                             panel_port: int
                              ) -> None:
-        server.panel_path = panel_path
+        server.panel_port = panel_port
+        await self.session.flush()
+
+    async def set_port_generator_port(self,
+                                      server: PanelServer,
+                                      port_generator_port: int
+                                      ) -> None:
+        server.port_generator_port = port_generator_port
         await self.session.flush()
 
     async def update_vpn(self,

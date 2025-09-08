@@ -1,6 +1,5 @@
 
-from fast_depends import Depends as Dp
-from fast_depends import inject
+from fast_depends import Depends, inject
 from faststream import FastStream
 from faststream.rabbit import RabbitBroker
 
@@ -28,7 +27,7 @@ async def handler(text: str,
     @inject
     async def _(text: str,
                 user_info: UserInfo,
-                service: Service = Dp(Service.depends)
+                service: Service = Depends(Service.depends)
                 ) -> None:
         service.main_message.notifications.append(Notification(text))
         await service.save_main_message()

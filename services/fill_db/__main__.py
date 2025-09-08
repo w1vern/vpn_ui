@@ -46,26 +46,6 @@ default_tariffs: list[dict[str, Any]] = [
     }
 ]
 
-default_servers: list[dict[str, Any]] = [
-    {
-        "ip": "localhost",
-        "description": "",
-        "country_code": "ru",
-        "is_available": True,
-        "display_name": "test",
-        "starting_date": datetime.now(UTC).replace(tzinfo=None),
-        "closing_date": (datetime.now(UTC) + timedelta(days=365)).replace(tzinfo=None),
-    }
-]
-
-default_panel_servers: list[dict[str, Any]] = [
-    {
-        "panel_path": "",
-        "login": "admin",
-        "password": "admin"
-    }
-]
-
 
 async def wait_for_table(table_name: str, retries: int = 30, delay: int = 1) -> None:
     for attempt in range(retries):
@@ -109,17 +89,6 @@ async def main() -> None:
                 **user,
                   **{"tariff_id": str(_.id)
                      }})
-
-        sr = ServerRepository(session)
-        psr = PanelServerRepository(session)
-        for i in range(len(default_servers)):
-            server = await sr.create(**default_servers[i])
-            pserver = default_panel_servers[i]
-            await psr.create(
-                server=server,
-                panel_path=pserver["panel_path"],
-                login=pserver["login"],
-                password=pserver["password"])
 
         logger.info("database is filled")
 

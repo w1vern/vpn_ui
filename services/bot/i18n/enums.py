@@ -9,7 +9,7 @@ class MessageKey(str, Enum):
     to_inbounds_menu = "to_inbounds_menu"
     to_tickets_menu = "to_tickets_menu"
     to_transactions_menu = "to_transactions_menu"
-    hide_notifications = "hide_notifications"
+
     read_notifications = "read_notifications"
 
     message_user_is_none_exception = "message_user_is_none_exception"

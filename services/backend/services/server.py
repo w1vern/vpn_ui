@@ -68,12 +68,13 @@ class ServerService:
                                       country_code=server_to_create.country_code,
                                       is_available=server_to_create.is_available,
                                       display_name=server_to_create.display_name,
-                                      starting_date=server_to_create.starting_date,
-                                      closing_date=server_to_create.closing_date)
+                                      starting_date=server_to_create.starting_date.replace(tzinfo=None),
+                                      closing_date=server_to_create.closing_date.replace(tzinfo=None))
         pserver = await self.psr.create(server=server,
+                                        panel_port=server_to_create.panel_port,
+                                        port_generator_port=server_to_create.port_generator_port,
                                         login=server_to_create.login,
-                                        password=server_to_create.password,
-                                        panel_path=server_to_create.panel_path)
+                                        password=server_to_create.password)
 
     async def edit(self,
                    server_id: UUID,
@@ -103,7 +104,9 @@ class ServerService:
             await self.psr.set_login(pserver, server_to_edit.login)
         if server_to_edit.password is not None:
             await self.psr.set_password(pserver, server_to_edit.password)
-        if server_to_edit.panel_path is not None:
-            await self.psr.set_panel_path(pserver, server_to_edit.panel_path)
+        if server_to_edit.panel_port is not None:
+            await self.psr.set_panel_port(pserver, server_to_edit.panel_port)
+        if server_to_edit.port_generator_port is not None:
+            await self.psr.set_port_generator_port(pserver, server_to_edit.port_generator_port)
         if server_to_edit.description is not None:
             await self.sr.set_description(server, server_to_edit.description)

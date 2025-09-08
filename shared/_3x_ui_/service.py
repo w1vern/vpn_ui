@@ -5,18 +5,14 @@ import secrets
 import string
 import uuid
 
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database.models import (
-    PanelServer,
-    User,
-)
+from shared.database.models import PanelServer, User
 from shared.database.repositories import (
     PanelServerRepository,
-    ServerUserInboundRepository,
+    ServerUserInboundRepository
 )
+from shared.infrastructure import setup_logger
 from shared.proxy_interface import (
     AccessConfig,
     AccessType,
@@ -29,12 +25,10 @@ from shared.proxy_interface import (
     VpnType,
 )
 
-from .repository import (
-    PanelRepository,
-)
-from .session_manager import (
-    ServerSession,
-)
+from .repository import PanelRepository
+from .session_manager import ServerSession
+
+logger = setup_logger(__name__)
 
 
 def generate_sub_id(length: int = 16) -> str:
@@ -185,6 +179,7 @@ class Service(ProxyInterface):
                                       sid=getattr(self.__server_session.server,
                                                   f"{vpn_type.value[:-3]}_domain_short_id"),
                                       spx="/", )
+        logger.debug(f"Hello from code: {response}")
         return VpnConfig(id=response['obj']['id'],
                          access_type=AccessType(vpn_type.value),
                          uuid=uuid4,

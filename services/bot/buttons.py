@@ -14,11 +14,11 @@ class GetKeyboardSizeFunction(Protocol):
 
 def get_keyboard_size(values: list[Button]
                       ) -> list[int]:
-    in_a_row = 4
+    in_a_row = 2
     length = len(values)
     res: list[int] = []
     for _ in range(in_a_row, length + 1, in_a_row):
-        res.append(4)
+        res.append(in_a_row)
     if length % in_a_row:
         res.append(length % in_a_row)
     return res
@@ -35,8 +35,6 @@ class StaticButtons:
         I18nMessage(MessageKey.to_tickets_menu), "to_tickets_menu")
     to_transactions_menu = Button(
         I18nMessage(MessageKey.to_transactions_menu), "to_transactions_menu")
-    hide_notifications = Button(
-        I18nMessage(MessageKey.hide_notifications), "hide_notifications")
     read_notifications = Button(
         I18nMessage(MessageKey.read_notifications), "read_notifications")
 
@@ -45,7 +43,6 @@ def main_menu_keyboard() -> list[Button]:
     values: list[Button] = []
     values.append(StaticButtons.to_inbounds_menu)
     values.append(StaticButtons.to_transactions_menu)
-    values.append(StaticButtons.to_inbounds_menu)
     return values
 
 

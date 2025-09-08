@@ -4,17 +4,13 @@ import json
 import uuid
 from typing import Any
 
-from shared.database.models.user import (
-    User,
-)
+from shared.database.models.user import User
 from shared.proxy_interface import (
     ProxyType,
     VpnType,
 )
 
-from .session_manager import (
-    ServerSession,
-)
+from .session_manager import ServerSession
 
 
 class GlobalSettings:
@@ -59,7 +55,9 @@ class PanelRepository:
         self.server_session = server_session
 
     async def get_free_port(self) -> int:
-        resp = await self.server_session.client.get(url=f"http://{self.server_session.server.server.ip}:9101/api/")
+        resp = await self.server_session.client.post(url=self.server_session.server.port_generator_url,
+                                                     json={"username": self.server_session.server.login,
+                                                           "password": self.server_session.server.password})
         return int(resp.text)
 
     async def create_proxy(self,

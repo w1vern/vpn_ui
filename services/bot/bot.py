@@ -32,7 +32,9 @@ async def edit_message(bot: Bot,
     if not new_text is None:
         await bot.edit_message_text(new_text,
                                     chat_id=chat_id,
-                                    message_id=message_id)
+                                    message_id=message_id,
+                                    # parse_mode="MarkdownV2"
+                                    )
     if not new_keyboard is None:
         await bot.edit_message_reply_markup(chat_id=chat_id,
                                             message_id=message_id,
@@ -47,7 +49,9 @@ async def send_message(bot: Bot,
                        ) -> None:
     message = await bot.send_message(chat_id=chat_id,
                                      text=text,
-                                     reply_markup=keyboard)
+                                     reply_markup=keyboard,
+                                     # parse_mode="MarkdownV2"
+                                     )
     await redis.set(f"{RedisType.main_message_id.value}:{chat_id}", message.message_id)
     logger.debug(f"message_id: {message.message_id}")
 
@@ -57,6 +61,8 @@ async def update_message(new_state: Output,
                          redis: Redis = Depends(get_redis_client),
                          bot: Bot = Depends(get_bot)
                          ) -> None:
+    # if new_state.text is not None:
+    #    new_state.text.replace(".", "\\.")
     message_id: int | None = await redis.get(f"{RedisType.main_message_id.value}:{new_state.user_info.id}")
     logger.debug(f"message_id: {message_id}")
     if not message_id is None:

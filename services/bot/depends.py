@@ -8,6 +8,7 @@ from shared.database import (
     LanguageCodes,
     PanelServerRepository,
     ServerRepository,
+    ServerUserInboundRepository,
     TariffRepository,
     TransactionRepository,
     User,
@@ -47,6 +48,10 @@ async def get_server_repo(session: AsyncSession = Depends(session_manager.sessio
 async def get_panel_server_repo(session: AsyncSession = Depends(session_manager.session)
                                 ) -> PanelServerRepository:
     return PanelServerRepository(session)
+
+async def get_server_user_inbound_repo(session: AsyncSession = Depends(session_manager.session)
+                                ) -> ServerUserInboundRepository:
+    return ServerUserInboundRepository(session)
 
 
 async def get_transaction_repo(session: AsyncSession = Depends(session_manager.session)

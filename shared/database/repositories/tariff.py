@@ -10,7 +10,7 @@ from .base import BaseRepository
 
 
 class TariffRepository(BaseRepository[Tariff]):
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, Tariff)
 
     async def create(self,

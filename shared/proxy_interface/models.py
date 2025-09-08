@@ -179,7 +179,7 @@ class VpnConfig(AccessConfig):
     def __init__(self,
                  id: int,
                  access_type: AccessType,
-                 uuid: UUID,
+                 uuid: UUID | str,
                  ip: str,
                  port: int,
                  protocol: str,
@@ -191,7 +191,10 @@ class VpnConfig(AccessConfig):
                  ) -> None:
         self.id = id
         self.access_type = access_type
-        self.uuid = uuid
+        if isinstance(uuid, str):
+            self.uuid = UUID(uuid)
+        else:
+            self.uuid = uuid
         self.ip = ip
         self.port = port
         self.protocol = protocol
@@ -212,7 +215,7 @@ class VpnConfig(AccessConfig):
     def to_string(self) -> str:
         ans = self.__dict__
         ans['security'] = ans['security'].to_dict()
-        return json.dumps(self.__dict__)
+        return json.dumps(self.__dict__, default=str)
 
     @classmethod
     def from_string(cls, access_config_str: str) -> 'AccessConfig':
