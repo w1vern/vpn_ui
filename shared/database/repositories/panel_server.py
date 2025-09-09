@@ -25,6 +25,7 @@ class PanelServerRepository(BaseRepository[PanelServer]):
                      server: Server,
                      panel_port: int,
                      port_generator_port: int,
+                     web_path: str,
                      login: str = "",
                      password: str = "",
                      vless_id: int = 0,
@@ -39,10 +40,11 @@ class PanelServerRepository(BaseRepository[PanelServer]):
                      vmess_port: int = 0,
                      vmess_domain_short_id: str = ""
                      ) -> PanelServer:
-        return await self.universal_create(
+        return await self.__create(
             id=server.id,
             panel_port=panel_port,
             port_generator_port=port_generator_port,
+            web_path=web_path,
             login=login,
             password=password,
             vless_id=vless_id,
@@ -84,6 +86,13 @@ class PanelServerRepository(BaseRepository[PanelServer]):
                                       port_generator_port: int
                                       ) -> None:
         server.port_generator_port = port_generator_port
+        await self.session.flush()
+
+    async def set_web_path(self,
+                           server: PanelServer,
+                           web_path: str
+                           ) -> None:
+        server.web_path = web_path
         await self.session.flush()
 
     async def update_vpn(self,

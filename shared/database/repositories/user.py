@@ -36,7 +36,7 @@ class UserRepository(BaseRepository[User]):
                      rights: int = RightsType.member.value,
                      settings: int = SettingsType.default.value,
                      ) -> User:
-        return await self.universal_create(
+        return await self.__create(
             telegram_id=telegram_id,
             tariff_id=tariff_id,
             description=description,

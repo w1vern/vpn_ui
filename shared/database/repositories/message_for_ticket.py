@@ -23,7 +23,7 @@ class MessageForTicketRepository(BaseRepository[MessageForTicket]):
                      ticket: Ticket,
                      message_type: str
                      ) -> MessageForTicket:
-        return await self.universal_create(
+        return await self.__create(
             text=text,
             ticket_id=ticket.id,
             message_type=message_type)

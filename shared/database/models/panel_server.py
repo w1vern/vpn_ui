@@ -2,9 +2,7 @@
 
 import uuid
 
-from sqlalchemy import (
-    ForeignKey,
-)
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -23,8 +21,11 @@ class PanelServer(Base):
 
     panel_port: Mapped[int] = mapped_column()
     port_generator_port: Mapped[int] = mapped_column()
+
+    web_path: Mapped[str] = mapped_column()
     login: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()
+
     vless_id: Mapped[int] = mapped_column()
     vless_port: Mapped[int] = mapped_column()
     vless_domain_short_id: Mapped[str] = mapped_column()
@@ -41,8 +42,8 @@ class PanelServer(Base):
 
     @property
     def panel_url(self) -> str:
-        return f"http://{self.server.ip}:{self.panel_port}/"
-    
+        return f"http://{self.server.ip}:{self.panel_port}/{self.web_path}/"
+
     @property
     def port_generator_url(self) -> str:
-        return f"http://{self.server.ip}:{self.port_generator_port}/"
+        return f"http://{self.server.ip}:{self.port_generator_port}/{self.web_path}/"

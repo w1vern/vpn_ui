@@ -22,7 +22,7 @@ class TgBotTokenRepository(BaseRepository[TgBotToken]):
                      token: str,
                      server: Server
                      ) -> TgBotToken:
-        return await self.universal_create(
+        return await self.__create(
             token=token,
             server_id=server.id)
 

@@ -31,7 +31,7 @@ class ServerRepository(BaseRepository[Server]):
             starting_date = datetime.now(UTC).replace(tzinfo=None)
         if closing_date is None:
             closing_date = datetime.min
-        return await self.universal_create(
+        return await self.__create(
             ip=ip,
             description=description,
             country_code=country_code,

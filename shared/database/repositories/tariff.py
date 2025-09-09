@@ -22,7 +22,7 @@ class TariffRepository(BaseRepository[Tariff]):
                      description: str,
                      is_special: bool = False,
                      ) -> Tariff:
-        return await self.universal_create(
+        return await self.__create(
             name=name,
             duration=duration,
             description=description,
@@ -34,6 +34,7 @@ class TariffRepository(BaseRepository[Tariff]):
 
     async def edit(self,
                    tariff: Tariff,
+                   *,
                    name: str | None = None,
                    description: str | None = None,
                    duration: timedelta | None = None,
@@ -42,21 +43,16 @@ class TariffRepository(BaseRepository[Tariff]):
                    traffic: int | None = None,
                    is_special: bool | None = None
                    ) -> None:
-        if name is not None:
-            tariff.name = name
-        if duration is not None:
-            tariff.duration = duration
-        if price is not None:
-            tariff.price = price
-        if price_of_traffic_reset is not None:
-            tariff.price_of_traffic_reset = price_of_traffic_reset
-        if traffic is not None:
-            tariff.traffic = traffic
-        if is_special is not None:
-            tariff.is_special = is_special
-        if description is not None:
-            tariff.description = description
-        await self.session.flush()
+        await self.__edit(
+            tariff,
+            name=name,
+            description=description,
+            duration=duration,
+            price=price,
+            price_of_traffic_reset=price_of_traffic_reset,
+            traffic=traffic,
+            is_special=is_special
+        )
 
     async def get_by_name(self, name: str) -> Tariff | None:
         stmt = select(Tariff).where(Tariff.name == name).limit(1)
