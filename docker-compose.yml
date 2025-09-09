@@ -1,13 +1,12 @@
-
 x-service-base: &service-base
   build:
     context: .
   env_file:
     - .env
   depends_on:
-    alembic: 
+    alembic:
       condition: service_started
-    postgres: 
+    postgres:
       condition: service_started
     rabbitmq:
       condition: service_healthy
@@ -52,9 +51,9 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      redis: 
+      redis:
         condition: service_started
-      fill_db: 
+      fill_db:
         condition: service_completed_successfully
     profiles:
       - with_backend
@@ -63,11 +62,11 @@ services:
     <<: *service-base
     command: python -m services.bot
     depends_on:
-      fill_db: 
+      fill_db:
         condition: service_completed_successfully
     profiles:
       - with_bot
-    
+
   fill_db:
     <<: *service-base
     command: python -m services.fill_db
@@ -101,6 +100,8 @@ services:
     depends_on:
       frontend:
         condition: service_started
+    ports:
+      - 80:80
     profiles:
       - with_frontend
 
