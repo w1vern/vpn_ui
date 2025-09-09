@@ -29,7 +29,7 @@ class TicketRepository(BaseRepository[Ticket]):
             opening_date = datetime.now(UTC).replace(tzinfo=None)
         if closing_date is None:
             closing_date = datetime.now(UTC).replace(tzinfo=None)
-        return await self.__create(
+        return await self._create(
             title=title,
             holder_id=holder.id,
             opening_date=opening_date,

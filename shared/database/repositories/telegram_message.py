@@ -21,7 +21,7 @@ class TelegramMessageRepository(BaseRepository[TelegramMessage]):
                      sender: User,
                      recipient: User
                      ) -> TelegramMessage:
-        return await self.__create(
+        return await self._create(
             text=text,
             date=date,
             sender_id=sender.id,

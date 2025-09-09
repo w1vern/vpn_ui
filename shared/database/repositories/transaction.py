@@ -28,7 +28,7 @@ class TransactionRepository(BaseRepository[Transaction]):
                      ) -> Transaction:
         if date is None:
             date = datetime.now(UTC).replace(tzinfo=None)
-        return await self.__create(
+        return await self._create(
             user_id=user.id,
             amount=amount,
             description=description,

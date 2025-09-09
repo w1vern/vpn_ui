@@ -1,17 +1,18 @@
 """first migration
 
-Revision ID: 20317e7f3f14
+Revision ID: ecda3de90f2a
 Revises: 
-Create Date: 2025-09-08 14:18:27.868671
+Create Date: 2025-09-09 10:02:06.438200
 
 """
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = '20317e7f3f14'
+revision: str = 'ecda3de90f2a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -50,6 +51,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('panel_port', sa.Integer(), nullable=False),
     sa.Column('port_generator_port', sa.Integer(), nullable=False),
+    sa.Column('web_path', sa.String(), nullable=False),
     sa.Column('login', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('vless_id', sa.Integer(), nullable=False),

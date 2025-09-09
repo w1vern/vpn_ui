@@ -37,7 +37,7 @@ class ActivePeriodRepository(BaseRepository):
             start_date = datetime.now(UTC).replace(tzinfo=None)
         if end_date is None:
             end_date = datetime.min
-        return await self.__create(
+        return await self._create(
             user_id=user.id,
             transaction_id=transaction.id,
             tariff_id=tariff.id,

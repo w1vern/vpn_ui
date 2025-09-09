@@ -28,9 +28,9 @@ class BaseRepository(Generic[ModelType]):
         self.session = session
         self.model = model
 
-    async def __create(self,
-                       **kwargs: Any
-                       ) -> ModelType:
+    async def _create(self,
+                      **kwargs: Any
+                      ) -> ModelType:
         model = self.model(**kwargs)
         self.session.add(model)
         await self.session.flush()
@@ -39,10 +39,10 @@ class BaseRepository(Generic[ModelType]):
             raise Exception("Model not created")
         return model
 
-    async def __edit(self,
-                     instance: ModelType,
-                     **kwargs: Any
-                     ) -> None:
+    async def _edit(self,
+                    instance: ModelType,
+                    **kwargs: Any
+                    ) -> None:
         for field, value in kwargs.items():
             if value is not None:
                 if not hasattr(instance, field):

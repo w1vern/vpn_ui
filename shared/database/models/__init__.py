@@ -1,5 +1,6 @@
 
 from .active_period import ActivePeriod
+from .base import Base
 from .message_for_ticket import MessageForTicket
 from .panel_server import PanelServer
 from .server import Server
@@ -12,6 +13,7 @@ from .transaction import Transaction
 from .user import User
 
 __all__ = [
+    'Base',
     'ActivePeriod',
     'MessageForTicket',
     'PanelServer',

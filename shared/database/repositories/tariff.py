@@ -22,7 +22,7 @@ class TariffRepository(BaseRepository[Tariff]):
                      description: str,
                      is_special: bool = False,
                      ) -> Tariff:
-        return await self.__create(
+        return await self._create(
             name=name,
             duration=duration,
             description=description,
@@ -43,7 +43,7 @@ class TariffRepository(BaseRepository[Tariff]):
                    traffic: int | None = None,
                    is_special: bool | None = None
                    ) -> None:
-        await self.__edit(
+        await self._edit(
             tariff,
             name=name,
             description=description,

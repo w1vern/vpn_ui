@@ -1,19 +1,13 @@
 
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.proxy_interface import (
-    VpnType,
-)
+from shared.proxy_interface import VpnType
 
 from ..models import (
     PanelServer,
     Server,
 )
-from .base import (
-    BaseRepository,
-)
+from .base import BaseRepository
 
 
 class PanelServerRepository(BaseRepository[PanelServer]):
@@ -40,7 +34,7 @@ class PanelServerRepository(BaseRepository[PanelServer]):
                      vmess_port: int = 0,
                      vmess_domain_short_id: str = ""
                      ) -> PanelServer:
-        return await self.__create(
+        return await self._create(
             id=server.id,
             panel_port=panel_port,
             port_generator_port=port_generator_port,

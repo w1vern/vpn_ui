@@ -30,7 +30,7 @@ class ServerUserInboundRepository(BaseRepository[ServerUserInbound]):
                      user: User,
                      config: AccessConfig,
                      ) -> ServerUserInbound:
-        return await self.__create(
+        return await self._create(
             server_id=server.id,
             user_id=user.id,
             config_str=config.to_string()
