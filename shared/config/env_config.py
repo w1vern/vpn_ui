@@ -65,6 +65,7 @@ class Settings(BaseSettings):
     rabbit: RabbitSettings = RabbitSettings()
     bot: BotSettings = BotSettings()
     backend: BackendSettings = BackendSettings()
+    is_test_start
 
 
 env_config = Settings()
