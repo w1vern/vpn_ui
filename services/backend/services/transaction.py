@@ -59,7 +59,7 @@ class TransactionService:
         if type is None:
             raise TransactionTypeNotFoundException()
         if not transaction_to_create.date is None:
-            transaction_to_create.date.replace(tzinfo=None)
+            transaction_to_create.date = transaction_to_create.date.replace(tzinfo=None)
         await self.tr.create(tr_user,
                              transaction_to_create.amount,
                              transaction_to_create.description,

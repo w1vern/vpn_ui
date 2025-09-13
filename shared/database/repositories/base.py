@@ -61,21 +61,22 @@ class BaseRepository(Generic[ModelType]):
         return await self.session.scalar(stmt)
 
     def __build_filters(self,
-                        **kwargs: Any
+                        **kwargs: Any | None
                         ) -> list[BinaryExpression[bool]]:
         filters = [self.model.deleted_date.is_(None)]
         for field, value in kwargs.items():
-            if hasattr(self.model, field):
-                filters.append(getattr(self.model, field) == value)
-            else:
-                raise ValueError(
-                    f"Model {self.model.__name__} has no field '{field}'")
+            if not value is None:
+                if hasattr(self.model, field):
+                    filters.append(getattr(self.model, field) == value)
+                else:
+                    raise ValueError(
+                        f"Model {self.model.__name__} has no field '{field}'")
         return filters
 
     async def get_all(self,
                       limit: int | None = None,
                       offset: int | None = None,
-                      **kwargs: Any
+                      **kwargs: Any | None
                       ) -> list[ModelType]:
         stmt = (
             select(self.model)

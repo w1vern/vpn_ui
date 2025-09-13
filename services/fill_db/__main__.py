@@ -51,8 +51,8 @@ default_pservers = []
 if not env_config.boot_level is BootLevel.RELEASE:
     with resources.files(__package__).joinpath("test_db.json").open("r", encoding="utf-8") as f:
         DB: dict[str, list[dict[str, Any]]] = json.load(f)
-        default_servers = DB["servers"]
-        default_pservers = DB["panel_servers"]
+        default_servers = DB["default_servers"]
+        default_pservers = DB["default_panel_servers"]
 
 
 async def wait_for_table(table_name: str, retries: int = 30, delay: int = 1) -> None:

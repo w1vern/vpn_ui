@@ -61,18 +61,18 @@ class ServerService:
                      ) -> None:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
-        server_to_create.starting_date.replace(tzinfo=None)
-        server_to_create.closing_date.replace(tzinfo=None)
         server = await self.sr.create(ip=server_to_create.ip,
                                       description=server_to_create.description,
                                       country_code=server_to_create.country_code,
                                       is_available=server_to_create.is_available,
                                       display_name=server_to_create.display_name,
-                                      starting_date=server_to_create.starting_date.replace(tzinfo=None),
+                                      starting_date=server_to_create.starting_date.replace(
+                                          tzinfo=None),
                                       closing_date=server_to_create.closing_date.replace(tzinfo=None))
         pserver = await self.psr.create(server=server,
                                         panel_port=server_to_create.panel_port,
                                         port_generator_port=server_to_create.port_generator_port,
+                                        web_path=server_to_create.web_path,
                                         login=server_to_create.login,
                                         password=server_to_create.password)
 
@@ -108,5 +108,7 @@ class ServerService:
             await self.psr.set_panel_port(pserver, server_to_edit.panel_port)
         if server_to_edit.port_generator_port is not None:
             await self.psr.set_port_generator_port(pserver, server_to_edit.port_generator_port)
+        if server_to_edit.web_path is not None:
+            await self.psr.set_web_path(pserver, server_to_edit.web_path)
         if server_to_edit.description is not None:
             await self.sr.set_description(server, server_to_edit.description)

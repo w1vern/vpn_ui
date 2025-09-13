@@ -20,6 +20,7 @@ class ServerSchema(BaseModel):
 
     panel_port: int
     port_generator_port: int
+    web_path: str
     login: str
     password: str
 
@@ -38,6 +39,7 @@ class ServerSchema(BaseModel):
             closing_date=server.server.closing_date,
             panel_port=server.panel_port,
             port_generator_port=server.port_generator_port,
+            web_path=server.web_path,
             login=server.login,
             password=server.password
         )
@@ -54,6 +56,7 @@ class ServerToEditSchema(BaseModel):
 
     panel_port: int | None = None
     port_generator_port: int | None = None
+    web_path: str | None = None
     login: str | None = None
     password: str | None = None
 
@@ -63,6 +66,7 @@ class CreateServerSchema(BaseModel):
     description: str
     panel_port: int
     port_generator_port: int
+    web_path: str
     country_code: str
     is_available: bool
     display_name: str
