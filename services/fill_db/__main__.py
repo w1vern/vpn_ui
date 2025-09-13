@@ -1,20 +1,21 @@
 
 import asyncio
-from datetime import (
-    UTC,
-    timedelta,
-)
+from datetime import timedelta
+from importlib import resources
+import json
 from typing import Any
 
 from sqlalchemy import text
 
-from shared.config import env_config
+from shared.config import env_config, BootLevel
 from shared.database import (
     RightsType,
     SettingsType,
     TariffRepository,
     UserRepository,
     session_manager,
+    ServerRepository,
+    PanelServerRepository
 )
 from shared.infrastructure import setup_logger
 
@@ -42,6 +43,16 @@ default_tariffs: list[dict[str, Any]] = [
         "traffic": 50
     }
 ]
+
+default_servers = []
+default_pservers = []
+
+
+if not env_config.boot_level is BootLevel.RELEASE:
+    with resources.files(__package__).joinpath("test_db.json").open("r", encoding="utf-8") as f:
+        DB: dict[str, list[dict[str, Any]]] = json.load(f)
+        default_servers = DB["servers"]
+        default_pservers = DB["panel_servers"]
 
 
 async def wait_for_table(table_name: str, retries: int = 30, delay: int = 1) -> None:
@@ -81,11 +92,19 @@ async def main() -> None:
             raise Exception("tariff not created")
 
         for user in default_users:
-
-            await ur.create(**{
-                **user,
-                  **{"tariff_id": str(_.id)
-                     }})
+            await ur.create(**{**user, **{"tariff_id": str(_.id)}})
+        sr = ServerRepository(session)
+        psr = PanelServerRepository(session)
+        for i in range(len(default_servers)):
+            server = await sr.create(**default_servers[i])
+            pserver = default_pservers[i]
+            await psr.create(
+                server=server,
+                panel_port=pserver["panel_port"],
+                port_generator_port=pserver["port_generator_port"],
+                web_path=pserver["web_path"],
+                login=pserver["login"],
+                password=pserver["password"])
 
         logger.info("database is filled")
 

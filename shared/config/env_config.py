@@ -2,10 +2,17 @@
 import os
 
 from pydantic import BaseModel
+from enum import Enum
 from pydantic_settings import (
     BaseSettings,
     SettingsConfigDict,
 )
+
+
+class BootLevel(str, Enum):
+    DEBUG = "DEBUG"
+    TEST = "TEST"
+    RELEASE = "RELEASE"
 
 
 class DBSettings(BaseModel):
@@ -65,7 +72,7 @@ class Settings(BaseSettings):
     rabbit: RabbitSettings = RabbitSettings()
     bot: BotSettings = BotSettings()
     backend: BackendSettings = BackendSettings()
-    is_test_start
+    boot_level: BootLevel = BootLevel.DEBUG
 
 
 env_config = Settings()

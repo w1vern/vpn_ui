@@ -1,9 +1,10 @@
 
 import logging
 import sys
+from shared.config import env_config, BootLevel
 
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(name)s | %(message)s',
-                    level=logging.DEBUG,
+                    level=logging.INFO if env_config.boot_level is BootLevel.RELEASE else logging.DEBUG,
                     handlers=[logging.StreamHandler(sys.stdout)])
 
 
