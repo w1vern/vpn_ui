@@ -101,7 +101,7 @@ services:
       frontend:
         condition: service_started
     ports:
-      - 80:80
+      - ${NGINX_PORT}:80
     profiles:
       - with_frontend
 
