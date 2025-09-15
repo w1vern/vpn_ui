@@ -21,10 +21,17 @@ dependencies = [
     "aiogram>=3.20.0.post0",
     "fast-depends>=2.4.12",
     "aioschedule>=0.5.2",
+    "pytest-asyncio>=1.2.0",
+    "pytest>=8.4.2",
+    "pytest-mock>=3.15.0",
 ]
 
 [dependency-groups]
-dev = ["cli-tools", "isort>=6.0.1"]
+dev = [
+    "cli-tools",
+ "isort>=6.0.1",
+ "pylint>=3.3.8",
+]
 
 [tool.uv.sources]
 cli-tools = { git = "https://github.com/w1vern/cli_tools" }

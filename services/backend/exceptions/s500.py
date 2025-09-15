@@ -6,7 +6,7 @@ from .base import BaseCustomHTTPException
 
 
 class SendFeedbackToAdminException(BaseCustomHTTPException):
-    def __init__(self):
+    def __init__(self) -> None:
         current_frame = inspect.currentframe()
         message = ""
         if current_frame:
