@@ -6,37 +6,37 @@ from .i18n import I18nMessage, MessageKey
 
 
 class BaseCustomException(Exception):
-    def __init__(self, detail: I18nMessage):
+    def __init__(self, detail: I18nMessage) -> None:
         self.detail = detail
 
 
 class MessageUserIsNoneException(BaseCustomException):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(I18nMessage(MessageKey.message_user_is_none_exception))
 
 
 class UserNotFoundException(BaseCustomException):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(I18nMessage(MessageKey.user_not_found_exception))
 
 
 class MessageUsernameIsNoneException(BaseCustomException):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(I18nMessage(MessageKey.message_username_is_none_exception))
 
 
 class IncorrectStateException(BaseCustomException):
-    def __init__(self, state: str):
+    def __init__(self, state: str) -> None:
         super().__init__(I18nMessage(MessageKey.incorrect_state_exception, state=state))
 
 
 class MessageTextIsNoneException(BaseCustomException):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(I18nMessage(MessageKey.message_text_is_none_exception))
 
 
 class SendFeedbackToAdminException(BaseCustomException):
-    def __init__(self):
+    def __init__(self) -> None:
         current_frame = inspect.currentframe()
         message = ""
         if current_frame:

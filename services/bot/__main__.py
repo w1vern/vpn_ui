@@ -7,7 +7,7 @@ from .lifecycle import register_lifecycle
 from .rabbit import app
 
 
-async def main():
+async def main() -> None:
     register_lifecycle(dp, bot)
     dp.include_router(router)
     bot_task = asyncio.create_task(dp.start_polling(bot))

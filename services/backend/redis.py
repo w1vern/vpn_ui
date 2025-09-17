@@ -3,6 +3,7 @@ from enum import Enum
 
 from redis.asyncio import Redis
 
+from shared.infrastructure import RedisDatabase
 from shared.infrastructure import get_redis_client as gr
 
 
@@ -14,4 +15,4 @@ class RedisType(str, Enum):
 
 
 def get_redis_client() -> Redis:
-    return gr(db=0)
+    return gr(db=RedisDatabase.backend.value)

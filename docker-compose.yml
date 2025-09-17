@@ -53,6 +53,12 @@ services:
         condition: service_started
       fill_db:
         condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://backend:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     profiles:
       - with_backend
 

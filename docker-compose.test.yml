@@ -1,0 +1,12 @@
+
+services:
+  integration-tests:
+    build:
+      context: .
+    env_file:
+      - .env
+    command:
+      python -m tests.integration
+    depends_on:
+      backend:
+        condition: service_healthy
