@@ -1,5 +1,7 @@
 
 
+from datetime import datetime, UTC
+from os import replace
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -26,7 +28,8 @@ class MessageForTicketRepository(BaseRepository[MessageForTicket]):
         return await self._create(
             text=text,
             ticket_id=ticket.id,
-            message_type=message_type)
+            message_type=message_type,
+            date=datetime.now(UTC).replace(tzinfo=None))
 
     async def get_all_by_ticket(self,
                                 ticket: Ticket

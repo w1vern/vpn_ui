@@ -1,7 +1,9 @@
 
-from redis.asyncio import Redis
 from httpx import AsyncClient
+from redis.asyncio import Redis
+
 from shared.infrastructure import setup_logger
+
 from .utils import check_response
 
 logger = setup_logger(__name__)

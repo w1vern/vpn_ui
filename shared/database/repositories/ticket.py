@@ -51,6 +51,6 @@ class TicketRepository(BaseRepository[Ticket]):
     async def close(self,
                     ticket: Ticket
                     ) -> None:
-        ticket.closing_date = datetime.now(UTC)
+        ticket.closing_date = datetime.now(UTC).replace(tzinfo=None)
         ticket.is_open = False
         await self.session.flush()

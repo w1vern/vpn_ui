@@ -52,11 +52,10 @@ class TicketService:
                 ) -> 'TicketService':
         return cls(session, tr, ur, mr, user_schema)
 
-    @staticmethod
-    async def get_ticket(ticket_id: UUID,
-                         tr: TicketRepository = Depends(get_ticket_repo)
+    async def get_ticket(self,
+                         ticket_id: UUID
                          ) -> Ticket:
-        ticket = await tr.get_by_id(ticket_id)
+        ticket = await self.tr.get_by_id(ticket_id)
         if ticket is None:
             raise TicketNotFoundException()
         return ticket

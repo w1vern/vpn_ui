@@ -1,9 +1,10 @@
 
+from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import UUID
+
 from httpx import AsyncClient
 
-from datetime import datetime, UTC, timedelta
 from .utils import check_response
 
 
@@ -40,8 +41,8 @@ async def get(base_url: str,
     return response.json()[0]["id"]
 
 
-async def patch(base_url: str,
-                server_id: UUID,
+async def patch(server_id: UUID,
+                base_url: str,
                 httpx_client: AsyncClient
                 ) -> None:
     response = await httpx_client.patch(f"{base_url}/{server_id}", json={
@@ -50,9 +51,9 @@ async def patch(base_url: str,
     check_response(f"{base_url}/{server_id}", "PATCH", response)
 
 
-async def servers_test(base_url: str,
-                       httpx_client: AsyncClient
-                       ) -> None:
+async def server_test(base_url: str,
+                      httpx_client: AsyncClient
+                      ) -> None:
     await create(base_url, httpx_client)
     id = await get(base_url, httpx_client)
-    await patch(base_url, id, httpx_client)
+    await patch(id, base_url, httpx_client)

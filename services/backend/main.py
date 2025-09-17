@@ -1,10 +1,9 @@
 
 from fastapi import FastAPI
 
-from .response import SuccessResponse
-
 from .api import router
 from .rabbit import router as faststream_router
+from .response import SuccessResponse
 
 app = FastAPI(docs_url="/api/docs",
               redoc_url="/api/redoc",
