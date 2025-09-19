@@ -28,11 +28,13 @@ services:
       -c logging_collector=off
       -c client_min_messages=log
       -c log_error_verbosity=default
+    restart: unless-stopped
 
   redis:
     image: redis:7
     volumes:
       - redis_data:/data
+    restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -44,6 +46,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
+    restart: unless-stopped
 
   backend:
     <<: *service-base
@@ -61,6 +64,7 @@ services:
       start_period: 5s
     profiles:
       - with_backend
+    restart: unless-stopped
 
   bot:
     <<: *service-base
@@ -70,6 +74,7 @@ services:
         condition: service_completed_successfully
     profiles:
       - with_bot
+    restart: unless-stopped
 
   fill_db:
     <<: *service-base
@@ -95,6 +100,7 @@ services:
         condition: service_started
     profiles:
       - with_frontend
+    restart: unless-stopped
 
   nginx:
     image: nginx:latest
@@ -108,6 +114,7 @@ services:
       - ${NGINX_PORT}:80
     profiles:
       - with_frontend
+    restart: unless-stopped
 
 volumes:
   postgres_data:
