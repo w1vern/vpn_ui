@@ -55,10 +55,10 @@ docker_build:
 	docker compose up -d --build
 
 docker_test:
-	docker compose -f docker-compose.yml -f docker-compose.test.yml up -d --build
+	docker compose -f compose.yml -f compose.test.yml up -d --build
 
 docker_test-down:
-	docker compose -f docker-compose.yml -f docker-compose.test.yml down -v
+	docker compose -f compose.yml -f compose.test.yml down -v
 
 add_frontend:
 	git submodule add --name frontend https://github.com/ImmortalAI/vpn_front_vue services/frontend

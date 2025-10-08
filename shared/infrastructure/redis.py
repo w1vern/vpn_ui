@@ -16,4 +16,7 @@ def get_redis_client(db: int) -> Redis:
         host=env_config.redis.ip,
         port=env_config.redis.port,
         db=db,
-        decode_responses=True)
+        decode_responses=True,
+        username=env_config.redis.login,
+        password=env_config.redis.password
+    )

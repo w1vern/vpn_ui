@@ -32,6 +32,8 @@ class RedisSettings(BaseModel):
 
     ip: str = ""
     port: int = 0
+    login: str | None = None
+    password: str | None = None
 
 
 class RabbitSettings(BaseModel):
@@ -78,6 +80,12 @@ class Settings(BaseSettings):
 
 
 env_config = Settings()
+
+if env_config.redis.login == "":
+    env_config.redis.login = None
+
+if env_config.redis.password == "":
+    env_config.redis.password = None
 
 if env_config.bot.superuser == 0:
     raise ValueError("env parameters not set")
