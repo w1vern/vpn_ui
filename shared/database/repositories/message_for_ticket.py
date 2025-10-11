@@ -1,7 +1,8 @@
 
 
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from os import replace
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import (
     AsyncSession,

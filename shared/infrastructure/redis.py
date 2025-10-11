@@ -6,11 +6,6 @@ from redis.asyncio import Redis
 from shared.config import env_config
 
 
-class RedisDatabase(int, Enum):
-    backend = 0
-    bot = 1
-
-
 def get_redis_client(db: int) -> Redis:
     return Redis(
         host=env_config.redis.ip,

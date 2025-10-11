@@ -2,25 +2,21 @@
 import httpx
 
 from shared.config import env_config
-from shared.infrastructure import (
-    RedisDatabase,
-    get_redis_client,
-    setup_logger
-)
+from shared.infrastructure import get_redis_client, setup_logger
 
 from .auth import auth_test
-from .server import server_test
-from .user import user_test
-from .tariff import tariff_test
-from .transaction import transaction_test
 from .notification import notification_test
+from .server import server_test
+from .tariff import tariff_test
 from .ticket import ticket_test
+from .transaction import transaction_test
+from .user import user_test
 
 logger = setup_logger(__name__)
 
 
 async def run_backend_test() -> None:
-    redis = get_redis_client(db=RedisDatabase.backend.value)
+    redis = get_redis_client(db=env_config.redis.backend)
     url = f"http://{env_config.backend.ip}:{env_config.backend.port}/api/"
     async with httpx.AsyncClient() as httpx_client:
         await auth_test(url + "auth", env_config.bot.superuser, redis, httpx_client)

@@ -1,13 +1,15 @@
 
 from uuid import UUID
-from .utils import check_response
 
 from httpx import AsyncClient
+
 from shared.database import (
     TicketRepository,
-    session_manager,
-    UserRepository
+    UserRepository,
+    session_manager
 )
+
+from .utils import check_response
 
 
 async def get_all(base_url: str,

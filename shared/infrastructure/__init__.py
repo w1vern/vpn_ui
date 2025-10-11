@@ -8,7 +8,7 @@ from .rabbit import (
     notification_queue,
     tg_code_queue
 )
-from .redis import RedisDatabase, get_redis_client
+from .redis import get_redis_client
 
 __all__ = [
     'RABBIT_URL',
@@ -19,7 +19,6 @@ __all__ = [
     'TgInfo',
 
     'get_redis_client',
-    'RedisDatabase',
 
     'setup_logger'
 ]

@@ -34,6 +34,8 @@ class RedisSettings(BaseModel):
     port: int = 0
     login: str | None = None
     password: str | None = None
+    backend: int = 0
+    bot: int = 1
 
 
 class RabbitSettings(BaseModel):

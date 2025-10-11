@@ -1,10 +1,12 @@
 
 from datetime import UTC, datetime
 from uuid import UUID
-from .utils import check_response
+
 from httpx import AsyncClient
 
 from shared.infrastructure import setup_logger
+
+from .utils import check_response
 
 logger = setup_logger(__name__)
 
