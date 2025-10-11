@@ -62,8 +62,6 @@ class BackendSettings(BaseModel):
         populate_by_name=True)
 
     secret: str = ""
-    ip: str = ""
-    port: int = 0
 
 
 class Settings(BaseSettings):

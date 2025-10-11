@@ -7,7 +7,7 @@ __pycache__/
 .vscode/
 logs/
 *.env*
-docker-compose*.yml
+compose*.yml
 Dockerfile
 .dockerignore
 LICENSE
