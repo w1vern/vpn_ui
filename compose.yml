@@ -110,8 +110,6 @@ services:
     depends_on:
       frontend:
         condition: service_started
-    ports:
-      - ${NGINX_PORT}:80
     profiles:
       - with_frontend
     restart: unless-stopped
