@@ -36,7 +36,6 @@ async def create(base_url: str,
         "transaction_type": "withdrawal",
         "date": datetime.now(UTC).replace(tzinfo=None).isoformat()
     }
-    logger.debug(transaction)
     response = await httpx_client.post(base_url, json=transaction)
     check_response(base_url, "POST", response)
 
