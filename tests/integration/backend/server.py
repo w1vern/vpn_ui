@@ -27,7 +27,12 @@ async def create(base_url: str,
         "login": "login",
         "password": "password",
         "starting_date": date.isoformat(),
-        "closing_date": date_plus.isoformat()
+        "closing_date": date_plus.isoformat(),
+        "vless_reality_id": 0,
+        "vless_reality_port": 0,
+        "vless_reality_domain_short_id": "custom_domain_short_id",
+        "vless_reality_public_key": "custom_public_key",
+        "vless_reality_private_key": "custom_private_key"
     }
     response = await httpx_client.post(base_url, json=server)
     check_response(base_url, "POST", response)
