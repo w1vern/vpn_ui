@@ -215,7 +215,6 @@ class VpnConfig(AccessConfig):
         self.class_name = self.__class__.__name__
 
     def create_string(self) -> str:
-        logger.debug(self.security.__class__)
         return "".join([
             f"vless://{self.uuid}@{self.ip}:{self.port}",
             f"?type=tcp",
@@ -228,17 +227,12 @@ class VpnConfig(AccessConfig):
     def to_string(self) -> str:
         ans = self.__dict__.copy()
         ans['security'] = ans['security'].to_dict()
-        logger.debug("-----------------------------------------------")
-        logger.debug(ans)
-        logger.debug("-----------------------------------------------")
         return json.dumps(ans, default=str)
 
     @classmethod
     def from_string(cls, access_config_str: str) -> 'AccessConfig':
-        logger.debug(access_config_str)
         vpn_dict = json.loads(access_config_str)
         security_dict = vpn_dict['security']
-        logger.debug(f"security_dict: {security_dict}")
         security = SecurityFactory.from_dict(security_dict)
         vpn_dict['security'] = security
         del (vpn_dict['class_name'])

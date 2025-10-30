@@ -8,9 +8,9 @@ services:
       - traefik.http.routers.${NETWORK_NAME}.tls.certresolver=letsEncrypt
     networks:
       default:
-      traefik_traefik:
+      traefik_external_network:
 
 
 networks:
-  traefik_traefik:
+  traefik_external_network:
     external: true
