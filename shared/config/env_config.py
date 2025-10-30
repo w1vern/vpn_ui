@@ -62,6 +62,7 @@ class BackendSettings(BaseModel):
         populate_by_name=True)
 
     secret: str = ""
+    workers: int = 0
 
 
 class Settings(BaseSettings):
