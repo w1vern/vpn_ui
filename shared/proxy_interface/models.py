@@ -1,10 +1,13 @@
 
-
 import abc
 import json
 from enum import Enum
 from typing import Any
 from uuid import UUID
+
+from shared.infrastructure import setup_logger
+
+logger = setup_logger(__name__)
 
 
 class AccessType(str, Enum):
@@ -75,7 +78,7 @@ class ProxyConfig(AccessConfig):
                  port: int,
                  login: str,
                  password: str,
-                 is_active: bool = True):
+                 is_active: bool = True) -> None:
         self.id = id
         self.access_type = access_type
         self.ip = ip
@@ -114,11 +117,11 @@ class SecurityFactory:
     __registry: dict[str, Security] = {}
 
     @classmethod
-    def register(cls, name, security_class):
+    def register(cls, name, security_class) -> None:
         cls.__registry[name] = security_class
 
     @classmethod
-    def from_dict(cls, security_dict: dict[str, Any]):
+    def from_dict(cls, security_dict: dict[str, Any]) -> Security:
         name = security_dict['class_name']
         if name not in cls.__registry:
             raise ValueError(f"No registered class for name: {name}")
@@ -152,7 +155,13 @@ class NoneSecurity(Security):
 
 @SecurityFactory.register_with_decorator()
 class RealityOptions(Security):
-    def __init__(self, public_key: str, fp: str, server_name_indication: str, sid: str, spx: str):
+    def __init__(self,
+                 public_key: str,
+                 fp: str,
+                 server_name_indication: str,
+                 sid: str,
+                 spx: str
+                 ) -> None:
         self.security_name = "reality"
         self.public_key = public_key
         self.fp = fp
@@ -205,22 +214,31 @@ class VpnConfig(AccessConfig):
         self.is_active = is_active
         self.class_name = self.__class__.__name__
 
-    def create_string(self):
+    def create_string(self) -> str:
+        logger.debug(self.security.__class__)
         return "".join([
             f"vless://{self.uuid}@{self.ip}:{self.port}",
-            f"?type={self.protocol}&path={self.path}",
+            f"?type=tcp",
+            f"&path={self.path}",
             f"&headerType={self.header_type}",
-            f"&security={self.security.create_string()}#{self.remark}"])
+            f"&security={self.security.create_string()}",
+            f"#{self.remark}"
+        ])
 
     def to_string(self) -> str:
-        ans = self.__dict__
+        ans = self.__dict__.copy()
         ans['security'] = ans['security'].to_dict()
-        return json.dumps(self.__dict__, default=str)
+        logger.debug("-----------------------------------------------")
+        logger.debug(ans)
+        logger.debug("-----------------------------------------------")
+        return json.dumps(ans, default=str)
 
     @classmethod
     def from_string(cls, access_config_str: str) -> 'AccessConfig':
+        logger.debug(access_config_str)
         vpn_dict = json.loads(access_config_str)
         security_dict = vpn_dict['security']
+        logger.debug(f"security_dict: {security_dict}")
         security = SecurityFactory.from_dict(security_dict)
         vpn_dict['security'] = security
         del (vpn_dict['class_name'])

@@ -74,15 +74,17 @@ class Service(ProxyInterface):
 
     async def get_config(self,
                          user: User,
-                         access_type: AccessType = AccessType.HTTP,
+                         access_type: AccessType = AccessType.VLESS_REALITY,
                          create_if_not_exists: bool = True,
                          login: str = "",
                          password: str = ""
                          ) -> AccessConfig | None:
         inbounds = await self.__suir.get_by_server_and_user(self.__server_session.server.server, user)
         for inbound in inbounds:
+            #logger.debug(inbound.config_str)
             if inbound.access_type == access_type:
-                if await self.config_is_valid(user, inbound.config) is True:
+                if await self.config_is_valid(user, inbound.config):
+                    #logger.debug("config loaded from db")
                     return inbound.config
                 break
         if create_if_not_exists is False:
@@ -95,6 +97,7 @@ class Service(ProxyInterface):
             return None
         if response is None:
             return None
+        #logger.debug(response.security.__class__)
         await self.__suir.create(self.__server_session.server.server, user, response)
         return response
 
@@ -138,7 +141,7 @@ class Service(ProxyInterface):
         protocol = vpn_type.value[:-3]
         if vpn_type == VpnType.VLESS_REALITY:
             protocol = "vless"
-        if getattr(self.__server_session.server, vpn_type.value) == 0:
+        if getattr(self.__server_session.server, vpn_type.value) == 0 and False:  # unused logic
             remark = generate_vpn_remark(vpn_type)
             short_ids = generate_short_ids()
             port = await self.__pr.get_free_port()
@@ -170,24 +173,28 @@ class Service(ProxyInterface):
                                                        sub_id=sub_id,
                                                        email=email)
             if response['success'] is False:
+                logger.error(f"Failed to create vpn user: {response}")
                 return None
         security = NoneSecurity()
         if vpn_type == VpnType.VLESS_REALITY:
-            security = RealityOptions(public_key=self.__server_session.server.vless_reality_public_key,
-                                      fp="random",
-                                      server_name_indication="yahoo.com",
-                                      sid=getattr(self.__server_session.server,
-                                                  f"{vpn_type.value[:-3]}_domain_short_id"),
-                                      spx="/", )
+            security = RealityOptions(
+                public_key=self.__server_session.server.vless_reality_public_key,
+                fp="chrome",
+                server_name_indication="yahoo.com",
+                sid=getattr(self.__server_session.server,
+                            f"{vpn_type.value[:-3]}_domain_short_id"),
+                spx="%2F"
+            )
+            logger.debug(f"Hello from code: {security}")
         logger.debug(f"Hello from code: {response}")
-        return VpnConfig(id=response['obj']['id'],
+        return VpnConfig(id=self.__server_session.server.vless_reality_id,  # not universal code
                          access_type=AccessType(vpn_type.value),
                          uuid=uuid4,
                          ip=self.__server_session.server.server.ip,
                          port=getattr(self.__server_session.server,
-                         f"{vpn_type.value[:-3]}_port"),
+                                      f"{vpn_type.value[:-3]}_port"),
                          protocol=protocol,
-                         path="",
+                         path="%2F",
                          header_type="http",
                          security=security,
                          remark=generate_user_remark(self.__server_session.server, user, vpn_type))

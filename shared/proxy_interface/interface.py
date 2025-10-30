@@ -15,7 +15,7 @@ class ProxyInterface(abc.ABC):
     @abc.abstractmethod
     async def get_config(self,
                          user: User,
-                         access_type: AccessType = AccessType.HTTP,
+                         access_type: AccessType = AccessType.VLESS_REALITY,
                          create_if_not_exists: bool = True,
                          login: str = "",
                          password: str = ""

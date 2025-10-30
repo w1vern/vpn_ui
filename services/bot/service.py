@@ -162,6 +162,7 @@ class Service():
             async with server_session_manager.get_session(pserver) as session:
                 service = PanelService(self.session, session)
                 config = await service.get_config(user, AccessType.VLESS_REALITY)
+                #logger.debug(config.security.__class__)
                 if config is None:
                     logger.debug("config is None")
                     continue

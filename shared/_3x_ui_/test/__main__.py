@@ -3,11 +3,9 @@
 import asyncio
 from time import sleep
 
-from shared._3x_ui_ import (
-    PanelRepository,
-    Service,
-    server_session_manager,
-)
+from ..repository import PanelRepository
+from ..service import Service
+from ..session_manager import server_session_manager
 from shared.database import (
     PanelServerRepository,
     ServerRepository,
@@ -27,10 +25,8 @@ async def main():
         user = (await ur.get_all())[0]
         async with server_session_manager.get_session(server) as server_session:
             service = Service(db_session, server_session)
-            await service.get_config(user)
-            await service.set_enable(user, False, AccessType.HTTP)
-            sleep(5)
-            await service.set_enable(user, True, AccessType.HTTP)
+            config = await service.get_config(user, AccessType.VLESS_REALITY, create_if_not_exists=True)
+            print(config.create_string())
 
 if __name__ == "__main__":
     asyncio.run(main())
