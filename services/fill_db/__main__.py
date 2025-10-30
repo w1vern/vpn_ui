@@ -104,7 +104,13 @@ async def main() -> None:
                 port_generator_port=pserver["port_generator_port"],
                 web_path=pserver["web_path"],
                 login=pserver["login"],
-                password=pserver["password"])
+                password=pserver["password"],
+                vless_reality_id=pserver["vless_reality_id"],
+                vless_reality_port=pserver["vless_reality_port"],
+                vless_reality_domain_short_id=pserver["vless_reality_domain_short_id"],
+                vless_reality_public_key=pserver["vless_reality_public_key"],
+                vless_reality_private_key=pserver["vless_reality_private_key"]
+            )
 
         logger.info("database is filled")
 
