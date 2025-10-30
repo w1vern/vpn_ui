@@ -91,18 +91,23 @@ class PanelServerRepository(BaseRepository[PanelServer]):
 
     async def update_vpn(self,
                          server: PanelServer,
-                         id: int,
-                         port: int,
-                         domain_short_id: str,
                          vpn_type: VpnType,
-                         public_key: str = "",
-                         private_key: str = ""
+                         id: int | None = None,
+                         port: int | None = None,
+                         domain_short_id: str | None = None,
+                         public_key: str | None = None,
+                         private_key: str | None = None
                          ) -> None:
-        setattr(server, vpn_type.value, id)
-        setattr(server, f"{vpn_type.value[:-3]}_port", port)
-        setattr(server,
-                f"{vpn_type.value[:-3]}_domain_short_id", domain_short_id)
+        if id is not None:
+            setattr(server, vpn_type.value, id)
+        if port is not None:
+            setattr(server, f"{vpn_type.value[:-3]}_port", port)
+        if domain_short_id is not None:
+            setattr(server,
+                    f"{vpn_type.value[:-3]}_domain_short_id", domain_short_id)
         if vpn_type == VpnType.VLESS_REALITY:
-            setattr(server, f"{vpn_type.value[:-3]}_public_key", public_key)
-            setattr(server, f"{vpn_type.value[:-3]}_private_key", private_key)
+            if public_key is not None:
+                setattr(server, f"{vpn_type.value[:-3]}_public_key", public_key)
+            if private_key is not None:
+                setattr(server, f"{vpn_type.value[:-3]}_private_key", private_key)
         await self.session.flush()

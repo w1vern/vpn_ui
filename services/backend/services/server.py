@@ -9,6 +9,7 @@ from shared.database import (
     ServerRepository,
     UserRepository
 )
+from shared.proxy_interface import VpnType
 
 from ..exceptions import (
     NotServerEditorException,
@@ -30,13 +31,14 @@ from .depends import (
 
 
 class ServerService:
-    def __init__(self,
-                 session: AsyncSession,
-                 ur: UserRepository,
-                 sr: ServerRepository,
-                 psr: PanelServerRepository,
-                 user_schema: UserSchema
-                 ) -> None:
+    def __init__(
+        self,
+            session: AsyncSession,
+            ur: UserRepository,
+            sr: ServerRepository,
+            psr: PanelServerRepository,
+            user_schema: UserSchema
+    ) -> None:
         self.session = session
         self.ur = ur
         self.sr = sr
@@ -44,13 +46,14 @@ class ServerService:
         self.user_schema = user_schema
 
     @classmethod
-    def depends(cls,
-                session: AsyncSession = Depends(get_session),
-                ur: UserRepository = Depends(get_user_repo),
-                sr: ServerRepository = Depends(get_server_repo),
-                psr: PanelServerRepository = Depends(get_panel_server_repo),
-                user_schema: UserSchema = Depends(get_user)
-                ) -> 'ServerService':
+    def depends(
+        cls,
+        session: AsyncSession = Depends(get_session),
+        ur: UserRepository = Depends(get_user_repo),
+        sr: ServerRepository = Depends(get_server_repo),
+        psr: PanelServerRepository = Depends(get_panel_server_repo),
+        user_schema: UserSchema = Depends(get_user)
+    ) -> 'ServerService':
         return cls(session, ur, sr, psr, user_schema)
 
     async def all(self) -> list[ServerSchema]:
@@ -61,20 +64,28 @@ class ServerService:
                      ) -> None:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
-        server = await self.sr.create(ip=server_to_create.ip,
-                                      description=server_to_create.description,
-                                      country_code=server_to_create.country_code,
-                                      is_available=server_to_create.is_available,
-                                      display_name=server_to_create.display_name,
-                                      starting_date=server_to_create.starting_date.replace(
-                                          tzinfo=None),
-                                      closing_date=server_to_create.closing_date.replace(tzinfo=None))
-        pserver = await self.psr.create(server=server,
-                                        panel_port=server_to_create.panel_port,
-                                        port_generator_port=server_to_create.port_generator_port,
-                                        web_path=server_to_create.web_path,
-                                        login=server_to_create.login,
-                                        password=server_to_create.password)
+        server = await self.sr.create(
+            ip=server_to_create.ip,
+            description=server_to_create.description,
+            country_code=server_to_create.country_code,
+            is_available=server_to_create.is_available,
+            display_name=server_to_create.display_name,
+            starting_date=server_to_create.starting_date.replace(
+                tzinfo=None),
+            closing_date=server_to_create.closing_date.replace(tzinfo=None))
+        pserver = await self.psr.create(
+            server=server,
+            panel_port=server_to_create.panel_port,
+            port_generator_port=server_to_create.port_generator_port,
+            web_path=server_to_create.web_path,
+            login=server_to_create.login,
+            password=server_to_create.password,
+            vless_reality_id=server_to_create.vless_reality_id,
+            vless_reality_port=server_to_create.vless_reality_port,
+            vless_reality_domain_short_id=server_to_create.vless_reality_domain_short_id,
+            vless_reality_public_key=server_to_create.vless_reality_public_key,
+            vless_reality_private_key=server_to_create.vless_reality_private_key
+        )
 
     async def edit(self,
                    server_id: UUID,
@@ -112,3 +123,12 @@ class ServerService:
             await self.psr.set_web_path(pserver, server_to_edit.web_path)
         if server_to_edit.description is not None:
             await self.sr.set_description(server, server_to_edit.description)
+        await self.psr.update_vpn(
+            server=pserver,
+            vpn_type=VpnType.VLESS_REALITY,
+            id=server_to_edit.vless_reality_id,
+            port=server_to_edit.vless_reality_port,
+            domain_short_id=server_to_edit.vless_reality_domain_short_id,
+            public_key=server_to_edit.vless_reality_public_key,
+            private_key=server_to_edit.vless_reality_private_key
+        )

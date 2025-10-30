@@ -152,25 +152,24 @@ class Service():
         if user is None:
             raise SendFeedbackToAdminException()
         pservers = await self.psr.get_all()
-        inbounds: list[ServerUserInbound] = []
+        configs: list[AccessConfig] = []
         for pserver in pservers:
             server = pserver.server
             if not server.is_available:
                 continue
-            inbound = await self.suir.get_by_server_and_user(server, user)
-            if len(inbound) == 0:
-                async with server_session_manager.get_session(pserver) as session:
-                    config = await PanelService(self.session, session
-                                                ).get_config(user, AccessType.VLESS_REALITY)
-                    if config is None:
-                        logger.debug("config is None")
-                        continue
-                inbound = await self.suir.create(server, user, config)
-            else:
-                inbound = inbound[0]
-            inbounds.append(inbound)
+            #inbound = await self.suir.get_by_server_and_user(server, user)
+            #if len(inbound) == 0:
+            async with server_session_manager.get_session(pserver) as session:
+                service = PanelService(self.session, session)
+                config = await service.get_config(user, AccessType.VLESS_REALITY)
+                if config is None:
+                    logger.debug("config is None")
+                    continue
+            #else:
+                #inbound = inbound[0]
+            configs.append(config)
         self.main_message.text = [
-            f"```\n{inbound.config.create_string()}\n```" for inbound in inbounds]
+            f"```\n{config.create_string()}\n```" for config in configs]
         self.main_message.text.append(I18nMessage(MessageKey.inbounds_menu
                                                   ).render(self.user_info.lang_code))
         self.main_message.buttons = inbounds_keyboard()

@@ -24,6 +24,12 @@ class ServerSchema(BaseModel):
     login: str
     password: str
 
+    vless_reality_id: int
+    vless_reality_port: int
+    vless_reality_domain_short_id: str
+    vless_reality_public_key: str
+    vless_reality_private_key: str
+
     @classmethod
     def from_db(cls,
                 server: PanelServer
@@ -41,7 +47,12 @@ class ServerSchema(BaseModel):
             port_generator_port=server.port_generator_port,
             web_path=server.web_path,
             login=server.login,
-            password=server.password
+            password=server.password,
+            vless_reality_id=server.vless_reality_id,
+            vless_reality_port=server.vless_reality_port,
+            vless_reality_domain_short_id=server.vless_reality_domain_short_id,
+            vless_reality_public_key=server.vless_reality_public_key,
+            vless_reality_private_key=server.vless_reality_private_key
         )
 
 
@@ -60,6 +71,12 @@ class ServerToEditSchema(BaseModel):
     login: str | None = None
     password: str | None = None
 
+    vless_reality_id: int | None = None
+    vless_reality_port: int | None = None
+    vless_reality_domain_short_id: str | None = None
+    vless_reality_public_key: str | None = None
+    vless_reality_private_key: str | None = None
+
 
 class CreateServerSchema(BaseModel):
     ip: str
@@ -74,3 +91,9 @@ class CreateServerSchema(BaseModel):
     password: str
     starting_date: datetime
     closing_date: datetime
+
+    vless_reality_id: int
+    vless_reality_port: int
+    vless_reality_domain_short_id: str
+    vless_reality_public_key: str
+    vless_reality_private_key: str
