@@ -38,7 +38,7 @@ async def create(base_url: str,
     check_response(base_url, "POST", response)
 
 
-async def get(base_url: str,
+async def get_all(base_url: str,
               httpx_client: AsyncClient
               ) -> UUID:
     response = await httpx_client.get(base_url)
@@ -55,10 +55,18 @@ async def patch(server_id: UUID,
     })
     check_response(f"{base_url}/{server_id}", "PATCH", response)
 
+async def get(server_id: UUID,
+              base_url: str,
+              httpx_client: AsyncClient
+              ) -> None:
+    response = await httpx_client.get(f"{base_url}/{server_id}")
+    check_response(base_url, "GET", response)
+
 
 async def server_test(base_url: str,
                       httpx_client: AsyncClient
                       ) -> None:
     await create(base_url, httpx_client)
-    id = await get(base_url, httpx_client)
+    id = await get_all(base_url, httpx_client)
+    await get(id, base_url, httpx_client)
     await patch(id, base_url, httpx_client)

@@ -38,6 +38,13 @@ async def me(base_url: str,
     check_response(base_url + "/me", "GET", response)
     return response.json()["id"]
 
+async def get(user_id: UUID,
+              base_url: str,
+              httpx_client: AsyncClient
+              ) -> None:
+    response = await httpx_client.get(f"{base_url}/{user_id}")
+    check_response(base_url, "GET", response)
+
 
 async def user_test(base_url: str,
                     httpx_client: AsyncClient
@@ -45,5 +52,6 @@ async def user_test(base_url: str,
     await get_all(base_url, httpx_client)
     await count(base_url, httpx_client)
     id = await me(base_url, httpx_client)
+    await get(id, base_url, httpx_client)
     await patch(base_url, id, httpx_client)
     return id

@@ -3,9 +3,6 @@
 import asyncio
 from time import sleep
 
-from ..repository import PanelRepository
-from ..service import Service
-from ..session_manager import server_session_manager
 from shared.database import (
     PanelServerRepository,
     ServerRepository,
@@ -15,6 +12,10 @@ from shared.database import (
 from shared.proxy_interface import (
     AccessType,
 )
+
+from ..repository import PanelRepository
+from ..service import Service
+from ..session_manager import server_session_manager
 
 
 async def main():
