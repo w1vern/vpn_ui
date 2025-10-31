@@ -35,17 +35,6 @@ async def all(
 
 
 @router.get(
-    path="/{user_id}",
-    summary=""
-)
-async def get_user(
-    user_id: UUID,
-    user_service: UserService = Depends(UserService.depends)
-) -> UserSchema:
-    return await user_service.get(user_id)
-
-
-@router.get(
     path="/count",
     summary="Get users count"
 )
@@ -74,3 +63,14 @@ async def get_self_info(
     user_service: UserService = Depends(UserService.depends)
 ) -> UserSchema:
     return await user_service.get_self_info()
+
+
+@router.get(
+    path="/{user_id}",
+    summary=""
+)
+async def get_user(
+    user_id: UUID,
+    user_service: UserService = Depends(UserService.depends)
+) -> UserSchema:
+    return await user_service.get(user_id)
