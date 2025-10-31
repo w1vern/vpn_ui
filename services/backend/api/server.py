@@ -24,7 +24,10 @@ async def get_all(
 ) -> list[ServerSchema]:
     return await server_service.all()
 
-
+@router.get(
+    path="/{server_id}",
+    summary="Get server by id"
+)
 async def get_server(
     server_id: UUID,
     server_service: ServerService = Depends(ServerService.depends)
