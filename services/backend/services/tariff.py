@@ -25,35 +25,41 @@ from .depends import (
 
 
 class TariffService:
-    def __init__(self,
-                 session: AsyncSession,
-                 tr: TariffRepository,
-                 user_schema: UserSchema
-                 ) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        tr: TariffRepository,
+        user_schema: UserSchema
+    ) -> None:
         self.session = session
         self.tr = tr
         self.user_schema = user_schema
 
     @classmethod
-    def depends(cls,
-                session: AsyncSession = Depends(get_session),
-                tr: TariffRepository = Depends(get_tariff_repo),
-                user_schema: UserSchema = Depends(get_user)
-                ) -> 'TariffService':
+    def depends(
+        cls,
+        session: AsyncSession = Depends(get_session),
+        tr: TariffRepository = Depends(get_tariff_repo),
+        user_schema: UserSchema = Depends(get_user)
+    ) -> 'TariffService':
         return cls(session, tr, user_schema)
 
     async def all(self) -> list[TariffSchema]:
         return [TariffSchema.from_db(t) for t in await self.tr.get_all()]
 
-    async def get(self, tariff_id: UUID) -> TariffSchema:
+    async def get(
+        self,
+        tariff_id: UUID
+    ) -> TariffSchema:
         tariff = await self.tr.get_by_id(tariff_id)
         if tariff is None:
             raise TariffNotFoundException()
         return TariffSchema.from_db(tariff)
 
-    async def create(self,
-                     create_tariff_schema: CreateTariffSchema
-                     ) -> None:
+    async def create(
+        self,
+        create_tariff_schema: CreateTariffSchema
+    ) -> None:
         if self.user_schema.rights.is_tariff_editor is False:
             raise NotTariffEditorException()
         await self.tr.create(
@@ -66,7 +72,10 @@ class TariffService:
             is_special=create_tariff_schema.is_special
         )
 
-    async def delete(self, tariff_id: UUID) -> None:
+    async def delete(
+        self,
+        tariff_id: UUID
+    ) -> None:
         if self.user_schema.rights.is_tariff_editor is False:
             raise NotTariffEditorException()
         tariff = await self.tr.get_by_id(tariff_id)
@@ -74,7 +83,11 @@ class TariffService:
             raise TariffNotFoundException()
         await self.tr.delete(tariff)
 
-    async def edit(self, tariff_id: UUID, edited_tariff: EditTariffSchema) -> None:
+    async def edit(
+        self,
+        tariff_id: UUID,
+        edited_tariff: EditTariffSchema
+    ) -> None:
         if self.user_schema.rights.is_tariff_editor is False:
             raise NotTariffEditorException()
         tariff = await self.tr.get_by_id(tariff_id)

@@ -9,19 +9,24 @@ from .depends import get_user
 
 
 class NotificationService:
-    def __init__(self,
-                 broker: RabbitBroker,
-                 user_schema: UserSchema
-                 ) -> None:
+    def __init__(
+        self,
+        broker: RabbitBroker,
+        user_schema: UserSchema
+    ) -> None:
         self.user_schema = user_schema
         self.broker = broker
 
     @classmethod
-    async def depends(cls,
-                      broker: RabbitBroker = Depends(get_broker),
-                      user_schema: UserSchema = Depends(get_user)
-                      ) -> 'NotificationService':
+    async def depends(
+        cls,
+        broker: RabbitBroker = Depends(get_broker),
+        user_schema: UserSchema = Depends(get_user)
+    ) -> 'NotificationService':
         return cls(broker, user_schema)
 
-    async def send(self, notification: Notification) -> None:
+    async def send(
+        self,
+        notification: Notification
+    ) -> None:
         await send_tg_notification(notification.data, self.user_schema, self.broker)

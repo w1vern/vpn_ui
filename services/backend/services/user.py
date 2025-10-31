@@ -21,37 +21,47 @@ from .depends import (
 
 
 class UserService:
-    def __init__(self,
-                 session: AsyncSession,
-                 ur: UserRepository,
-                 user_schema: UserSchema
-                 ) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        ur: UserRepository,
+        user_schema: UserSchema
+    ) -> None:
         self.session = session
         self.ur = ur
         self.user_schema = user_schema
 
     @classmethod
-    def depends(cls,
-                session: AsyncSession = Depends(get_session),
-                ur: UserRepository = Depends(get_user_repo),
-                user_schema: UserSchema = Depends(get_user)
-                ) -> 'UserService':
+    def depends(
+        cls,
+        session: AsyncSession = Depends(get_session),
+        ur: UserRepository = Depends(get_user_repo),
+        user_schema: UserSchema = Depends(get_user)
+    ) -> 'UserService':
         return cls(session, ur, user_schema)
 
-    async def all(self,
-                  limit: int | None,
-                  offset: int | None
-                  ) -> list[UserSchema]:
+    async def all(
+        self,
+        limit: int | None,
+        offset: int | None
+    ) -> list[UserSchema]:
         return [UserSchema.from_db(u)
                 for u in await self.ur.get_all(limit, offset)]
 
     async def count(self) -> int:
         return await self.ur.count()
 
-    async def edit(self,
-                   user_id: UUID,
-                   edited_user: EditUserSchema
-                   ) -> None:  # TODO: analyze: mb need to fix
+    async def get(self, user_id: UUID) -> UserSchema:
+        user = await self.ur.get_by_id(user_id)
+        if user is None:
+            raise UserNotFoundException()
+        return UserSchema.from_db(user)
+
+    async def edit(
+        self,
+            user_id: UUID,
+            edited_user: EditUserSchema
+    ) -> None:  # TODO: analyze: mb need to fix
         user = await self.ur.get_by_id(user_id)
         if user is None:
             raise UserNotFoundException()

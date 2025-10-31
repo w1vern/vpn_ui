@@ -13,9 +13,10 @@ router = APIRouter(prefix="/auth", tags=["auth"])
     path="/refresh",
     summary="Refresh the access token"
 )
-async def refresh(refresh_token: str | None = Cookie(None),
-                  auth_service: AuthService = Depends(AuthService.depends)
-                  ) -> SuccessResponse:
+async def refresh(
+    refresh_token: str | None = Cookie(None),
+    auth_service: AuthService = Depends(AuthService.depends)
+) -> SuccessResponse:
     response = SuccessResponse()
     access = await auth_service.refresh(refresh_token)
     response.set_cookie("access_token", access,
@@ -27,9 +28,10 @@ async def refresh(refresh_token: str | None = Cookie(None),
     path="/login",
     summary="Login using Telegram authentication"
 )
-async def login(tg_auth: TgAuth,
-                auth_service: AuthService = Depends(AuthService.depends)
-                ) -> SuccessResponse:
+async def login(
+    tg_auth: TgAuth,
+    auth_service: AuthService = Depends(AuthService.depends)
+) -> SuccessResponse:
     refresh, access = await auth_service.login(tg_auth)
     response = SuccessResponse()
     response.set_cookie(key="refresh_token", value=refresh,
@@ -54,8 +56,9 @@ async def logout() -> SuccessResponse:
     path="/tg_code",
     summary="Send a Telegram login code"
 )
-async def tg_code(tg_id: TgId,
-                  auth_service: AuthService = Depends(AuthService.depends)
-                  ) -> SuccessResponse:
+async def tg_code(
+    tg_id: TgId,
+    auth_service: AuthService = Depends(AuthService.depends)
+) -> SuccessResponse:
     await auth_service.send_code(tg_id)
     return SuccessResponse()

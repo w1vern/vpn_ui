@@ -25,11 +25,12 @@ router = APIRouter(prefix="/tickets", tags=["tickets"])
     path="/{ticket_id}/messages",
     summary="Add a new message to an existing ticket"
 )
-async def new_message_ticket(ticket_id: UUID,
-                             message: TicketMessageCreateSchema,
-                             ticket_service: TicketService = Depends(
-                                 TicketService.depends)
-                             ) -> SuccessResponse:
+async def new_message_ticket(
+    ticket_id: UUID,
+    message: TicketMessageCreateSchema,
+    ticket_service: TicketService = Depends(
+        TicketService.depends)
+) -> SuccessResponse:
     await ticket_service.new_message(ticket_id, message)
     return SuccessResponse()
 
@@ -38,8 +39,9 @@ async def new_message_ticket(ticket_id: UUID,
     path="",
     summary="Get all feedback tickets"
 )
-async def get_all_tickets(ticket_service: TicketService = Depends(TicketService.depends)
-                          ) -> list[TicketSchema]:
+async def get_all_tickets(
+    ticket_service: TicketService = Depends(TicketService.depends)
+) -> list[TicketSchema]:
     return await ticket_service.all()
 
 
@@ -47,10 +49,11 @@ async def get_all_tickets(ticket_service: TicketService = Depends(TicketService.
     path="/{ticket_id}",
     summary="Get an existing feedback ticket with its messages"
 )
-async def get_ticket(ticket_id: UUID,
-                     ticket_service: TicketService = Depends(
-                         TicketService.depends)
-                     ) -> TicketSchema:
+async def get_ticket(
+    ticket_id: UUID,
+    ticket_service: TicketService = Depends(
+        TicketService.depends)
+) -> TicketSchema:
     return await ticket_service.get(ticket_id)
 
 
@@ -58,9 +61,10 @@ async def get_ticket(ticket_id: UUID,
     path="/{ticket_id}/close",
     summary="Close an existing feedback ticket"
 )
-async def close_ticket(ticket_id: UUID,
-                       ticket_service: TicketService = Depends(
-                           TicketService.depends)
-                       ) -> SuccessResponse:
+async def close_ticket(
+    ticket_id: UUID,
+    ticket_service: TicketService = Depends(
+        TicketService.depends)
+) -> SuccessResponse:
     await ticket_service.close(ticket_id)
     return SuccessResponse()

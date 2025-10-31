@@ -26,31 +26,35 @@ from .depends import get_user_repo
 
 
 class AuthService:
-    def __init__(self,
-                 ur: UserRepository,
-                 redis: Redis,
-                 broker: RabbitBroker,
-                 anti_spam: AntiSpamService):
+    def __init__(
+        self,
+        ur: UserRepository,
+        redis: Redis,
+        broker: RabbitBroker,
+        anti_spam: AntiSpamService
+    ) -> None:
         self.ur = ur
         self.redis = redis
         self.broker = broker
         self.anti_spam = anti_spam
 
     @classmethod
-    def depends(cls,
-                ur: UserRepository = Depends(get_user_repo),
-                redis: Redis = Depends(get_redis_client),
-                broker: RabbitBroker = Depends(get_broker),
-                anti_spam: AntiSpamService = Depends(AntiSpamService.depends)
-                ) -> 'AuthService':
+    def depends(
+        cls,
+        ur: UserRepository = Depends(get_user_repo),
+        redis: Redis = Depends(get_redis_client),
+        broker: RabbitBroker = Depends(get_broker),
+        anti_spam: AntiSpamService = Depends(AntiSpamService.depends)
+    ) -> 'AuthService':
         return cls(ur, redis, broker, anti_spam)
 
     async def __create_code(self) -> str:
         return f"{random.randint(0, 999999):06}"
 
-    async def login(self,
-                    tg_auth: TgAuth
-                    ) -> tuple[str, str]:
+    async def login(
+        self,
+        tg_auth: TgAuth
+    ) -> tuple[str, str]:
 
         await self.anti_spam.increment_ip_attempts()
         await self.anti_spam.check_login_lock(tg_auth.tg_id)
@@ -75,9 +79,10 @@ class AuthService:
 
         return refresh, access
 
-    async def refresh(self,
-                      refresh_token: str | None,
-                      ) -> str:
+    async def refresh(
+        self,
+        refresh_token: str | None,
+    ) -> str:
         if refresh_token is None:
             raise RefreshTokenMissingException()
 
@@ -94,9 +99,10 @@ class AuthService:
         access = AccessToken(user, now).to_token()
         return access
 
-    async def send_code(self,
-                        tg_id: TgId,
-                        ) -> None:
+    async def send_code(
+        self,
+        tg_id: TgId,
+    ) -> None:
         await self.anti_spam.increment_ip_attempts()
 
         user = await self.ur.get_by_telegram_id(tg_id.tg_id)

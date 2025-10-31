@@ -33,11 +33,11 @@ from .depends import (
 class ServerService:
     def __init__(
         self,
-            session: AsyncSession,
-            ur: UserRepository,
-            sr: ServerRepository,
-            psr: PanelServerRepository,
-            user_schema: UserSchema
+        session: AsyncSession,
+        ur: UserRepository,
+        sr: ServerRepository,
+        psr: PanelServerRepository,
+        user_schema: UserSchema
     ) -> None:
         self.session = session
         self.ur = ur
@@ -59,9 +59,19 @@ class ServerService:
     async def all(self) -> list[ServerSchema]:
         return [ServerSchema.from_db(s) for s in await self.psr.get_all()]
 
-    async def create(self,
-                     server_to_create: CreateServerSchema
-                     ) -> None:
+    async def get(
+        self,
+        server_id: UUID
+    ) -> ServerSchema:
+        server = await self.psr.get_by_id(server_id)
+        if server is None:
+            raise ServerNotFoundException()
+        return ServerSchema.from_db(server)
+
+    async def create(
+        self,
+        server_to_create: CreateServerSchema
+    ) -> None:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
         server = await self.sr.create(
@@ -87,10 +97,11 @@ class ServerService:
             vless_reality_private_key=server_to_create.vless_reality_private_key
         )
 
-    async def edit(self,
-                   server_id: UUID,
-                   server_to_edit: ServerToEditSchema
-                   ) -> None:
+    async def edit(
+        self,
+        server_id: UUID,
+        server_to_edit: ServerToEditSchema
+    ) -> None:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
         server = await self.sr.get_by_id(server_id)
