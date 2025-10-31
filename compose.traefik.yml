@@ -1,5 +1,7 @@
 services:
   nginx:
+    ports: !reset
+      - ${NGINX_PORT}:80
     labels: 
       - traefik.enable=true
       - traefik.http.services.${NETWORK_NAME}.loadbalancer.server.port=80
