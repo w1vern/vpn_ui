@@ -26,7 +26,6 @@ async def main():
         async with server_session_manager.get_session(server) as server_session:
             service = Service(db_session, server_session)
             config = await service.get_config(user, AccessType.VLESS_REALITY, create_if_not_exists=True)
-            print(config.create_string())
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -1,5 +1,4 @@
 
-
 import abc
 
 from shared.database.models.user import User

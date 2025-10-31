@@ -92,7 +92,7 @@ async def main() -> None:
             raise Exception("tariff not created")
 
         for user in default_users:
-            await ur.create(**{**user, **{"tariff_id": str(_.id)}})
+            await ur.create(**{**user, **{"tariff_id": str(_.id)}}) # type: ignore
         sr = ServerRepository(session)
         psr = PanelServerRepository(session)
         for i in range(len(default_servers)):
