@@ -83,6 +83,7 @@ class BaseRepository(Generic[ModelType]):
             .where(and_(*self.__build_filters(**kwargs)))
             .limit(limit)
             .offset(offset)
+            .order_by(self.model.created_date.desc(), self.model.id.asc())
         )
         return list((await self.session.scalars(stmt)).all())
 

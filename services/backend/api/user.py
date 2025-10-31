@@ -31,7 +31,7 @@ async def all(
                               description="Number of items to return"),
     user_service: UserService = Depends(UserService.depends)
 ) -> list[UserSchema]:
-    return await user_service.all(offset, limit)
+    return await user_service.all(limit, offset)
 
 
 @router.get(

@@ -56,8 +56,15 @@ class ServerService:
     ) -> 'ServerService':
         return cls(session, ur, sr, psr, user_schema)
 
-    async def all(self) -> list[ServerSchema]:
-        return [ServerSchema.from_db(s) for s in await self.psr.get_all()]
+    async def all(
+        self,
+        limit: int | None,
+        offset: int | None
+    ) -> list[ServerSchema]:
+        return [ServerSchema.from_db(s) for s in await self.psr.get_all(limit, offset)]
+
+    async def count(self) -> int:
+        return await self.sr.count()
 
     async def get(
         self,

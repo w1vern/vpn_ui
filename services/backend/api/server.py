@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from ..response import SuccessResponse
 from ..schemas import (
@@ -20,9 +20,26 @@ router = APIRouter(prefix="/servers", tags=["servers"])
     summary="Get all servers"
 )
 async def get_all(
+    offset: int | None = Query(None,
+                               ge=0,
+                               description="From which index to start"),
+    limit: int | None = Query(None,
+                              ge=1,
+                              description="Number of items to return"),
     server_service: ServerService = Depends(ServerService.depends)
 ) -> list[ServerSchema]:
-    return await server_service.all()
+    return await server_service.all(limit, offset)
+
+
+@router.get(
+    path="/count",
+    summary="Get servers count"
+)
+async def count(
+    server_service: ServerService = Depends(ServerService.depends)
+) -> int:
+    return await server_service.count()
+
 
 @router.get(
     path="/{server_id}",
