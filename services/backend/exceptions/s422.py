@@ -1,7 +1,7 @@
 
-from .base import BaseCustomHTTPException
+from .base import BaseUnprocessableEntityException
 
 
-class InvalidDateFormatException(BaseCustomHTTPException):
+class InvalidDateFormatException(BaseUnprocessableEntityException):
     def __init__(self) -> None:
-        super().__init__(422, "Invalid date format")
+        super().__init__("Invalid date format")

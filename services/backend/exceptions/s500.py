@@ -2,10 +2,10 @@
 import inspect
 import traceback
 
-from .base import BaseCustomHTTPException
+from .base import BaseInternalServerErrorException
 
 
-class SendFeedbackToAdminException(BaseCustomHTTPException):
+class SendFeedbackToAdminException(BaseInternalServerErrorException):
     def __init__(self) -> None:
         current_frame = inspect.currentframe()
         message = ""
@@ -19,7 +19,7 @@ class SendFeedbackToAdminException(BaseCustomHTTPException):
         stack_trace = "".join(traceback.format_stack())
         message += f"Stack Trace:\n{stack_trace}"
 
-        super().__init__(500, "".join([
+        super().__init__("".join([
             "Interesting error occurred.",
             "Please contact the administrator for assistance.",
             "\n\nAdditional information:\n",

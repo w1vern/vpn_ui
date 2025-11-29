@@ -1,83 +1,82 @@
 
-from .base import BaseCustomHTTPException
+from .base import BaseUnauthorizedException
 
 
-class AccessTokenMissingException(BaseCustomHTTPException):
+class AccessTokenMissingException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Access token is missing")
+        super().__init__("Access token is missing")
 
 
-class AccessTokenExpiredException(BaseCustomHTTPException):
+class AccessTokenExpiredException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Access token has expired")
+        super().__init__("Access token has expired")
 
 
-class AccessTokenInvalidatedException(BaseCustomHTTPException):
+class AccessTokenInvalidatedException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Access token is invalidated")
+        super().__init__("Access token is invalidated")
 
 
-class AccessTokenCorruptedException(BaseCustomHTTPException):
+class AccessTokenCorruptedException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Access token is corrupted")
+        super().__init__("Access token is corrupted")
 
 
-class RefreshTokenMissingException(BaseCustomHTTPException):
+class RefreshTokenMissingException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Refresh token is missing")
+        super().__init__("Refresh token is missing")
 
 
-class RefreshTokenExpiredException(BaseCustomHTTPException):
+class RefreshTokenExpiredException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Refresh token has expired")
+        super().__init__("Refresh token has expired")
 
 
-class RefreshTokenInvalidException(BaseCustomHTTPException):
+class RefreshTokenInvalidException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Invalid refresh token")
+        super().__init__("Invalid refresh token")
 
 
-class LoginLockedException(BaseCustomHTTPException):
+class LoginLockedException(BaseUnauthorizedException):
     def __init__(self, seconds: int) -> None:
-        super().__init__(401, f"Login is locked for {seconds} seconds")
+        super().__init__(f"Login is locked for {seconds} seconds")
 
 
-class TooManyAttemptsFromIPException(BaseCustomHTTPException):
+class TooManyAttemptsFromIPException(BaseUnauthorizedException):
     def __init__(self, ip: str) -> None:
-        super().__init__(
-            401, f"Too many incorrect login attempts from IP: {ip}")
+        super().__init__(f"Too many incorrect login attempts from IP: {ip}")
 
 
-class CodeNotFoundException(BaseCustomHTTPException):
+class CodeNotFoundException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Telegram code not found")
+        super().__init__("Telegram code not found")
 
 
-class UserNotFoundException(BaseCustomHTTPException):
+class UserNotFoundException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "User not found")
+        super().__init__("User not found")
 
 
-class InvalidCredentialsException(BaseCustomHTTPException):
+class InvalidCredentialsException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Invalid credentials")
+        super().__init__("Invalid credentials")
 
 
-class UnauthorizedLogoutException(BaseCustomHTTPException):
+class UnauthorizedLogoutException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Unauthorized logout attempt")
+        super().__init__("Unauthorized logout attempt")
 
 
-class TooSoonToSendCodeException(BaseCustomHTTPException):
+class TooSoonToSendCodeException(BaseUnauthorizedException):
     def __init__(self, seconds: int) -> None:
-        super().__init__(401, f"New code can be sent in {seconds} seconds")
+        super().__init__(f"New code can be sent in {seconds} seconds")
 
 
-class AuthIntegrityException(BaseCustomHTTPException):
+class AuthIntegrityException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Authentication integrity check failed. Contact administrator.")
+        super().__init__("Authentication integrity check failed. Contact administrator.")
 
 
-class RequestClientException(BaseCustomHTTPException):
+class RequestClientException(BaseUnauthorizedException):
     def __init__(self) -> None:
-        super().__init__(401, "Request client not found")
+        super().__init__("Request client not found")

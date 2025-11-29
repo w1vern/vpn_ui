@@ -1,35 +1,37 @@
 
-from .base import BaseCustomHTTPException
+from .base import BaseNotFoundException
 
 
-class ServerNotFoundException(BaseCustomHTTPException):
+class ServerNotFoundException(BaseNotFoundException):
     def __init__(self) -> None:
-        super().__init__(404, "Server not found")
+        super().__init__("Server not found")
 
 
-class TargetUserNotFoundException(BaseCustomHTTPException):
+class TargetUserNotFoundException(BaseNotFoundException):
     def __init__(self) -> None:
-        super().__init__(404, "Target user does not exist")
+        super().__init__("Target user does not exist")
 
 
-class TransactionTypeNotFoundException(BaseCustomHTTPException):
+class TransactionTypeNotFoundException(BaseNotFoundException):
     def __init__(self) -> None:
-        super().__init__(404, "Transaction type does not exist")
+        super().__init__("Transaction type does not exist")
 
 
-class TicketNotFoundException(BaseCustomHTTPException):
+class TicketNotFoundException(BaseNotFoundException):
     def __init__(self) -> None:
-        super().__init__(404, "Ticket not found")
+        super().__init__("Ticket not found")
 
 
-class UserNotFoundException(BaseCustomHTTPException):
+class UserNotFoundException(BaseNotFoundException):
     def __init__(self) -> None:
-        super().__init__(404, "User not found")
+        super().__init__("User not found")
 
-class TransactionNotFoundException(BaseCustomHTTPException):
-    def __init__(self) -> None:
-        super().__init__(404, "Transaction not found")
 
-class TariffNotFoundException(BaseCustomHTTPException):
+class TransactionNotFoundException(BaseNotFoundException):
     def __init__(self) -> None:
-        super().__init__(404, "Tariff not found")
+        super().__init__("Transaction not found")
+
+
+class TariffNotFoundException(BaseNotFoundException):
+    def __init__(self) -> None:
+        super().__init__("Tariff not found")

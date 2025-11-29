@@ -1,24 +1,22 @@
 
-from .base import (
-    BaseCustomHTTPException,
-)
+from .base import BaseBadRequestException
 
 
-class PasswordsDoNotMatchException(BaseCustomHTTPException):
+class PasswordsDoNotMatchException(BaseBadRequestException):
     def __init__(self) -> None:
-        super().__init__(400, "Passwords do not match")
+        super().__init__("Passwords do not match")
 
 
-class ServerAlreadyExistsException(BaseCustomHTTPException):
+class ServerAlreadyExistsException(BaseBadRequestException):
     def __init__(self) -> None:
-        super().__init__(400, "Server already exists")
+        super().__init__("Server already exists")
 
 
-class ServerCreationFailedException(BaseCustomHTTPException):
+class ServerCreationFailedException(BaseBadRequestException):
     def __init__(self) -> None:
-        super().__init__(400, "Server creation failed")
+        super().__init__("Server creation failed")
 
 
-class InvalidTicketDataException(BaseCustomHTTPException):
+class InvalidTicketDataException(BaseBadRequestException):
     def __init__(self) -> None:
-        super().__init__(400, "Invalid ticket data")
+        super().__init__("Invalid ticket data")

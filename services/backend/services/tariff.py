@@ -9,7 +9,8 @@ from shared.database import TariffRepository
 
 from ..exceptions import (
     NotTariffEditorException,
-    TariffNotFoundException
+    TariffNotFoundException,
+    TariffAlreadyExistsException
 )
 from ..schemas import (
     CreateTariffSchema,
@@ -62,6 +63,9 @@ class TariffService:
     ) -> None:
         if self.user_schema.rights.is_tariff_editor is False:
             raise NotTariffEditorException()
+        tariff = await self.tr.get_by_name(create_tariff_schema.name)
+        if tariff is not None:
+            raise TariffAlreadyExistsException()
         await self.tr.create(
             name=create_tariff_schema.name,
             duration=timedelta(seconds=create_tariff_schema.duration),
@@ -81,6 +85,7 @@ class TariffService:
         tariff = await self.tr.get_by_id(tariff_id)
         if tariff is None:
             raise TariffNotFoundException()
+        tariff.name = f"{tariff.id}:{tariff.name}" 
         await self.tr.delete(tariff)
 
     async def edit(
