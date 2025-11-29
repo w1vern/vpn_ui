@@ -26,17 +26,19 @@ class PanelServer(Base):
     login: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()
 
-    vless_id: Mapped[int] = mapped_column()
-    vless_port: Mapped[int] = mapped_column()
-    vless_domain_short_id: Mapped[str] = mapped_column()
-    vless_reality_id: Mapped[int] = mapped_column()
-    vless_reality_port: Mapped[int] = mapped_column()
-    vless_reality_domain_short_id: Mapped[str] = mapped_column()
-    vless_reality_public_key: Mapped[str] = mapped_column()
-    vless_reality_private_key: Mapped[str] = mapped_column()
-    vmess_id: Mapped[int] = mapped_column()
-    vmess_port: Mapped[int] = mapped_column()
-    vmess_domain_short_id: Mapped[str] = mapped_column()
+    vless_id: Mapped[int | None] = mapped_column(nullable=True)
+    vless_port: Mapped[int | None] = mapped_column(nullable=True)
+    vless_domain_short_id: Mapped[str | None] = mapped_column(nullable=True)
+
+    vless_reality_id: Mapped[int | None] = mapped_column(nullable=True)
+    vless_reality_port: Mapped[int | None] = mapped_column(nullable=True)
+    vless_reality_domain_short_id: Mapped[str | None] = mapped_column(nullable=True)
+    vless_reality_public_key: Mapped[str | None] = mapped_column(nullable=True)
+    vless_reality_private_key: Mapped[str | None] = mapped_column(nullable=True)
+
+    vmess_id: Mapped[int | None] = mapped_column(nullable=True)
+    vmess_port: Mapped[int | None] = mapped_column(nullable=True)
+    vmess_domain_short_id: Mapped[str | None] = mapped_column(nullable=True)
 
     server: Mapped[Server] = relationship(lazy='selectin', foreign_keys=[id])
 
