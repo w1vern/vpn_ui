@@ -1,5 +1,4 @@
 
-
 from datetime import datetime
 from uuid import UUID
 
@@ -24,11 +23,11 @@ class ServerSchema(BaseModel):
     login: str
     password: str
 
-    vless_reality_id: int
-    vless_reality_port: int
-    vless_reality_domain_short_id: str
-    vless_reality_public_key: str
-    vless_reality_private_key: str
+    vless_reality_id: int | None
+    vless_reality_port: int | None
+    vless_reality_domain_short_id: str | None
+    vless_reality_public_key: str | None
+    vless_reality_private_key: str | None
 
     @classmethod
     def from_db(cls,
