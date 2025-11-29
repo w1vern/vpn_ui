@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter, Cookie, Depends
 
-from ..config import Config, SECURE_COOKIES
+from ..config import SECURE_COOKIES, Config
 from ..response import SuccessResponse
 from ..schemas import TgAuth, TgId
 from ..services import AuthService

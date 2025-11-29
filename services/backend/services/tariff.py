@@ -9,8 +9,8 @@ from shared.database import TariffRepository
 
 from ..exceptions import (
     NotTariffEditorException,
-    TariffNotFoundException,
-    TariffAlreadyExistsException
+    TariffAlreadyExistsException,
+    TariffNotFoundException
 )
 from ..schemas import (
     CreateTariffSchema,

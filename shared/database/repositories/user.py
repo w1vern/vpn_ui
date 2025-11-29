@@ -3,9 +3,7 @@ import secrets
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..enums import (
     Rights,
@@ -17,9 +15,7 @@ from ..models import (
     Tariff,
     User,
 )
-from .base import (
-    BaseRepository,
-)
+from .base import BaseRepository
 
 
 class UserRepository(BaseRepository[User]):
@@ -69,7 +65,8 @@ class UserRepository(BaseRepository[User]):
 
     async def update_telegram_id(self,
                                  user: User,
-                                 new_tg_id: int) -> None:
+                                 new_tg_id: int
+                                 ) -> None:
         user.telegram_id = new_tg_id
         await self.session.flush()
 
@@ -86,7 +83,7 @@ class UserRepository(BaseRepository[User]):
                             ) -> None:
         for right, value in updated_rights.items():
             if getattr(user, right) != value:
-                user.rights ^= Rights(right).value
+                user.rights ^= Rights[right].value
         await self.session.flush()
 
     async def update_settings(self,
@@ -95,7 +92,7 @@ class UserRepository(BaseRepository[User]):
                               ) -> None:
         for setting, value in updated_settings.items():
             if getattr(user, setting) != value:
-                user.settings ^= Settings(setting).value
+                user.settings ^= Settings[setting].value
         await self.session.flush()
 
     async def update_secret(self, user: User) -> None:
