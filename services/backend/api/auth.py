@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter, Cookie, Depends
 
-from ..config import Config
+from ..config import Config, SECURE_COOKIES
 from ..response import SuccessResponse
 from ..schemas import TgAuth, TgId
 from ..services import AuthService
@@ -19,8 +19,15 @@ async def refresh(
 ) -> SuccessResponse:
     response = SuccessResponse()
     access = await auth_service.refresh(refresh_token)
-    response.set_cookie("access_token", access,
-                        max_age=Config.access_token_lifetime, httponly=True)
+    response.set_cookie(
+        key="access_token",
+        value=access,
+        max_age=Config.access_token_lifetime,
+        httponly=True,
+        samesite='strict',
+        secure=SECURE_COOKIES,
+        path="/api"
+    )
     return response
 
 
@@ -34,10 +41,23 @@ async def login(
 ) -> SuccessResponse:
     refresh, access = await auth_service.login(tg_auth)
     response = SuccessResponse()
-    response.set_cookie(key="refresh_token", value=refresh,
-                        max_age=Config.refresh_token_lifetime, httponly=True)
-    response.set_cookie(key="access_token", value=access,
-                        max_age=Config.access_token_lifetime, httponly=True)
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh,
+        max_age=Config.refresh_token_lifetime,
+        httponly=True, samesite='strict',
+        secure=SECURE_COOKIES,
+        path="/api/auth/refresh"
+    )
+    response.set_cookie(
+        key="access_token",
+        value=access,
+        max_age=Config.access_token_lifetime,
+        httponly=True,
+        samesite='strict',
+        secure=SECURE_COOKIES,
+        path="/api"
+    )
     return response
 
 
