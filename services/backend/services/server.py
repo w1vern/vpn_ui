@@ -78,7 +78,7 @@ class ServerService:
     async def create(
         self,
         server_to_create: CreateServerSchema
-    ) -> None:
+    ) -> ServerSchema:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
         server = await self.sr.create(
@@ -103,6 +103,7 @@ class ServerService:
             vless_reality_public_key=server_to_create.vless_reality_public_key,
             vless_reality_private_key=server_to_create.vless_reality_private_key
         )
+        return ServerSchema.from_db(pserver)
 
     async def edit(
         self,

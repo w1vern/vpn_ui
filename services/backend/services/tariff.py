@@ -60,13 +60,13 @@ class TariffService:
     async def create(
         self,
         create_tariff_schema: CreateTariffSchema
-    ) -> None:
+    ) -> TariffSchema:
         if self.user_schema.rights.is_tariff_editor is False:
             raise NotTariffEditorException()
         tariff = await self.tr.get_by_name(create_tariff_schema.name)
         if tariff is not None:
             raise TariffAlreadyExistsException()
-        await self.tr.create(
+        tariff = await self.tr.create(
             name=create_tariff_schema.name,
             duration=timedelta(seconds=create_tariff_schema.duration),
             price=create_tariff_schema.price,
@@ -75,6 +75,7 @@ class TariffService:
             description=create_tariff_schema.description,
             is_special=create_tariff_schema.is_special
         )
+        return TariffSchema.from_db(tariff)
 
     async def delete(
         self,

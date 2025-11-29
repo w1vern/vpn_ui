@@ -41,9 +41,8 @@ async def get(tariff_id: UUID, tariff_service: TariffService = Depends(TariffSer
 )
 async def create(create_tariff_schema: CreateTariffSchema,
                  tariff_service: TariffService = Depends(TariffService.depends)
-                 ) -> SuccessResponse:
-    await tariff_service.create(create_tariff_schema)
-    return SuccessResponse()
+                 ) -> TariffSchema:
+    return await tariff_service.create(create_tariff_schema)
 
 
 @router.delete(

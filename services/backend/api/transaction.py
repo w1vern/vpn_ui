@@ -21,9 +21,9 @@ async def create(
     transaction_to_create: TransactionSchema,
     transaction_service: TransactionService = Depends(
         TransactionService.depends),
-) -> SuccessResponse:
-    await transaction_service.create(transaction_to_create)
-    return SuccessResponse()
+) -> TransactionSchema:
+    return await transaction_service.create(transaction_to_create)
+    
 
 
 @router.get(

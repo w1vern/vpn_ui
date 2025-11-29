@@ -17,7 +17,7 @@ from ..schemas import (
     TicketMessageCreateSchema,
     TicketMessageSchema,
     TicketSchema,
-    UserSchema,
+    UserSchema
 )
 from .depends import (
     get_message_repo,
@@ -80,9 +80,10 @@ class TicketService:
         self,
         ticket_id: UUID,
         message: TicketMessageCreateSchema
-    ) -> None:
+    ) -> TicketMessageSchema:
         ticket = await self.get_ticket(ticket_id)
-        await self.mr.create(message.message, ticket, MessageTicketType.from_admin.value)
+        message_db = await self.mr.create(message.message, ticket, MessageTicketType.from_admin.value)
+        return TicketMessageSchema.from_db(message_db)
 
     async def close(
         self,

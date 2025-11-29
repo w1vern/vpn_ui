@@ -59,9 +59,8 @@ async def create_server(
     server_to_create: CreateServerSchema,
     server_service: ServerService = Depends(
         ServerService.depends)
-) -> SuccessResponse:
-    await server_service.create(server_to_create)
-    return SuccessResponse()
+) -> ServerSchema:
+    return await server_service.create(server_to_create)
 
 
 @router.patch(

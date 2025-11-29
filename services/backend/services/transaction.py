@@ -50,7 +50,7 @@ class TransactionService:
     async def create(
         self,
         transaction_to_create: TransactionSchema
-    ) -> None:
+    ) -> TransactionSchema:
         if self.user_schema.rights.is_transaction_editor is False:
             raise UserNotTransactionEditorException
         tr_user = await self.ur.get_by_id(transaction_to_create.user_id)
@@ -63,12 +63,13 @@ class TransactionService:
         if not transaction_to_create.date is None:
             transaction_to_create.date = transaction_to_create.date.replace(
                 tzinfo=None)
-        await self.tr.create(tr_user,
+        transaction = await self.tr.create(tr_user,
                              transaction_to_create.amount,
                              transaction_to_create.description,
                              transaction_to_create.date,
                              type.value)
         await self.ur.update_balance(tr_user, transaction_to_create.amount)
+        return TransactionSchema.from_db(transaction)
 
     async def all(
         self,

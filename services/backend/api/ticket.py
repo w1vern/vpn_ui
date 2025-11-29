@@ -6,14 +6,10 @@ from fastapi import (
     Depends,
 )
 
-from shared.database import (
-    session_manager,
-)
-
 from ..response import SuccessResponse
 from ..schemas import (
-    NewTicketSchema,
     TicketMessageCreateSchema,
+    TicketMessageSchema,
     TicketSchema
 )
 from ..services import TicketService
@@ -30,9 +26,8 @@ async def new_message_ticket(
     message: TicketMessageCreateSchema,
     ticket_service: TicketService = Depends(
         TicketService.depends)
-) -> SuccessResponse:
-    await ticket_service.new_message(ticket_id, message)
-    return SuccessResponse()
+) -> TicketMessageSchema:
+    return await ticket_service.new_message(ticket_id, message)
 
 
 @router.get(
