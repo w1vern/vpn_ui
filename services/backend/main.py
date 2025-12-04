@@ -13,7 +13,7 @@ app = FastAPI(docs_url="/api/docs",
               })
 
 
-@app.get("/health", include_in_schema=False)
+@router.get("/health", include_in_schema=False)
 async def health() -> SuccessResponse:
     return SuccessResponse()
 
