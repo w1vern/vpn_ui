@@ -178,7 +178,7 @@ class Service(ProxyInterface):
         security = NoneSecurity()
         if vpn_type == VpnType.VLESS_REALITY:
             security = RealityOptions(
-                public_key=self.__server_session.server.vless_reality_public_key,
+                public_key=self.__server_session.server.vless_reality_public_key, # type: ignore
                 fp="chrome",
                 server_name_indication="yahoo.com",
                 sid=getattr(self.__server_session.server,
@@ -187,7 +187,7 @@ class Service(ProxyInterface):
             )
             logger.debug(f"Hello from code: {security}")
         logger.debug(f"Hello from code: {response}")
-        return VpnConfig(id=self.__server_session.server.vless_reality_id,  # not universal code
+        return VpnConfig(id=self.__server_session.server.vless_reality_id,  # type: ignore # not universal code
                          access_type=AccessType(vpn_type.value),
                          uuid=uuid4,
                          ip=self.__server_session.server.server.ip,
