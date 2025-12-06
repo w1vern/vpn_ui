@@ -1,17 +1,18 @@
 """first migration
 
-Revision ID: ecda3de90f2a
+Revision ID: 9b94c2ad6193
 Revises: 
-Create Date: 2025-09-09 10:02:06.438200
+Create Date: 2025-12-07 00:27:04.013425
 
 """
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = 'ecda3de90f2a'
+revision: str = '9b94c2ad6193'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -53,17 +54,17 @@ def upgrade() -> None:
     sa.Column('web_path', sa.String(), nullable=False),
     sa.Column('login', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
-    sa.Column('vless_id', sa.Integer(), nullable=False),
-    sa.Column('vless_port', sa.Integer(), nullable=False),
-    sa.Column('vless_domain_short_id', sa.String(), nullable=False),
-    sa.Column('vless_reality_id', sa.Integer(), nullable=False),
-    sa.Column('vless_reality_port', sa.Integer(), nullable=False),
-    sa.Column('vless_reality_domain_short_id', sa.String(), nullable=False),
-    sa.Column('vless_reality_public_key', sa.String(), nullable=False),
-    sa.Column('vless_reality_private_key', sa.String(), nullable=False),
-    sa.Column('vmess_id', sa.Integer(), nullable=False),
-    sa.Column('vmess_port', sa.Integer(), nullable=False),
-    sa.Column('vmess_domain_short_id', sa.String(), nullable=False),
+    sa.Column('vless_id', sa.Integer(), nullable=True),
+    sa.Column('vless_port', sa.Integer(), nullable=True),
+    sa.Column('vless_domain_short_id', sa.String(), nullable=True),
+    sa.Column('vless_reality_id', sa.Integer(), nullable=True),
+    sa.Column('vless_reality_port', sa.Integer(), nullable=True),
+    sa.Column('vless_reality_domain_short_id', sa.String(), nullable=True),
+    sa.Column('vless_reality_public_key', sa.String(), nullable=True),
+    sa.Column('vless_reality_private_key', sa.String(), nullable=True),
+    sa.Column('vmess_id', sa.Integer(), nullable=True),
+    sa.Column('vmess_port', sa.Integer(), nullable=True),
+    sa.Column('vmess_domain_short_id', sa.String(), nullable=True),
     sa.Column('created_date', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('deleted_date', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['id'], ['servers.id'], ),
