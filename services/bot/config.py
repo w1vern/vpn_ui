@@ -1,5 +1,5 @@
 
-from shared.config import env_config
+from shared.infrastructure import env_config
 
 TOKEN = env_config.bot.token
 

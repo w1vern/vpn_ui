@@ -1,8 +1,11 @@
 
 import httpx
 
-from shared.config import env_config
-from shared.infrastructure import get_redis_client, setup_logger
+from shared.infrastructure import (
+    env_config,
+    get_redis_client,
+    setup_logger
+)
 
 from .auth import auth_test
 from .notification import notification_test

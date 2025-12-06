@@ -5,8 +5,7 @@ from aiogram.types import InlineKeyboardMarkup
 from fast_depends import Depends, inject
 from redis.asyncio import Redis
 
-from shared.config import env_config
-from shared.infrastructure import setup_logger
+from shared.infrastructure import env_config, setup_logger
 
 from .exceptions import SendFeedbackToAdminException
 from .keyboard import create_keyboard

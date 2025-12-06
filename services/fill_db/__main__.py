@@ -7,7 +7,6 @@ from typing import Any
 
 from sqlalchemy import text
 
-from shared.config import BootLevel, env_config
 from shared.database import (
     PanelServerRepository,
     RightsType,
@@ -17,7 +16,7 @@ from shared.database import (
     UserRepository,
     session_manager
 )
-from shared.infrastructure import setup_logger
+from shared.infrastructure import BootLevel, env_config, setup_logger
 
 logger = setup_logger(__name__)
 

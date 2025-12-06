@@ -1,10 +1,6 @@
 
 import contextlib
-from typing import (
-    Any,
-    AsyncGenerator,
-    AsyncIterator,
-)
+from collections.abc import AsyncGenerator, AsyncIterator
 
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
@@ -13,7 +9,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from shared.config import (
+from shared.infrastructure import (
     env_config,
 )
 
@@ -23,7 +19,7 @@ raising_message = "DatabaseSessionManager is not initialized"
 
 
 class DatabaseSessionManager:
-    def __init__(self, host: str, engine_kwargs: dict[str, Any] = {}):
+    def __init__(self, host: str, engine_kwargs: dict[str, object] = {}):
         self._engine = create_async_engine(host, **engine_kwargs)
         self._sessionmaker = async_sessionmaker(
             autocommit=False, bind=self._engine, expire_on_commit=False)

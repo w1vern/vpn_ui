@@ -3,7 +3,7 @@ from enum import Enum
 
 from redis.asyncio import Redis
 
-from shared.config import env_config
+from shared.infrastructure import env_config
 
 
 def get_redis_client(db: int) -> Redis:

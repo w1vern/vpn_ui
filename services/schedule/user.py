@@ -58,7 +58,7 @@ async def check_users() -> None:
             if last_active_periods.result_traffic != -1:
                 if user.balance > user.tariff.price and user.auto_pay is True:
                     await ur.update_rights(user, {Rights.can_use.name: True})
-                    await tr.create(user, user.tariff.price, current_date, TransactionType.withdrawal.value)
+                    await tr.create(user, user.tariff.price, "", current_date, TransactionType.withdrawal.value)
                     for service in services:
                         await service.set_enable(user, True, None)
                 continue
@@ -68,8 +68,7 @@ async def check_users() -> None:
                 for service in services:
                     await service.reset_traffic(user)
                 if user.auto_pay is True and user.balance > user.tariff.price:
-                    # type: ignore
-                    await tr.create(user, user.tariff.price, current_date, TransactionType.withdrawal.value)
+                    await tr.create(user, user.tariff.price, "", current_date, TransactionType.withdrawal.value)
                 else:
                     await ur.update_rights(user, {Rights.can_use.name: False})
                     for service in services:
@@ -82,8 +81,7 @@ async def check_users() -> None:
                     for service in services:
                         await service.reset_traffic(user)
                     if user.auto_pay is True and user.balance > user.tariff.price_of_traffic_reset:
-                        # type: ignore
-                        trans = await tr.create(user, user.tariff.price, current_date, TransactionType.withdrawal.value)
+                        trans = await tr.create(user, user.tariff.price, "", current_date, TransactionType.withdrawal.value)
                         if not trans:
                             raise Exception("Transaction is None")
                         await apr.close_period(last_active_periods, traffic, current_date)

@@ -1,7 +1,7 @@
 
 import uvicorn
 
-from shared.config import BootLevel, env_config
+from shared.infrastructure import BootLevel, env_config
 
 if __name__ == "__main__":
     uvicorn.run(

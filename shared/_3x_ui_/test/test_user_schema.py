@@ -4,12 +4,12 @@ import asyncio
 from services.backend.schemas import (
     UserSchema,
 )
-from shared.config import (
-    env_config,
-)
 from shared.database import (
     UserRepository,
     session_manager,
+)
+from shared.infrastructure import (
+    env_config,
 )
 
 
