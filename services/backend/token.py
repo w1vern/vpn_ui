@@ -5,7 +5,6 @@ from datetime import (
     datetime,
     timedelta,
 )
-from typing import Any
 from uuid import UUID
 
 import jwt
@@ -19,14 +18,14 @@ from .config import (
 from .schemas import UserSchema
 
 
-def decode_jwt(token: str) -> dict[str, Any]:
+def decode_jwt(token: str) -> dict[str, object]:
     return jwt.decode(
         token,
         key=SECRET,
         algorithms=[Config.algorithm])
 
 
-def encode_jwt(payload: dict[str, Any]) -> str:
+def encode_jwt(payload: dict[str, object]) -> str:
     return jwt.encode(
         payload,
         key=SECRET,
@@ -35,7 +34,7 @@ def encode_jwt(payload: dict[str, Any]) -> str:
 
 class AccessToken:
     def __init__(self,
-                 user: User | UserSchema | dict[str, Any],
+                 user: User | UserSchema | dict[str, object],
                  created_date: datetime | str | None = None,
                  lifetime: timedelta | float | None = None
                  ) -> None:
@@ -52,7 +51,7 @@ class AccessToken:
         else:
             self.lifetime = lifetime
         if isinstance(user, dict):
-            self.user = UserSchema(**user)
+            self.user = UserSchema(**user) # type: ignore
         elif isinstance(user, User):
             self.user = UserSchema.from_db(user)
         else:
@@ -60,7 +59,7 @@ class AccessToken:
 
     @classmethod
     def from_token(cls, token: str) -> "AccessToken":
-        return AccessToken(**decode_jwt(token))
+        return AccessToken(**decode_jwt(token)) # type: ignore
 
     def to_token(self) -> str:
         return encode_jwt({
@@ -97,7 +96,7 @@ class RefreshToken:
 
     @classmethod
     def from_token(cls, token: str) -> "RefreshToken":
-        return RefreshToken(**decode_jwt(token))
+        return RefreshToken(**decode_jwt(token)) # type: ignore
 
     def to_token(self) -> str:
         return encode_jwt({

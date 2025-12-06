@@ -1,5 +1,5 @@
 
-from typing import Awaitable, Callable
+from collections.abc import Awaitable, Callable
 
 from fast_depends import Depends
 from redis.asyncio import Redis
@@ -157,17 +157,17 @@ class Service():
             server = pserver.server
             if not server.is_available:
                 continue
-            #inbound = await self.suir.get_by_server_and_user(server, user)
-            #if len(inbound) == 0:
+            # inbound = await self.suir.get_by_server_and_user(server, user)
+            # if len(inbound) == 0:
             async with server_session_manager.get_session(pserver) as session:
                 service = PanelService(self.session, session)
                 config = await service.get_config(user, AccessType.VLESS_REALITY)
-                #logger.debug(config.security.__class__)
+                # logger.debug(config.security.__class__)
                 if config is None:
                     logger.debug("config is None")
                     continue
-            #else:
-                #inbound = inbound[0]
+            # else:
+                # inbound = inbound[0]
             configs.append(config)
         self.main_message.text = [
             f"```\n{config.create_string()}\n```" for config in configs]
