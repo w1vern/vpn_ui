@@ -44,8 +44,8 @@ class PanelServer(Base):
 
     @property
     def panel_url(self) -> str:
-        return f"http://{self.server.ip}:{self.panel_port}/{self.web_path}/"
+        return f"http{'s'*self.server.secured}://{self.server.ip}:{self.panel_port}/{self.web_path}/"
 
     @property
     def port_generator_url(self) -> str:
-        return f"http://{self.server.ip}:{self.port_generator_port}/{self.web_path}/"
+        return f"http{'s'*self.server.secured}://{self.server.ip}:{self.port_generator_port}/{self.web_path}/"

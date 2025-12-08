@@ -1,8 +1,8 @@
 
 import abc
+from collections.abc import Callable
 import json
 from enum import Enum
-from typing import Any
 from uuid import UUID
 
 from shared.infrastructure import setup_logger
@@ -50,7 +50,7 @@ class AccessConfigFactory:
     __registry: dict[str, AccessConfig] = {}
 
     @classmethod
-    def register(cls, name: str, config_class):
+    def register(cls, name: str, config_class) -> None:
         cls.__registry[name] = config_class
 
     @classmethod
@@ -62,8 +62,8 @@ class AccessConfigFactory:
         return cls.__registry[name].from_string(access_config_str)
 
     @classmethod
-    def register_with_decorator(cls):
-        def decorator(config_class):
+    def register_with_decorator(cls) -> Callable[..., type[AccessConfig]]:
+        def decorator(config_class) -> type[AccessConfig]:
             cls.register(config_class.__name__, config_class)
             return config_class
         return decorator
@@ -75,6 +75,7 @@ class ProxyConfig(AccessConfig):
                  id: int,
                  access_type: AccessType,
                  ip: str,
+                 secured: bool,
                  port: int,
                  login: str,
                  password: str,
@@ -82,6 +83,7 @@ class ProxyConfig(AccessConfig):
         self.id = id
         self.access_type = access_type
         self.ip = ip
+        self.secured = secured
         self.port = port
         self.login = login
         self.password = password
@@ -89,7 +91,7 @@ class ProxyConfig(AccessConfig):
         self.class_name = self.__class__.__name__
 
     def create_string(self) -> str:
-        return f"http://{self.login}:{self.password}@{self.ip}:{self.port}"
+        return f"http{'s'*self.secured}://{self.login}:{self.password}@{self.ip}:{self.port}"
 
     def to_string(self) -> str:
         return json.dumps(self.__dict__)
@@ -98,7 +100,7 @@ class ProxyConfig(AccessConfig):
     def from_string(cls, access_config_str: str) -> 'AccessConfig':
         proxy_dict = json.loads(access_config_str)
         del (proxy_dict['class_name'])
-        return ProxyConfig(**proxy_dict)
+        return ProxyConfig(**proxy_dict)  # type: ignore
 
 
 class Security(abc.ABC):
@@ -107,10 +109,10 @@ class Security(abc.ABC):
     def create_string(self) -> str: ...
 
     @abc.abstractmethod
-    def to_dict(self) -> dict[str, Any]: ...
+    def to_dict(self) -> dict[str, object]: ...
 
     @classmethod
-    def from_dict(cls, security_dict: dict[str, Any]) -> 'Security': ...
+    def from_dict(cls, security_dict: dict[str, object]) -> 'Security': ...
 
 
 class SecurityFactory:
@@ -121,15 +123,15 @@ class SecurityFactory:
         cls.__registry[name] = security_class
 
     @classmethod
-    def from_dict(cls, security_dict: dict[str, Any]) -> Security:
+    def from_dict(cls, security_dict: dict[str, object]) -> Security:
         name = security_dict['class_name']
         if name not in cls.__registry:
             raise ValueError(f"No registered class for name: {name}")
-        return cls.__registry[name].from_dict(security_dict)
+        return cls.__registry[name].from_dict(security_dict)  # type: ignore
 
     @classmethod
-    def register_with_decorator(cls):
-        def decorator(security_class):
+    def register_with_decorator(cls) -> Callable[..., type[Security]]:
+        def decorator(security_class) -> type[Security]:
             cls.register(security_class.__name__, security_class)
             return security_class
         return decorator
@@ -144,11 +146,11 @@ class NoneSecurity(Security):
     def create_string(self) -> str:
         return 'none'
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         return self.__dict__
 
     @classmethod
-    def from_dict(cls, security_dict: dict[str, Any]) -> Security:
+    def from_dict(cls, security_dict: dict[str, object]) -> Security:
         del (security_dict['class_name'])
         return cls(**security_dict)
 
@@ -173,14 +175,14 @@ class RealityOptions(Security):
     def create_string(self) -> str:
         return f"{self.security_name}&pbk={self.public_key}&fp={self.fp}&sni={self.server_name_indication}&sid={self.sid}&spx={self.spx}"
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         return self.__dict__
 
     @classmethod
-    def from_dict(cls, security_dict: dict[str, Any]) -> Security:
+    def from_dict(cls, security_dict: dict[str, object]) -> Security:
         del (security_dict['class_name'])
         del (security_dict['security_name'])
-        return cls(**security_dict)
+        return cls(**security_dict)  # type: ignore
 
 
 @AccessConfigFactory.register_with_decorator()

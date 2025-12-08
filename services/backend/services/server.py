@@ -83,6 +83,7 @@ class ServerService:
             raise NotServerEditorException()
         server = await self.sr.create(
             ip=server_to_create.ip,
+            secured=server_to_create.secured,
             description=server_to_create.description,
             country_code=server_to_create.country_code,
             is_available=server_to_create.is_available,
@@ -118,6 +119,8 @@ class ServerService:
             raise ServerNotFoundException()
         if server_to_edit.ip is not None:
             await self.sr.set_ip(server, server_to_edit.ip)
+        if server_to_edit.secured is not None:
+            await self.sr.set_secured(server, server_to_edit.secured)
         if server_to_edit.country_code is not None:
             await self.sr.set_country_code(server, server_to_edit.country_code)
         if server_to_edit.display_name is not None:

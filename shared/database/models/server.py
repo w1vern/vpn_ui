@@ -13,6 +13,7 @@ class Server(Base):
     __tablename__ = "servers"
 
     ip: Mapped[str] = mapped_column()
+    secured: Mapped[bool] = mapped_column()
     description: Mapped[str] = mapped_column()
     country_code: Mapped[str] = mapped_column()
     is_available: Mapped[bool] = mapped_column()

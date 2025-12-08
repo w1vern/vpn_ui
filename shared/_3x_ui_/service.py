@@ -127,6 +127,7 @@ class Service(ProxyInterface):
         return ProxyConfig(id=response['obj']['id'],
                            access_type=AccessType(proxy_type.value),
                            ip=self.__server_session.server.server.ip,
+                           secured=self.__server_session.server.server.secured,
                            port=response['obj']['port'],
                            login=response['obj']['settings']['accounts'][0]['user'],
                            password=response['obj']['settings']['accounts'][0]['pass'])

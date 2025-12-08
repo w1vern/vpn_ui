@@ -10,6 +10,7 @@ from shared.database import PanelServer
 class ServerSchema(BaseModel):
     id: UUID
     ip: str
+    secured: bool
     description: str
     country_code: str
     is_available: bool
@@ -38,6 +39,7 @@ class ServerSchema(BaseModel):
             description=server.server.description,
             display_name=server.server.display_name,
             ip=server.server.ip,
+            secured=server.server.secured,
             country_code=server.server.country_code,
             is_available=server.server.is_available,
             starting_date=server.server.starting_date,
@@ -57,6 +59,7 @@ class ServerSchema(BaseModel):
 
 class ServerToEditSchema(BaseModel):
     ip: str | None = None
+    secured: bool | None = None
     description: str | None = None
     country_code: str | None = None
     is_available: bool | None = None
@@ -79,6 +82,7 @@ class ServerToEditSchema(BaseModel):
 
 class CreateServerSchema(BaseModel):
     ip: str
+    secured: bool
     description: str
     panel_port: int
     port_generator_port: int
