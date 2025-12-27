@@ -13,7 +13,7 @@ from shared.database import (
 )
 
 
-def parse_nested_json(obj):
+def parse_nested_json(obj) -> None:
     if isinstance(obj, dict):
         for key, value in obj.items():
             if isinstance(value, str):
@@ -97,7 +97,7 @@ class ServerSession():
 
 
 class ServerSessionManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.cookies: dict[uuid.UUID, Any] = {}
 
     @contextlib.asynccontextmanager

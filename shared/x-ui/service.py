@@ -1,29 +1,12 @@
 
 
-import random
 import secrets
-import string
 import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database.models import PanelServer, User
-from shared.database.repositories import (
-    PanelServerRepository,
-    ServerUserInboundRepository
-)
 from shared.infrastructure import setup_logger
-from shared.proxy_interface import (
-    AccessConfig,
-    AccessType,
-    NoneSecurity,
-    ProxyConfig,
-    ProxyInterface,
-    ProxyType,
-    RealityOptions,
-    VpnConfig,
-    VpnType,
-)
+from shared.database import User, ServerInbound
 
 from .repository import PanelRepository
 from .session_manager import ServerSession
@@ -31,40 +14,15 @@ from .session_manager import ServerSession
 logger = setup_logger(__name__)
 
 
-def generate_sub_id(length: int = 16) -> str:
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+def generate_email(user: User, server_inbound: ServerInbound) -> str:
+    return f"{server_inbound.inbound_id}.{user.id}"
 
 
-def generate_short_ids(count: int = 1) -> list[str]:
-    res: list[str] = []
-    for _ in range(count):
-        length = random.randint(16, 16)
-        res.append(
-            hex(random.randint(0b1 << 4 * (length-1), 0b1 << 4 * length))[2:])
-    return res
+def generate_user_remark(user: User, server_inbound: ServerInbound) -> str:
+    return f"{server_inbound.server.country_code}-{server_inbound.name}-{user.telegram_username}"
 
 
-def generate_email(user: User, vpn_type: VpnType) -> str:
-    return f"{user.telegram_username}-{vpn_type.value[:-3]}-{uuid.uuid4()}"
-
-
-def generate_vpn_remark(vpn_type: VpnType) -> str:
-    return f"{vpn_type.value[:-3]}"
-
-
-def generate_proxy_remark(server: PanelServer, user: User, proxy_type: ProxyType) -> str:
-    return f"{proxy_type.value[:-3]}-{user.telegram_username}"
-
-
-def generate_user_remark(server: PanelServer, user: User, vpn_type: VpnType) -> str:
-    return f"{server.server.country_code}-{server.server.display_name}-{user.telegram_username}-{vpn_type.value[:-3]}"
-
-
-def generate_key(length: int = 43) -> str:
-    return ''.join(random.choices(string.ascii_letters + string.digits + "-_", k=length))
-
-
-class Service(ProxyInterface):
+class Service():
     def __init__(self, db_session: AsyncSession, server_session: ServerSession) -> None:
         self.__db_session = db_session
         self.__server_session = server_session
@@ -81,10 +39,10 @@ class Service(ProxyInterface):
                          ) -> AccessConfig | None:
         inbounds = await self.__suir.get_by_server_and_user(self.__server_session.server.server, user)
         for inbound in inbounds:
-            #logger.debug(inbound.config_str)
+            # logger.debug(inbound.config_str)
             if inbound.access_type == access_type:
                 if await self.config_is_valid(user, inbound.config):
-                    #logger.debug("config loaded from db")
+                    # logger.debug("config loaded from db")
                     return inbound.config
                 break
         if create_if_not_exists is False:
@@ -97,7 +55,7 @@ class Service(ProxyInterface):
             return None
         if response is None:
             return None
-        #logger.debug(response.security.__class__)
+        # logger.debug(response.security.__class__)
         await self.__suir.create(self.__server_session.server.server, user, response)
         return response
 
@@ -179,7 +137,7 @@ class Service(ProxyInterface):
         security = NoneSecurity()
         if vpn_type == VpnType.VLESS_REALITY:
             security = RealityOptions(
-                public_key=self.__server_session.server.vless_reality_public_key, # type: ignore
+                public_key=self.__server_session.server.vless_reality_public_key,  # type: ignore
                 fp="chrome",
                 server_name_indication="yahoo.com",
                 sid=getattr(self.__server_session.server,

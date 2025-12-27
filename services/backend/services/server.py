@@ -2,6 +2,7 @@
 from uuid import UUID
 
 from fastapi import Depends
+from shared.proxy_interface import VpnType
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (
@@ -9,7 +10,6 @@ from shared.database import (
     ServerRepository,
     UserRepository
 )
-from shared.proxy_interface import VpnType
 
 from ..exceptions import (
     NotServerEditorException,

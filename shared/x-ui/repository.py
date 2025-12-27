@@ -4,50 +4,9 @@ import json
 import uuid
 from typing import Any
 
-from shared.database.models.user import User
-from shared.proxy_interface import (
-    ProxyType,
-    VpnType,
-)
+from shared.database import User
 
 from .session_manager import ServerSession
-
-
-class GlobalSettings:
-    sniffing = {
-        "enabled": False,
-        "destOverride": [
-            "http",
-            "tls",
-            "quic",
-            "fakedns"
-        ],
-        "metadataOnly": False,
-        "routeOnly": False
-    }
-
-    allocate = {
-        "strategy": "always",
-        "refresh": 5,
-        "concurrency": 3
-    }
-
-    settings = {
-
-    }
-
-    streamSettings = {
-
-    }
-
-    data = {
-        "up": 500,
-        "down": 300,
-        "total": 0,
-        "enable": True,
-        "expiryTime": 0,
-        "listen": ""
-    }
 
 
 class PanelRepository:

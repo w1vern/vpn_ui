@@ -3,10 +3,16 @@ from collections.abc import Awaitable, Callable
 
 from fast_depends import Depends
 from redis.asyncio import Redis
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from shared._3x_ui_ import Service as PanelService
 from shared._3x_ui_ import server_session_manager
+from shared.proxy_interface import (
+    AccessConfig,
+    AccessType,
+    VpnConfig,
+    VpnType
+)
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from shared.database import (
     PanelServerRepository,
     ServerRepository,
@@ -18,12 +24,6 @@ from shared.database import (
     session_manager
 )
 from shared.infrastructure import setup_logger
-from shared.proxy_interface import (
-    AccessConfig,
-    AccessType,
-    VpnConfig,
-    VpnType
-)
 
 from .buttons import (
     StaticButtons,
