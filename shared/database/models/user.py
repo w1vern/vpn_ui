@@ -3,16 +3,9 @@ from secrets import token_urlsafe
 from uuid import UUID
 
 from sqlalchemy import BigInteger, ForeignKey
-from sqlalchemy.orm import (
-    Mapped,
-    mapped_column,
-    relationship,
-)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from ..enums import (
-    Rights,
-    Settings,
-)
+from ..enums import Rights, Settings
 from .base import Base
 from .tariff import Tariff
 
@@ -20,12 +13,15 @@ from .tariff import Tariff
 class User(Base):
     __tablename__ = "users"
 
-    telegram_id: Mapped[int] = mapped_column(BigInteger,
-                                             unique=True,
-                                             index=True)
+    telegram_id: Mapped[int] = mapped_column(
+        BigInteger,
+        unique=True,
+        index=True
+    )
     tariff_id: Mapped[UUID] = mapped_column(ForeignKey("tariffs.id"))
     telegram_username: Mapped[str] = mapped_column()
     telegram_language_code: Mapped[str] = mapped_column()
+    internal_id: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str] = mapped_column()
     balance: Mapped[float] = mapped_column()
     rights: Mapped[int] = mapped_column()
@@ -40,7 +36,7 @@ class User(Base):
         return self.rights & Rights.is_servers_editor.value != 0
 
     @is_server_editor.setter
-    def is_server_editor(self, value: bool):
+    def is_server_editor(self, value: bool) -> None:
         if self.is_server_editor != value:
             self.rights ^= Rights.is_servers_editor.value
 
@@ -49,7 +45,7 @@ class User(Base):
         return self.rights & Rights.is_transactions_editor.value != 0
 
     @is_transaction_editor.setter
-    def is_transaction_editor(self, value: bool):
+    def is_transaction_editor(self, value: bool) -> None:
         if self.is_transaction_editor != value:
             self.rights ^= Rights.is_transactions_editor.value
 
@@ -58,7 +54,7 @@ class User(Base):
         return self.rights & Rights.is_active_periods_editor.value != 0
 
     @is_active_period_editor.setter
-    def is_active_period_editor(self, value: bool):
+    def is_active_period_editor(self, value: bool) -> None:
         if self.is_active_period_editor != value:
             self.rights ^= Rights.is_active_periods_editor.value
 
@@ -67,7 +63,7 @@ class User(Base):
         return self.rights & Rights.is_tariffs_editor.value != 0
 
     @is_tariff_editor.setter
-    def is_tariff_editor(self, value: bool):
+    def is_tariff_editor(self, value: bool) -> None:
         if self.is_tariff_editor != value:
             self.rights ^= Rights.is_tariffs_editor.value
 
@@ -76,7 +72,7 @@ class User(Base):
         return self.rights & Rights.is_member_rights_editor.value != 0
 
     @is_member_rights_editor.setter
-    def is_member_rights_editor(self, value: bool):
+    def is_member_rights_editor(self, value: bool) -> None:
         if self.is_member_rights_editor != value:
             self.rights ^= Rights.is_member_rights_editor.value
 
@@ -85,7 +81,7 @@ class User(Base):
         return self.rights & Rights.is_users_editor.value != 0
 
     @is_user_editor.setter
-    def is_user_editor(self, value: bool):
+    def is_user_editor(self, value: bool) -> None:
         if self.is_user_editor != value:
             self.rights ^= Rights.is_users_editor.value
 
@@ -94,7 +90,7 @@ class User(Base):
         return self.rights & Rights.is_admin_rights_editor.value != 0
 
     @is_admin_rights_editor.setter
-    def is_admin_rights_editor(self, value: bool):
+    def is_admin_rights_editor(self, value: bool) -> None:
         if self.is_admin_rights_editor != value:
             self.rights ^= Rights.is_admin_rights_editor.value
 
@@ -103,7 +99,7 @@ class User(Base):
         return self.rights & Rights.is_control_panel_user.value != 0
 
     @is_control_panel_user.setter
-    def is_control_panel_user(self, value: bool):
+    def is_control_panel_user(self, value: bool) -> None:
         if self.is_control_panel_user != value:
             self.rights ^= Rights.is_control_panel_user.value
 
@@ -112,7 +108,7 @@ class User(Base):
         return self.rights & Rights.can_use.value != 0
 
     @can_use.setter
-    def can_use(self, value: bool):
+    def can_use(self, value: bool) -> None:
         if self.can_use != value:
             self.rights ^= Rights.can_use.value
 
@@ -121,7 +117,7 @@ class User(Base):
         return self.rights & Rights.is_verified.value != 0
 
     @is_verified.setter
-    def is_verified(self, value: bool):
+    def is_verified(self, value: bool) -> None:
         if self.is_verified != value:
             self.rights ^= Rights.is_verified.value
 
@@ -130,7 +126,7 @@ class User(Base):
         return self.settings & Settings.auto_pay.value != 0
 
     @auto_pay.setter
-    def auto_pay(self, value: bool):
+    def auto_pay(self, value: bool) -> None:
         if self.auto_pay != value:
             self.settings ^= Settings.auto_pay.value
 
@@ -139,7 +135,7 @@ class User(Base):
         return self.settings & Settings.is_active.value != 0
 
     @is_active.setter
-    def is_active(self, value: bool):
+    def is_active(self, value: bool) -> None:
         if self.is_active != value:
             self.settings ^= Settings.is_active.value
 
@@ -148,6 +144,6 @@ class User(Base):
         return self.settings & Settings.get_traffic_notifications.value != 0
 
     @get_traffic_notifications.setter
-    def get_traffic_notifications(self, value: bool):
+    def get_traffic_notifications(self, value: bool) -> None:
         if self.get_traffic_notifications != value:
             self.settings ^= Settings.get_traffic_notifications.value
