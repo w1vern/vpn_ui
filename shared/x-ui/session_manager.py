@@ -1,46 +1,32 @@
 
-
 import contextlib
 import json
-import uuid
 from collections.abc import AsyncIterator
 from typing import Any
+from uuid import UUID
 
 import httpx
 
-from shared.database import (
-    PanelServer,
-)
+from shared.database import Server
 
-
-def parse_nested_json(obj) -> None:
-    if isinstance(obj, dict):
-        for key, value in obj.items():
-            if isinstance(value, str):
-                try:
-                    obj[key] = json.loads(value)
-                except json.JSONDecodeError:
-                    pass
-            else:
-                parse_nested_json(value)
-    elif isinstance(obj, list):
-        for item in obj:
-            parse_nested_json(item)
+from .exceptions import UnauthorizedException
 
 
 class ServerSession():
-    def __init__(self,
-                 server: PanelServer,
-                 client: httpx.AsyncClient
-                 ) -> None:
+    def __init__(
+        self,
+        server: Server,
+        client: httpx.AsyncClient
+    ) -> None:
         self.server = server
         self.client = client
 
-    async def __make_request(self,
-                             path: str,
-                             method: str,
-                             body: dict[str, Any] | None = None
-                             ) -> httpx.Response:
+    async def __make_request(
+        self,
+        path: str,
+        method: str,
+        body: dict[str, Any] | None = None
+    ) -> httpx.Response:
         if not await self.__is_auth():
             await self.__auth()
         response = await self.client.request(method=method,
@@ -50,7 +36,10 @@ class ServerSession():
                                              json=body)
         return response
 
-    def __get_api_path(self, endpoint: str) -> str:
+    def __get_api_path(
+        self,
+        endpoint: str
+    ) -> str:
         return self.server.panel_url + "panel/api/inbounds/" + endpoint
 
     async def __is_auth(self) -> bool:
@@ -59,54 +48,70 @@ class ServerSession():
             return True
         return False
 
-    async def __auth(self) -> None:
+    async def __auth(
+        self
+    ) -> None:
         resp = await self.client.post(
             self.server.panel_url + "login",
             json={"username": self.server.login, "password": self.server.password})
         resp.raise_for_status()
 
-    async def __get_dict(self, response: httpx.Response) -> dict[str, Any]:
+    async def __get_dict(
+        self,
+        response: httpx.Response
+    ) -> dict[str, Any]:
+        if response.status_code == 404:
+            raise UnauthorizedException()
         return json.loads(response.text
                           .replace('\\n', '')
                           .replace('\\"', '"')
                           .replace('"{', '{')
                           .replace('}"', '}'))
 
-    async def post(self,
-                   path: str,
-                   body: dict[str, Any] = {}
-                   ) -> httpx.Response:
+    async def post(
+        self,
+        path: str,
+        body: dict[str, Any] = {}
+    ) -> httpx.Response:
         return await self.__make_request(path, "POST", body)
 
-    async def get(self,
-                  path: str
-                  ) -> httpx.Response:
+    async def get(
+        self,
+        path: str
+    ) -> httpx.Response:
         return await self.__make_request(path, "GET")
 
-    async def post_dict(self,
-                        path: str,
-                        body: dict[str, Any] = {}
-                        ) -> dict[str, Any]:
+    async def post_dict(
+        self,
+        path: str,
+        body: dict[str, Any] = {}
+    ) -> dict[str, object]:
         response = await self.post(path, body)
         return await self.__get_dict(response)
 
-    async def get_dict(self,
-                       path: str
-                       ) -> dict[str, Any]:
+    async def get_dict(
+        self,
+        path: str
+    ) -> dict[str, Any]:
         return await self.__get_dict(await self.get(path))
 
 
 class ServerSessionManager:
-    def __init__(self) -> None:
-        self.cookies: dict[uuid.UUID, Any] = {}
+    def __init__(
+        self
+    ) -> None:
+        self.cookies: dict[UUID, httpx.Cookies] = {}
 
     @contextlib.asynccontextmanager
-    async def get_session(self,
-                          server: PanelServer
-                          ) -> AsyncIterator[ServerSession]:
+    async def get_session(
+        self,
+        server: Server
+    ) -> AsyncIterator[ServerSession]:
         async with httpx.AsyncClient() as client:
             client.cookies = self.cookies.get(
-                server.id, {})
+                server.id,
+                {}
+            )
             yield ServerSession(server, client)
             self.cookies[server.id] = client.cookies
 

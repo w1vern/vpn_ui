@@ -18,3 +18,10 @@ class Server(Base):
     description: Mapped[str] = mapped_column()
     country_code: Mapped[str] = mapped_column()
     display_name: Mapped[str] = mapped_column()
+    
+    starting_date: Mapped[datetime] = mapped_column()
+    closing_date: Mapped[datetime] = mapped_column()
+
+    @property
+    def panel_url(self) -> str:
+        return f"http{'s'*self.secured}://{self.ip}:{self.panel_port}/{self.web_path}/"
