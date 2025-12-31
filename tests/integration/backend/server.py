@@ -1,4 +1,5 @@
 
+import random
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
@@ -7,31 +8,26 @@ from httpx import AsyncClient
 from .utils import check_response
 
 
-async def create(base_url: str,
-                 httpx_client: AsyncClient
-                 ) -> None:
+async def create(
+    base_url: str,
+    httpx_client: AsyncClient
+) -> None:
     date = datetime.now(UTC).replace(tzinfo=None)
     date_plus = date + timedelta(days=30)
     date = date.replace(tzinfo=None)
     date_plus = date_plus.replace(tzinfo=None)
     server = {
-        "ip": "127.0.0.1",
+        "ip": f"{random.random()}",
+        "secured": False,
         "description": "custom_description",
         "panel_port": 0,
-        "port_generator_port": 0,
-        "web_path": "custom_path",
+        "panel_web_path": "custom_path",
         "country_code": "us",
-        "is_available": True,
         "display_name": "custom_name",
-        "login": "login",
-        "password": "password",
+        "panel_login": "login",
+        "panel_password": "password",
         "starting_date": date.isoformat(),
-        "closing_date": date_plus.isoformat(),
-        "vless_reality_id": 0,
-        "vless_reality_port": 0,
-        "vless_reality_domain_short_id": "custom_domain_short_id",
-        "vless_reality_public_key": "custom_public_key",
-        "vless_reality_private_key": "custom_private_key"
+        "closing_date": date_plus.isoformat()
     }
     response = await httpx_client.post(base_url, json=server)
     check_response(base_url, "POST", response)
@@ -60,7 +56,7 @@ async def patch(
     httpx_client: AsyncClient
 ) -> None:
     response = await httpx_client.patch(f"{base_url}/{server_id}", json={
-        "ip": "0.0.0.0"
+        "ip": f"{random.random()}"
     })
     check_response(f"{base_url}/{server_id}", "PATCH", response)
 

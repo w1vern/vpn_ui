@@ -1,11 +1,11 @@
 
 from datetime import datetime
-from typing import Any, TypeVar
+from typing import Any
 from uuid import UUID, uuid4
 
+from pydantic_core import core_schema
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql import func
-from pydantic_core import core_schema
 
 
 class Unset:
@@ -24,7 +24,11 @@ class Unset:
         return False
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source_type: Any, handler: Any) -> core_schema.CoreSchema:
+    def __get_pydantic_core_schema__(
+        cls,
+        source_type: Any,
+        handler: Any
+    ) -> core_schema.CoreSchema:
         def validate(value: Any) -> Any:
             if isinstance(value, cls):
                 return value
@@ -35,7 +39,7 @@ class Unset:
             serialization=core_schema.plain_serializer_function_ser_schema(
                 lambda x: None if isinstance(x, cls) else x,
                 return_schema=core_schema.any_schema(),
-            ),
+            )
         )
 
 

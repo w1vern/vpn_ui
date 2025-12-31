@@ -5,15 +5,15 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.backend.api import tariff
-from shared.database import Unset, UserRepository, TariffRepository
+from shared.database import TariffRepository, Unset, UserRepository
 
 from ..depends import get_session, get_user, get_user_repo
 from ..exceptions import (
     AdminRightsEditNotAllowedException,
     MemberRightsEditNotAllowedException,
     MemberSettingsEditNotAllowedException,
-    UserNotFoundException,
-    TariffNotFoundException
+    TariffNotFoundException,
+    UserNotFoundException
 )
 from ..schemas import EditUserSchema, UserSchema
 
