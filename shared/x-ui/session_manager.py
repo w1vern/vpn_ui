@@ -53,7 +53,7 @@ class ServerSession():
     ) -> None:
         resp = await self.client.post(
             self.server.panel_url + "login",
-            json={"username": self.server.login, "password": self.server.password})
+            json={"username": self.server.panel_login, "password": self.server.panel_password})
         resp.raise_for_status()
 
     async def __get_dict(

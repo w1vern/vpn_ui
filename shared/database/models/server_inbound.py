@@ -13,7 +13,7 @@ class ServerInbound(Base):
 
     inbound_id: Mapped[int]
     template: Mapped[str]
-    template_type: Mapped[str]
+    protocol: Mapped[str]
     server_id: Mapped[UUID] = mapped_column(ForeignKey("servers.id"))
     name: Mapped[str]
     description: Mapped[str]

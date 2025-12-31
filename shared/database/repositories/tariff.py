@@ -1,27 +1,31 @@
 
-
 from datetime import timedelta
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import Tariff
+from ..models import UNSET, Tariff, Unset
 from .base import BaseRepository
 
 
 class TariffRepository(BaseRepository[Tariff]):
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(
+        self,
+        session: AsyncSession
+    ) -> None:
         super().__init__(session, Tariff)
 
-    async def create(self,
-                     name: str,
-                     duration: timedelta,
-                     price: float,
-                     price_of_traffic_reset: float,
-                     traffic: int,
-                     description: str,
-                     is_special: bool = False,
-                     ) -> Tariff:
+    async def create(
+        self,
+        name: str,
+        duration: timedelta,
+        price: float,
+        price_of_traffic_reset: float,
+        traffic: int,
+        description: str,
+        with_unavalable_inbounds: bool = False,
+        is_special: bool = False,
+    ) -> Tariff:
         return await self._create(
             name=name,
             duration=duration,
@@ -29,20 +33,23 @@ class TariffRepository(BaseRepository[Tariff]):
             price=price,
             price_of_traffic_reset=price_of_traffic_reset,
             traffic=traffic,
+            with_unavalable_inbounds=with_unavalable_inbounds,
             is_special=is_special
         )
 
-    async def edit(self,
-                   tariff: Tariff,
-                   *,
-                   name: str | None = None,
-                   description: str | None = None,
-                   duration: timedelta | None = None,
-                   price: float | None = None,
-                   price_of_traffic_reset: float | None = None,
-                   traffic: int | None = None,
-                   is_special: bool | None = None
-                   ) -> None:
+    async def edit(
+        self,
+        tariff: Tariff,
+        *,
+        name: str | Unset = UNSET,
+        description: str | Unset = UNSET,
+        duration: timedelta | Unset = UNSET,
+        price: float | Unset = UNSET,
+        price_of_traffic_reset: float | Unset = UNSET,
+        traffic: int | Unset = UNSET,
+        with_unavalable_inbounds: bool | Unset = UNSET,
+        is_special: bool | Unset = UNSET
+    ) -> None:
         await self._edit(
             tariff,
             name=name,
@@ -51,9 +58,13 @@ class TariffRepository(BaseRepository[Tariff]):
             price=price,
             price_of_traffic_reset=price_of_traffic_reset,
             traffic=traffic,
+            with_unavalable_inbounds=with_unavalable_inbounds,
             is_special=is_special
         )
 
-    async def get_by_name(self, name: str) -> Tariff | None:
+    async def get_by_name(
+        self,
+        name: str
+    ) -> Tariff | None:
         stmt = select(Tariff).where(Tariff.name == name).limit(1)
         return await self.session.scalar(stmt)

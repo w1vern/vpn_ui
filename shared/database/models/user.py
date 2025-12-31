@@ -18,7 +18,10 @@ class User(Base):
         unique=True,
         index=True
     )
-    tariff_id: Mapped[UUID] = mapped_column(ForeignKey("tariffs.id"))
+    tariff_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("tariffs.id"),
+        nullable=True
+    )
     telegram_username: Mapped[str] = mapped_column()
     telegram_language_code: Mapped[str] = mapped_column()
     internal_id: Mapped[str] = mapped_column(unique=True)
@@ -28,7 +31,7 @@ class User(Base):
     settings: Mapped[int] = mapped_column()
     secret: Mapped[str] = mapped_column(default=token_urlsafe)
 
-    tariff: Mapped[Tariff] = relationship(
+    tariff: Mapped[Tariff | None] = relationship(
         lazy="selectin", foreign_keys=[tariff_id])
 
     @property

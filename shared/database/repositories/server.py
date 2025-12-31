@@ -1,17 +1,10 @@
 
-from datetime import (
-    UTC,
-    datetime,
-)
+from datetime import UTC, datetime
 
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import Server
-from .base import (
-    BaseRepository,
-)
+from ..models import UNSET, Server, Unset
+from .base import BaseRepository
 
 
 class ServerRepository(BaseRepository[Server]):
@@ -25,9 +18,12 @@ class ServerRepository(BaseRepository[Server]):
         description: str,
         country_code: str,
         display_name: str,
+        panel_port: int,
+        panel_web_path: str,
+        panel_login: str,
+        panel_password: str,
         starting_date: datetime | None = None,
-        closing_date: datetime | None = None,
-        is_available: bool = True
+        closing_date: datetime | None = None
     ) -> Server:
         if starting_date is None:
             starting_date = datetime.now(UTC).replace(tzinfo=None)
@@ -38,71 +34,42 @@ class ServerRepository(BaseRepository[Server]):
             secured=secured,
             description=description,
             country_code=country_code,
-            is_available=is_available,
             display_name=display_name,
+            panel_port=panel_port,
+            panel_web_path=panel_web_path,
+            panel_login=panel_login,
+            panel_password=panel_password,
             starting_date=starting_date,
-            closing_date=closing_date)
-
-    async def set_is_available(
+            closing_date=closing_date
+        )
+        
+    async def edit(
         self,
         server: Server,
-        is_available: bool
+        *,
+        ip: str | Unset = UNSET,
+        secured: bool | Unset = UNSET,
+        description: str | Unset = UNSET,
+        country_code: str | Unset = UNSET,
+        display_name: str | Unset = UNSET,
+        panel_port: int | Unset = UNSET,
+        panel_web_path: str | Unset = UNSET,
+        panel_login: str | Unset = UNSET,
+        panel_password: str | Unset = UNSET,
+        starting_date: datetime | Unset = UNSET,
+        closing_date: datetime | Unset = UNSET
     ) -> None:
-        server.is_available = is_available
-        await self.session.flush()
-
-    async def set_created_date(
-        self,
-        server: Server,
-        created_date: datetime
-    ) -> None:
-        server.created_date = created_date
-        await self.session.flush()
-
-    async def set_closing_date(
-        self,
-        server: Server,
-        closing_date: datetime
-    ) -> None:
-        server.closing_date = closing_date
-        await self.session.flush()
-
-    async def set_display_name(
-        self,
-        server: Server,
-        display_name: str
-    ) -> None:
-        server.display_name = display_name
-        await self.session.flush()
-
-    async def set_ip(
-        self,
-        server: Server,
-        ip: str
-    ) -> None:
-        server.ip = ip
-        await self.session.flush()
-
-    async def set_secured(
-        self,
-        server: Server,
-        secured: bool
-    ) -> None:
-        server.secured = secured
-        await self.session.flush()
-
-    async def set_description(
-        self,
-        server: Server,
-        description: str
-    ) -> None:
-        server.description = description
-        await self.session.flush()
-
-    async def set_country_code(
-        self,
-        server: Server,
-        country_code: str
-    ) -> None:
-        server.country_code = country_code
-        await self.session.flush()
+        await self._edit(
+            server,
+            ip=ip,
+            secured=secured,
+            description=description,
+            country_code=country_code,
+            display_name=display_name,
+            panel_port=panel_port,
+            panel_web_path=panel_web_path,
+            panel_login=panel_login,
+            panel_password=panel_password,
+            starting_date=starting_date,
+            closing_date=closing_date
+        )

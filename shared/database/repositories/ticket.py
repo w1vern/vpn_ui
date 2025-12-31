@@ -15,7 +15,7 @@ from .base import BaseRepository
 
 
 class TicketRepository(BaseRepository[Ticket]):
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, Ticket)
 
     async def create(self,

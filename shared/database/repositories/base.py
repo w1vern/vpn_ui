@@ -1,12 +1,9 @@
 
-from datetime import (
-    UTC,
-    datetime,
-)
+from datetime import UTC, datetime
 from typing import (
     Any,
     Generic,
-    TypeVar,
+    TypeVar
 )
 from uuid import UUID
 
@@ -14,7 +11,7 @@ from sqlalchemy import BinaryExpression, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import and_
 
-from ..models.base import Base
+from ..models import Base, UNSET
 
 ModelType = TypeVar("ModelType", bound=Base)
 
@@ -43,7 +40,7 @@ class BaseRepository(Generic[ModelType]):
                     **kwargs: Any
                     ) -> None:
         for field, value in kwargs.items():
-            if value is not None:
+            if value is not UNSET:
                 if not hasattr(instance, field):
                     raise ValueError(
                         f"{self.model.__name__} has no attribute {field}")
