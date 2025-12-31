@@ -1,16 +1,10 @@
 
-from datetime import (
-    UTC,
-    datetime,
-)
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import (
-    Ticket,
-    User,
-)
+from ..models import Ticket, User
 from .base import BaseRepository
 
 

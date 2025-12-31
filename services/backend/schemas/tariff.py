@@ -1,10 +1,9 @@
 
-
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from shared.database import Tariff
+from shared.database import UNSET, Tariff, Unset
 
 
 class TariffSchema(BaseModel):
@@ -15,6 +14,7 @@ class TariffSchema(BaseModel):
     price: float
     price_of_traffic_reset: float
     traffic: int
+    with_unavalable_inbounds: bool
     is_special: bool
 
     model_config = ConfigDict(from_attributes=True)
@@ -29,6 +29,7 @@ class TariffSchema(BaseModel):
             price=tariff.price,
             price_of_traffic_reset=tariff.price_of_traffic_reset,
             traffic=tariff.traffic,
+            with_unavalable_inbounds=tariff.with_unavalable_inbounds,
             is_special=tariff.is_special
         )
 
@@ -40,14 +41,15 @@ class CreateTariffSchema(BaseModel):
     price: float
     price_of_traffic_reset: float
     traffic: int
+    with_unavalable_inbounds: bool
     is_special: bool
 
 class EditTariffSchema(BaseModel):
-    name: str | None = None
-    description: str | None = None
-    duration: int | None = None
-    price: float | None = None
-    price_of_traffic_reset: float | None = None
-    traffic: int | None = None
-    is_special: bool | None = None
-
+    name: str | Unset = UNSET
+    description: str | Unset = UNSET
+    duration: int | Unset = UNSET
+    price: float | Unset = UNSET
+    price_of_traffic_reset: float | Unset = UNSET
+    traffic: int | Unset = UNSET
+    with_unavalable_inbounds: bool | Unset = UNSET
+    is_special: bool | Unset = UNSET

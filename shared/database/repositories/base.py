@@ -1,17 +1,13 @@
 
 from datetime import UTC, datetime
-from typing import (
-    Any,
-    Generic,
-    TypeVar
-)
+from typing import Any, Generic, TypeVar
 from uuid import UUID
 
 from sqlalchemy import BinaryExpression, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import and_
 
-from ..models import Base, UNSET
+from ..models import UNSET, Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 

@@ -1,14 +1,10 @@
 
-
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-)
+from pydantic import BaseModel, ConfigDict
 
-from shared.database import LanguageCodes, User
+from shared.database import UNSET, LanguageCodes, Unset, User
 
 from .tariff import TariffSchema
 
@@ -46,23 +42,18 @@ class UserSchema(BaseModel):
     rights: UserRightsSchema
     settings: UserSettingsSchema
 
-    tariff: TariffSchema
+    tariff: TariffSchema | None
 
-    model_config = ConfigDict(
-        # json_encoders={
-        #     UUID: lambda v: str(v),
-        #     datetime: lambda v: v.isoformat()
-        # },
-        from_attributes=True
-    )
+    model_config = ConfigDict(from_attributes=True)
 
     @classmethod
-    def from_db(cls, user: User) -> "UserSchema":
+    def from_db(cls, user: User) -> 'UserSchema':
         settings = UserSettingsSchema.model_validate(user)
         rights = UserRightsSchema.model_validate(user)
         return UserSchema(
             id=user.id,
-            tariff=TariffSchema.from_db(user.tariff),
+            tariff=TariffSchema.from_db(user.tariff)
+            if user.tariff is not None else None,
             telegram_id=user.telegram_id,
             telegram_username=user.telegram_username,
             telegram_language_code=LanguageCodes(user.telegram_language_code),
@@ -75,26 +66,26 @@ class UserSchema(BaseModel):
 
 
 class EditUserSettingsSchema(BaseModel):
-    auto_pay: bool | None = None
-    is_active: bool | None = None
-    get_traffic_notifications: bool | None = None
+    auto_pay: bool | Unset = UNSET
+    is_active: bool | Unset = UNSET
+    get_traffic_notifications: bool | Unset = UNSET
 
 
 class EditUserRightsSchema(BaseModel):
-    is_server_editor: bool | None = None
-    is_user_editor: bool | None = None
-    is_transaction_editor: bool | None = None
-    is_active_period_editor: bool | None = None
-    is_tariff_editor: bool | None = None
-    is_member_rights_editor: bool | None = None
-    is_admin_rights_editor: bool | None = None
-    is_control_panel_user: bool | None = None
-    is_verified: bool | None = None
+    is_server_editor: bool | Unset = UNSET
+    is_user_editor: bool | Unset = UNSET
+    is_transaction_editor: bool | Unset = UNSET
+    is_active_period_editor: bool | Unset = UNSET
+    is_tariff_editor: bool | Unset = UNSET
+    is_member_rights_editor: bool | Unset = UNSET
+    is_admin_rights_editor: bool | Unset = UNSET
+    is_control_panel_user: bool | Unset = UNSET
+    is_verified: bool | Unset = UNSET
 
 
 class EditUserSchema(BaseModel):
-    telegram_id: int | None = None
-    tariff_id: UUID | None = None
-    description: str | None = None
-    rights: EditUserRightsSchema | None = None
-    settings: EditUserSettingsSchema | None = None
+    telegram_id: int | Unset = UNSET
+    tariff_id: UUID | None | Unset = UNSET
+    description: str | Unset = UNSET
+    rights: EditUserRightsSchema | Unset = UNSET
+    settings: EditUserSettingsSchema | Unset = UNSET

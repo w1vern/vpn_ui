@@ -5,8 +5,18 @@ from uuid import UUID
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import TariffRepository
+from shared.database import (
+    UNSET,
+    TariffRepository,
+    Unset,
+    UserRepository
+)
 
+from ..depends import (
+    get_session,
+    get_tariff_repo,
+    get_user,
+)
 from ..exceptions import (
     NotTariffEditorException,
     TariffAlreadyExistsException,
@@ -17,11 +27,6 @@ from ..schemas import (
     EditTariffSchema,
     TariffSchema,
     UserSchema
-)
-from .depends import (
-    get_session,
-    get_tariff_repo,
-    get_user,
 )
 
 
@@ -63,6 +68,8 @@ class TariffService:
     ) -> TariffSchema:
         if self.user_schema.rights.is_tariff_editor is False:
             raise NotTariffEditorException()
+        if create_tariff_schema.name.startswith("archive."):
+            raise TariffAlreadyExistsException()
         tariff = await self.tr.get_by_name(create_tariff_schema.name)
         if tariff is not None:
             raise TariffAlreadyExistsException()
@@ -73,6 +80,7 @@ class TariffService:
             price_of_traffic_reset=create_tariff_schema.price_of_traffic_reset,
             traffic=create_tariff_schema.traffic,
             description=create_tariff_schema.description,
+            with_unavalable_inbounds=create_tariff_schema.with_unavalable_inbounds,
             is_special=create_tariff_schema.is_special
         )
         return TariffSchema.from_db(tariff)
@@ -86,7 +94,11 @@ class TariffService:
         tariff = await self.tr.get_by_id(tariff_id)
         if tariff is None:
             raise TariffNotFoundException()
-        tariff.name = f"{tariff.id}:{tariff.name}" 
+        ur = UserRepository(self.session)
+        users = await ur.get_all(tariff_id=tariff.id)
+        for user in users:
+            await ur.update_tariff(user, None)
+        await self.tr.edit(tariff, name=f"archive.{tariff.name}.{tariff.id}")
         await self.tr.delete(tariff)
 
     async def edit(
@@ -100,7 +112,7 @@ class TariffService:
         if tariff is None:
             raise TariffNotFoundException()
         duration = timedelta(seconds=edited_tariff.duration) \
-            if edited_tariff.duration is not None else None
+            if not isinstance(edited_tariff.duration, Unset) else UNSET
         await self.tr.edit(
             tariff,
             name=edited_tariff.name,
@@ -109,5 +121,6 @@ class TariffService:
             price_of_traffic_reset=edited_tariff.price_of_traffic_reset,
             traffic=edited_tariff.traffic,
             description=edited_tariff.description,
+            with_unavalable_inbounds=edited_tariff.with_unavalable_inbounds,
             is_special=edited_tariff.is_special
         )

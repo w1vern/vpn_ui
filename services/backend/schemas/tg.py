@@ -1,5 +1,4 @@
 
-
 from pydantic import BaseModel
 
 
@@ -9,3 +8,4 @@ class TgId(BaseModel):
 class TgAuth(BaseModel):
     tg_id: int
     tg_code: str
+    

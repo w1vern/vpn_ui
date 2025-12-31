@@ -12,19 +12,19 @@ from shared.database import (
     UserRepository,
 )
 
+from ..depends import (
+    get_message_repo,
+    get_session,
+    get_ticket_repo,
+    get_user,
+    get_user_repo
+)
 from ..exceptions import TicketNotFoundException
 from ..schemas import (
     TicketMessageCreateSchema,
     TicketMessageSchema,
     TicketSchema,
     UserSchema
-)
-from .depends import (
-    get_message_repo,
-    get_session,
-    get_ticket_repo,
-    get_user,
-    get_user_repo
 )
 
 
@@ -82,7 +82,11 @@ class TicketService:
         message: TicketMessageCreateSchema
     ) -> TicketMessageSchema:
         ticket = await self.get_ticket(ticket_id)
-        message_db = await self.mr.create(message.message, ticket, MessageTicketType.from_admin.value)
+        message_db = await self.mr.create(
+            text=message.message,
+            ticket=ticket,
+            message_type=MessageTicketType.from_admin.value
+        )
         return TicketMessageSchema.from_db(message_db)
 
     async def close(

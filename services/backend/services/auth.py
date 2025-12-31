@@ -9,6 +9,7 @@ from redis.asyncio import Redis
 from shared.database import UserRepository
 
 from ..config import Config
+from ..depends import get_user_repo
 from ..exceptions import (
     CodeNotFoundException,
     InvalidCredentialsException,
@@ -22,7 +23,6 @@ from ..redis import RedisType, get_redis_client
 from ..schemas import TgAuth, TgId
 from ..token import AccessToken, RefreshToken
 from .anti_spam import AntiSpamService
-from .depends import get_user_repo
 
 
 class AuthService:

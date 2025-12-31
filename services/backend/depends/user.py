@@ -1,18 +1,12 @@
 
-from datetime import (
-    UTC,
-    datetime,
-)
+from datetime import UTC, datetime
 
-from fastapi import (
-    Cookie,
-    Depends,
-)
+from fastapi import Cookie, Depends
 from redis.asyncio import Redis
 
 from shared.database import User, UserRepository
 
-from ...exceptions import (
+from ..exceptions import (
     AccessTokenCorruptedException,
     AccessTokenExpiredException,
     AccessTokenInvalidatedException,
@@ -20,17 +14,18 @@ from ...exceptions import (
     NotControlPanelUserException,
     SendFeedbackToAdminException
 )
-from ...redis import (
+from ..redis import (
     RedisType,
     get_redis_client,
 )
-from ...schemas import UserSchema
-from ...token import AccessToken
+from ..schemas import UserSchema
+from ..token import AccessToken
 
 
-async def get_user(access_token: str | None = Cookie(default=None),
-                   redis: Redis = Depends(get_redis_client)
-                   ) -> UserSchema:
+async def get_user(
+    access_token: str | None = Cookie(default=None),
+    redis: Redis = Depends(get_redis_client)
+) -> UserSchema:
     if access_token is None:
         raise AccessTokenMissingException()
     access = AccessToken.from_token(access_token)
@@ -46,9 +41,10 @@ async def get_user(access_token: str | None = Cookie(default=None),
     return access.user
 
 
-async def get_db_user(user: UserSchema,
-                      ur: UserRepository
-                      ) -> User:
+async def get_db_user(
+    user: UserSchema,
+    ur: UserRepository
+) -> User:
     user_db = await ur.get_by_id(user.id)
     if user_db is None:
         raise SendFeedbackToAdminException()

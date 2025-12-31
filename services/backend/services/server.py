@@ -2,31 +2,31 @@
 from uuid import UUID
 
 from fastapi import Depends
-from shared.proxy_interface import VpnType
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (
-    PanelServerRepository,
+    ServerInboundRepository,
     ServerRepository,
+    Unset,
     UserRepository
 )
 
+from ..depends import (
+    get_server_inbound_repo,
+    get_server_repo,
+    get_session,
+    get_user,
+    get_user_repo,
+)
 from ..exceptions import (
     NotServerEditorException,
     ServerNotFoundException
 )
 from ..schemas import (
     CreateServerSchema,
+    EditServerSchema,
     ServerSchema,
-    ServerToEditSchema,
     UserSchema
-)
-from .depends import (
-    get_panel_server_repo,
-    get_server_repo,
-    get_session,
-    get_user,
-    get_user_repo,
 )
 
 
@@ -36,13 +36,13 @@ class ServerService:
         session: AsyncSession,
         ur: UserRepository,
         sr: ServerRepository,
-        psr: PanelServerRepository,
+        sir: ServerInboundRepository,
         user_schema: UserSchema
     ) -> None:
         self.session = session
         self.ur = ur
         self.sr = sr
-        self.psr = psr
+        self.sir = sir
         self.user_schema = user_schema
 
     @classmethod
@@ -51,17 +51,18 @@ class ServerService:
         session: AsyncSession = Depends(get_session),
         ur: UserRepository = Depends(get_user_repo),
         sr: ServerRepository = Depends(get_server_repo),
-        psr: PanelServerRepository = Depends(get_panel_server_repo),
+        sir: ServerInboundRepository = Depends(get_server_inbound_repo),
         user_schema: UserSchema = Depends(get_user)
     ) -> 'ServerService':
-        return cls(session, ur, sr, psr, user_schema)
+        return cls(session, ur, sr, sir, user_schema)
 
     async def all(
         self,
         limit: int | None,
         offset: int | None
     ) -> list[ServerSchema]:
-        return [ServerSchema.from_db(s) for s in await self.psr.get_all(limit, offset)]
+        return [ServerSchema.from_db(s)
+                for s in await self.sr.get_all(limit, offset)]
 
     async def count(self) -> int:
         return await self.sr.count()
@@ -70,7 +71,7 @@ class ServerService:
         self,
         server_id: UUID
     ) -> ServerSchema:
-        server = await self.psr.get_by_id(server_id)
+        server = await self.sr.get_by_id(server_id)
         if server is None:
             raise ServerNotFoundException()
         return ServerSchema.from_db(server)
@@ -86,71 +87,44 @@ class ServerService:
             secured=server_to_create.secured,
             description=server_to_create.description,
             country_code=server_to_create.country_code,
-            is_available=server_to_create.is_available,
             display_name=server_to_create.display_name,
+            panel_port=server_to_create.panel_port,
+            panel_web_path=server_to_create.panel_web_path,
+            panel_login=server_to_create.panel_login,
+            panel_password=server_to_create.panel_password,
             starting_date=server_to_create.starting_date.replace(
                 tzinfo=None),
             closing_date=server_to_create.closing_date.replace(tzinfo=None))
-        pserver = await self.psr.create(
-            server=server,
-            panel_port=server_to_create.panel_port,
-            port_generator_port=server_to_create.port_generator_port,
-            web_path=server_to_create.web_path,
-            login=server_to_create.login,
-            password=server_to_create.password,
-            vless_reality_id=server_to_create.vless_reality_id,
-            vless_reality_port=server_to_create.vless_reality_port,
-            vless_reality_domain_short_id=server_to_create.vless_reality_domain_short_id,
-            vless_reality_public_key=server_to_create.vless_reality_public_key,
-            vless_reality_private_key=server_to_create.vless_reality_private_key
-        )
-        return ServerSchema.from_db(pserver)
+        return ServerSchema.from_db(server)
 
     async def edit(
         self,
         server_id: UUID,
-        server_to_edit: ServerToEditSchema
+        server_to_edit: EditServerSchema
     ) -> None:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
         server = await self.sr.get_by_id(server_id)
-        pserver = await self.psr.get_by_id(server_id)
-        if not (server and pserver):
+        if server is None:
             raise ServerNotFoundException()
-        if server_to_edit.ip is not None:
-            await self.sr.set_ip(server, server_to_edit.ip)
-        if server_to_edit.secured is not None:
-            await self.sr.set_secured(server, server_to_edit.secured)
-        if server_to_edit.country_code is not None:
-            await self.sr.set_country_code(server, server_to_edit.country_code)
-        if server_to_edit.display_name is not None:
-            await self.sr.set_display_name(server, server_to_edit.display_name)
-        if server_to_edit.starting_date is not None:
-            server_to_edit.starting_date.replace(tzinfo=None)
-            await self.sr.set_created_date(server, server_to_edit.starting_date)
-        if server_to_edit.closing_date is not None:
-            server_to_edit.closing_date.replace(tzinfo=None)
-            await self.sr.set_closing_date(server, server_to_edit.closing_date)
-        if server_to_edit.is_available is not None:
-            await self.sr.set_is_available(server, server_to_edit.is_available)
-        if server_to_edit.login is not None:
-            await self.psr.set_login(pserver, server_to_edit.login)
-        if server_to_edit.password is not None:
-            await self.psr.set_password(pserver, server_to_edit.password)
-        if server_to_edit.panel_port is not None:
-            await self.psr.set_panel_port(pserver, server_to_edit.panel_port)
-        if server_to_edit.port_generator_port is not None:
-            await self.psr.set_port_generator_port(pserver, server_to_edit.port_generator_port)
-        if server_to_edit.web_path is not None:
-            await self.psr.set_web_path(pserver, server_to_edit.web_path)
-        if server_to_edit.description is not None:
-            await self.sr.set_description(server, server_to_edit.description)
-        await self.psr.update_vpn(
-            server=pserver,
-            vpn_type=VpnType.VLESS_REALITY,
-            id=server_to_edit.vless_reality_id,
-            port=server_to_edit.vless_reality_port,
-            domain_short_id=server_to_edit.vless_reality_domain_short_id,
-            public_key=server_to_edit.vless_reality_public_key,
-            private_key=server_to_edit.vless_reality_private_key
+        if not isinstance(server_to_edit.starting_date, Unset):
+            server_to_edit.starting_date = server_to_edit.starting_date.replace(
+                tzinfo=None)
+        if not isinstance(server_to_edit.closing_date, Unset):
+            server_to_edit.closing_date = server_to_edit.closing_date.replace(
+                tzinfo=None)
+
+        await self.sr.edit(
+            server,
+            ip=server_to_edit.ip,
+            secured=server_to_edit.secured,
+            description=server_to_edit.description,
+            country_code=server_to_edit.country_code,
+            display_name=server_to_edit.display_name,
+            panel_port=server_to_edit.panel_port,
+            panel_web_path=server_to_edit.panel_web_path,
+            panel_login=server_to_edit.panel_login,
+            panel_password=server_to_edit.panel_password,
+            starting_date=server_to_edit.starting_date,
+            closing_date=server_to_edit.closing_date
         )

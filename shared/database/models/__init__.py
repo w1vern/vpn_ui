@@ -1,6 +1,6 @@
 
 from .active_period import ActivePeriod
-from .base import Base, Unset, UNSET
+from .base import UNSET, Base, Unset
 from .message_for_ticket import MessageForTicket
 from .server import Server
 from .server_inbound import ServerInbound

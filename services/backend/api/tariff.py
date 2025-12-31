@@ -21,8 +21,9 @@ router = APIRouter(prefix="/tariffs", tags=["tariffs"])
     path="",
     summary="Get all tariffs"
 )
-async def all(tariff_service: TariffService = Depends(TariffService.depends)
-              ) -> list[TariffSchema]:
+async def all(
+    tariff_service: TariffService = Depends(TariffService.depends)
+) -> list[TariffSchema]:
     return await tariff_service.all()
 
 
@@ -30,8 +31,10 @@ async def all(tariff_service: TariffService = Depends(TariffService.depends)
     path="/{tariff_id}",
     summary="Get tariff by id"
 )
-async def get(tariff_id: UUID, tariff_service: TariffService = Depends(TariffService.depends)
-              ) -> TariffSchema:
+async def get(
+    tariff_id: UUID,
+    tariff_service: TariffService = Depends(TariffService.depends)
+) -> TariffSchema:
     return await tariff_service.get(tariff_id)
 
 
@@ -39,9 +42,10 @@ async def get(tariff_id: UUID, tariff_service: TariffService = Depends(TariffSer
     path="",
     summary="Create a new tariff"
 )
-async def create(create_tariff_schema: CreateTariffSchema,
-                 tariff_service: TariffService = Depends(TariffService.depends)
-                 ) -> TariffSchema:
+async def create(
+    create_tariff_schema: CreateTariffSchema,
+    tariff_service: TariffService = Depends(TariffService.depends)
+) -> TariffSchema:
     return await tariff_service.create(create_tariff_schema)
 
 
@@ -49,9 +53,10 @@ async def create(create_tariff_schema: CreateTariffSchema,
     path="/{tariff_id}",
     summary="Delete an existing tariff"
 )
-async def delete(tariff_id: UUID,
-                 tariff_service: TariffService = Depends(TariffService.depends)
-                 ) -> SuccessResponse:
+async def delete(
+    tariff_id: UUID,
+    tariff_service: TariffService = Depends(TariffService.depends)
+) -> SuccessResponse:
     await tariff_service.delete(tariff_id)
     return SuccessResponse()
 
@@ -60,8 +65,10 @@ async def delete(tariff_id: UUID,
     path="/{tariff_id}",
     summary="Edit an existing tariff"
 )
-async def edit(tariff_id: UUID, edited_tariff: EditTariffSchema,
-               tariff_service: TariffService = Depends(TariffService.depends)
-               ) -> SuccessResponse:
+async def edit(
+    tariff_id: UUID,
+    edited_tariff: EditTariffSchema,
+    tariff_service: TariffService = Depends(TariffService.depends)
+) -> SuccessResponse:
     await tariff_service.edit(tariff_id, edited_tariff)
     return SuccessResponse()

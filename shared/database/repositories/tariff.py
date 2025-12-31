@@ -23,8 +23,8 @@ class TariffRepository(BaseRepository[Tariff]):
         price_of_traffic_reset: float,
         traffic: int,
         description: str,
-        with_unavalable_inbounds: bool = False,
-        is_special: bool = False,
+        with_unavalable_inbounds: bool,
+        is_special: bool,
     ) -> Tariff:
         return await self._create(
             name=name,

@@ -4,10 +4,7 @@ from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import (
-    TelegramMessage,
-    User,
-)
+from ..models import TelegramMessage, User
 from .base import BaseRepository
 
 

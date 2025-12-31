@@ -3,9 +3,9 @@
 from fastapi import Depends
 from faststream.rabbit import RabbitBroker
 
+from ..depends import get_user
 from ..rabbit import get_broker, send_tg_notification
 from ..schemas import Notification, UserSchema
-from .depends import get_user
 
 
 class NotificationService:

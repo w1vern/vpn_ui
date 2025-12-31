@@ -49,13 +49,14 @@ async def main() -> None:
             return
         await ur.create(
             telegram_id=env_config.bot.superuser,
-            telegram_username="Admin",
+            telegram_username="super-admin",
             telegram_language_code="en",
             description="",
             balance=0,
             rights=RightsType.super_admin.value,
             settings=SettingsType.default.value,
-            tariff_id=None
+            tariff=None,
+            internal_id="super-admin"
         )
         logger.info("database is filled")
 

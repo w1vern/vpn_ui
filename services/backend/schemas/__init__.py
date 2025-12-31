@@ -1,10 +1,12 @@
 
-
 from .notification import Notification
 from .server import (
+    CreateServerInboundSchema,
     CreateServerSchema,
-    ServerSchema,
-    ServerToEditSchema,
+    EditServerInboundSchema,
+    EditServerSchema,
+    ServerInboundSchema,
+    ServerSchema
 )
 from .tariff import CreateTariffSchema, EditTariffSchema, TariffSchema
 from .tg import TgAuth, TgId
@@ -25,9 +27,12 @@ from .user import (
 )
 
 __all__ = [
-    "ServerToEditSchema",
+    "EditServerSchema",
     "ServerSchema",
     "CreateServerSchema",
+    "ServerInboundSchema",
+    "CreateServerInboundSchema",
+    "EditServerInboundSchema",
 
     "TgAuth",
 
@@ -48,5 +53,7 @@ __all__ = [
 
     "TariffSchema",
     "CreateTariffSchema",
-    "EditTariffSchema"
+    "EditTariffSchema",
+
+    "Notification"
 ]

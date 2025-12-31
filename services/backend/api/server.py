@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, Query
 from ..response import SuccessResponse
 from ..schemas import (
     CreateServerSchema,
+    EditServerSchema,
     ServerSchema,
-    ServerToEditSchema,
 )
 from ..services import ServerService
 
@@ -19,12 +19,14 @@ router = APIRouter(prefix="/servers", tags=["servers"])
     summary="Get all servers"
 )
 async def get_all(
-    offset: int | None = Query(None,
-                               ge=0,
-                               description="From which index to start"),
-    limit: int | None = Query(None,
-                              ge=1,
-                              description="Number of items to return"),
+    offset: int | None = Query(
+        None,
+        ge=0,
+        description="From which index to start"),
+    limit: int | None = Query(
+        None,
+        ge=1,
+        description="Number of items to return"),
     server_service: ServerService = Depends(ServerService.depends)
 ) -> list[ServerSchema]:
     return await server_service.all(limit, offset)
@@ -69,7 +71,7 @@ async def create_server(
 )
 async def edit_server(
     server_id: UUID,
-    server_to_edit: ServerToEditSchema,
+    server_to_edit: EditServerSchema,
     server_service: ServerService = Depends(
         ServerService.depends)
 ) -> SuccessResponse:

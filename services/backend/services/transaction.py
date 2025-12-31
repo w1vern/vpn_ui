@@ -10,18 +10,18 @@ from shared.database import (
     UserRepository
 )
 
+from ..depends import (
+    get_session,
+    get_transaction_repo,
+    get_user,
+    get_user_repo
+)
 from ..exceptions import (
     TransactionTypeNotFoundException,
     UserNotFoundException,
     UserNotTransactionEditorException
 )
 from ..schemas import TransactionSchema, UserSchema
-from .depends import (
-    get_session,
-    get_transaction_repo,
-    get_user,
-    get_user_repo
-)
 
 
 class TransactionService:

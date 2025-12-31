@@ -1,12 +1,11 @@
 
 import secrets
-from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..enums import Rights, RightsType, Settings, SettingsType
-from ..models import Tariff, User
+from ..models import Tariff, Unset, User
 from .base import BaseRepository
 
 
@@ -20,17 +19,19 @@ class UserRepository(BaseRepository[User]):
         telegram_username: str,
         telegram_language_code: str,
         description: str,
-        tariff_id: UUID | None,
+        tariff: Tariff | None,
+        internal_id: str,
         balance: float = 0,
         rights: int = RightsType.member.value,
         settings: int = SettingsType.default.value,
     ) -> User:
         return await self._create(
             telegram_id=telegram_id,
-            tariff_id=tariff_id,
+            tariff_id=tariff.id if tariff is not None else None,
             description=description,
             telegram_username=telegram_username,
             telegram_language_code=telegram_language_code,
+            internal_id=internal_id,
             balance=balance,
             rights=rights,
             settings=settings)
@@ -78,9 +79,11 @@ class UserRepository(BaseRepository[User]):
     async def update_rights(
         self,
         user: User,
-        updated_rights: dict[str, bool]
+        updated_rights: dict[str, bool | Unset]
     ) -> None:
         for right, value in updated_rights.items():
+            if isinstance(value, Unset):
+                continue
             if getattr(user, right) != value:
                 user.rights ^= Rights[right].value
         await self.session.flush()
@@ -91,6 +94,8 @@ class UserRepository(BaseRepository[User]):
         updated_settings: dict[str, bool]
     ) -> None:
         for setting, value in updated_settings.items():
+            if isinstance(value, Unset):
+                continue
             if getattr(user, setting) != value:
                 user.settings ^= Settings[setting].value
         await self.session.flush()
@@ -116,4 +121,12 @@ class UserRepository(BaseRepository[User]):
         new_description: str
     ) -> None:
         user.description = new_description
+        await self.session.flush()
+        
+    async def update_internal_id(
+        self,
+        user: User,
+        new_internal_id: str
+    ) -> None:
+        user.internal_id = new_internal_id
         await self.session.flush()

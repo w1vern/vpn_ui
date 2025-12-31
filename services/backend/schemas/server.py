@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from shared.database import PanelServer
+from shared.database import UNSET, Server, ServerInbound, Unset
 
 
 class ServerSchema(BaseModel):
@@ -13,71 +13,51 @@ class ServerSchema(BaseModel):
     secured: bool
     description: str
     country_code: str
-    is_available: bool
     display_name: str
+
     starting_date: datetime
     closing_date: datetime
 
     panel_port: int
-    port_generator_port: int
-    web_path: str
-    login: str
-    password: str
-
-    vless_reality_id: int | None
-    vless_reality_port: int | None
-    vless_reality_domain_short_id: str | None
-    vless_reality_public_key: str | None
-    vless_reality_private_key: str | None
+    panel_web_path: str
+    panel_login: str
+    panel_password: str
 
     @classmethod
-    def from_db(cls,
-                server: PanelServer
-                ) -> 'ServerSchema':
+    def from_db(
+        cls,
+        server: Server
+    ) -> 'ServerSchema':
         return ServerSchema(
             id=server.id,
-            description=server.server.description,
-            display_name=server.server.display_name,
-            ip=server.server.ip,
-            secured=server.server.secured,
-            country_code=server.server.country_code,
-            is_available=server.server.is_available,
-            starting_date=server.server.starting_date,
-            closing_date=server.server.closing_date,
+            description=server.description,
+            display_name=server.display_name,
+            ip=server.ip,
+            secured=server.secured,
+            country_code=server.country_code,
+            starting_date=server.starting_date,
+            closing_date=server.closing_date,
             panel_port=server.panel_port,
-            port_generator_port=server.port_generator_port,
-            web_path=server.web_path,
-            login=server.login,
-            password=server.password,
-            vless_reality_id=server.vless_reality_id,
-            vless_reality_port=server.vless_reality_port,
-            vless_reality_domain_short_id=server.vless_reality_domain_short_id,
-            vless_reality_public_key=server.vless_reality_public_key,
-            vless_reality_private_key=server.vless_reality_private_key
+            panel_web_path=server.panel_web_path,
+            panel_login=server.panel_login,
+            panel_password=server.panel_password
         )
 
 
-class ServerToEditSchema(BaseModel):
-    ip: str | None = None
-    secured: bool | None = None
-    description: str | None = None
-    country_code: str | None = None
-    is_available: bool | None = None
-    display_name: str | None = None
-    starting_date: datetime | None = None
-    closing_date: datetime | None = None
+class EditServerSchema(BaseModel):
+    ip: str | Unset = UNSET
+    secured: bool | Unset = UNSET
+    description: str | Unset = UNSET
+    country_code: str | Unset = UNSET
+    display_name: str | Unset = UNSET
 
-    panel_port: int | None = None
-    port_generator_port: int | None = None
-    web_path: str | None = None
-    login: str | None = None
-    password: str | None = None
+    starting_date: datetime | Unset = UNSET
+    closing_date: datetime | Unset = UNSET
 
-    vless_reality_id: int | None = None
-    vless_reality_port: int | None = None
-    vless_reality_domain_short_id: str | None = None
-    vless_reality_public_key: str | None = None
-    vless_reality_private_key: str | None = None
+    panel_port: int | Unset = UNSET
+    panel_web_path: str | Unset = UNSET
+    panel_login: str | Unset = UNSET
+    panel_password: str | Unset = UNSET
 
 
 class CreateServerSchema(BaseModel):
@@ -85,18 +65,51 @@ class CreateServerSchema(BaseModel):
     secured: bool
     description: str
     panel_port: int
-    port_generator_port: int
-    web_path: str
+    panel_web_path: str
     country_code: str
-    is_available: bool
     display_name: str
-    login: str
-    password: str
+    panel_login: str
+    panel_password: str
     starting_date: datetime
     closing_date: datetime
 
-    vless_reality_id: int
-    vless_reality_port: int
-    vless_reality_domain_short_id: str
-    vless_reality_public_key: str
-    vless_reality_private_key: str
+
+class ServerInboundSchema(BaseModel):
+    id: UUID
+    inbound_id: int
+    protocol: str
+    name: str
+    description: str
+    is_available: bool
+
+    @classmethod
+    def from_db(
+        cls,
+        server_inbound: ServerInbound
+    ) -> 'ServerInboundSchema':
+        return ServerInboundSchema(
+            id=server_inbound.id,
+            inbound_id=server_inbound.inbound_id,
+            protocol=server_inbound.protocol,
+            name=server_inbound.name,
+            description=server_inbound.description,
+            is_available=server_inbound.is_available
+        )
+
+
+class EditServerInboundSchema(BaseModel):
+    inbound_id: int | Unset = UNSET
+    template: str | Unset = UNSET
+    protocol: str | Unset = UNSET
+    name: str | Unset = UNSET
+    description: str | Unset = UNSET
+    is_available: bool | Unset = UNSET
+
+
+class CreateServerInboundSchema(BaseModel):
+    inbound_id: int
+    template: str
+    protocol: str
+    name: str
+    description: str
+    is_available: bool
