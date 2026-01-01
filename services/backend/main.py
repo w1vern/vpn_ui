@@ -25,7 +25,7 @@ async def health() -> SuccessResponse:
     return SuccessResponse()
 
 
-@router.get("/sub/{user_id}")
+@router.get("/sub/{user_id}", include_in_schema=False)
 async def subscriptions(
     user_id: UUID,
     session: AsyncSession = Depends(get_session)
