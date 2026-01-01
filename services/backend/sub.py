@@ -1,8 +1,6 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
-from fastapi.responses import PlainTextResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (
@@ -15,19 +13,13 @@ from shared.database import (
 from shared.infrastructure import setup_logger
 from shared.x_ui import PanelRepository, server_session_manager
 
-from .depends import get_session
-
 logger = setup_logger(__name__)
 
 
-router = APIRouter(prefix="/sub")
-
-
-@router.get(path="/{user_id}", include_in_schema=False)
 async def get_subscriptions(
     user_id: UUID,
-    session: AsyncSession = Depends(get_session)
-) -> PlainTextResponse:
+    session: AsyncSession
+) -> tuple[str, int]:
     logger.debug(user_id)
     result: list[str] = []
     ur = UserRepository(session)
@@ -36,10 +28,10 @@ async def get_subscriptions(
     apr = ActivePeriodRepository(session)
     user = await ur.get_by_id(user_id)
     if user is None:
-        return PlainTextResponse(content="", status_code=404)
+        return "", 404
     ap = await apr.get_latest_for_user(user)
     if ap is None:
-        return PlainTextResponse(content="", status_code=401)
+        return "", 401
     use_unawailable = ap.tariff.with_unavalable_inbounds
     servers = await sr.get_all()
 
@@ -72,4 +64,4 @@ async def get_subscriptions(
                     case _:
                         string = inbd.template
                 result.append(f"{string}")
-    return PlainTextResponse(content="\n\n".join(result), status_code=200)
+    return "\n\n".join(result), 200

@@ -1,10 +1,15 @@
 
-from fastapi import FastAPI
+from uuid import UUID
+from fastapi import Depends, FastAPI
+from fastapi.responses import PlainTextResponse
+
+from services.backend.depends import get_session
 
 from .api import router
 from .rabbit import router as faststream_router
 from .response import SuccessResponse
-from .sub import router as sub_router
+from .sub import get_subscriptions
+from sqlalchemy.ext.asyncio import AsyncSession
 
 app = FastAPI(
     docs_url="/api/docs",
@@ -15,10 +20,18 @@ app = FastAPI(
     })
 
 
-@app.get("/health", include_in_schema=False)
+@router.get("/health", include_in_schema=False)
 async def health() -> SuccessResponse:
     return SuccessResponse()
 
+
+@router.get("/sub/{user_id}")
+async def subscriptions(
+    user_id: UUID,
+    session: AsyncSession = Depends(get_session)
+) -> PlainTextResponse:
+    ans, status = await get_subscriptions(user_id, session)
+    return PlainTextResponse(content=ans, status_code=status)
+
 app.include_router(router)
-app.include_router(sub_router)
 app.include_router(faststream_router)
