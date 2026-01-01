@@ -5,6 +5,10 @@ from .base import BaseNotFoundException
 class ServerNotFoundException(BaseNotFoundException):
     def __init__(self) -> None:
         super().__init__("Server not found")
+        
+class ServerInboundNotFoundException(BaseNotFoundException):
+    def __init__(self) -> None:
+        super().__init__("Server inbound not found")
 
 
 class TargetUserNotFoundException(BaseNotFoundException):

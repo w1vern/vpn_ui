@@ -5,13 +5,87 @@ from fastapi import APIRouter, Depends, Query
 
 from ..response import SuccessResponse
 from ..schemas import (
+    CreateServerInboundSchema,
     CreateServerSchema,
+    EditServerInboundSchema,
     EditServerSchema,
-    ServerSchema,
+    ServerInboundSchema,
+    ServerSchema
 )
-from ..services import ServerService
+from ..services import ServerInboundService, ServerService
 
 router = APIRouter(prefix="/servers", tags=["servers"])
+
+
+@router.get(
+    path="/inbounds",
+    summary="Get all server inbounds"
+)
+async def get_all_inbounds(
+    server_id: UUID | None = Query(None, description="Server ID"),
+    offset: int | None = Query(
+        None,
+        ge=0,
+        description="From which index to start"),
+    limit: int | None = Query(
+        None,
+        ge=1,
+        description="Number of items to return"),
+    server_ibound_service: ServerInboundService = Depends(
+        ServerInboundService.depends)
+) -> list[ServerInboundSchema]:
+    return await server_ibound_service.all(server_id, limit, offset)
+
+
+@router.get(
+    path="/inbounds/count",
+    summary="Get server inbounds count"
+)
+async def count_inbounds(
+    server_id: UUID | None = Query(None, description="Server ID"),
+    server_ibound_service: ServerInboundService = Depends(
+        ServerInboundService.depends)
+) -> int:
+    return await server_ibound_service.count(server_id)
+
+
+@router.post(
+    path="/inbounds/{server_id}",
+    summary="Create a new server inbound"
+)
+async def create_server_inbound(
+    server_id: UUID,
+    server_inbound_to_create: CreateServerInboundSchema,
+    server_ibound_service: ServerInboundService = Depends(
+        ServerInboundService.depends)
+) -> ServerInboundSchema:
+    return await server_ibound_service.create(server_id, server_inbound_to_create)
+
+
+@router.get(
+    path="/inbounds/{server_inbound_id}",
+    summary="Get server inbound by id"
+)
+async def get_server_inbound(
+    server_inbound_id: UUID,
+    server_ibound_service: ServerInboundService = Depends(
+        ServerInboundService.depends)
+) -> ServerInboundSchema:
+    return await server_ibound_service.get(server_inbound_id)
+
+
+@router.patch(
+    path="/inbounds/{server_inbound_id}",
+    summary="Update an existing server inbound",
+)
+async def edit_server_inbound(
+    server_inbound_id: UUID,
+    server_inbound_to_edit: EditServerInboundSchema,
+    server_ibound_service: ServerInboundService = Depends(
+        ServerInboundService.depends)
+) -> SuccessResponse:
+    await server_ibound_service.edit(server_inbound_id, server_inbound_to_edit)
+    return SuccessResponse()
 
 
 @router.get(

@@ -12,8 +12,9 @@ class GetKeyboardSizeFunction(Protocol):
         ...
 
 
-def get_keyboard_size(values: list[Button]
-                      ) -> list[int]:
+def get_keyboard_size(
+    values: list[Button]
+) -> list[int]:
     in_a_row = 2
     length = len(values)
     res: list[int] = []
@@ -26,17 +27,23 @@ def get_keyboard_size(values: list[Button]
 
 class StaticButtons:
     to_settings_menu = Button(
-        I18nMessage(MessageKey.to_settings_menu), "to_settings_menu")
+        I18nMessage(MessageKey.to_settings_menu),
+        "to_settings_menu")
     to_main_menu = Button(
-        I18nMessage(MessageKey.to_main_menu), "to_main_menu")
+        I18nMessage(MessageKey.to_main_menu),
+        "to_main_menu")
     to_inbounds_menu = Button(
-        I18nMessage(MessageKey.to_inbounds_menu), "to_inbounds_menu")
+        I18nMessage(MessageKey.to_inbounds_menu),
+        "to_inbounds_menu")
     to_tickets_menu = Button(
-        I18nMessage(MessageKey.to_tickets_menu), "to_tickets_menu")
+        I18nMessage(MessageKey.to_tickets_menu),
+        "to_tickets_menu")
     to_transactions_menu = Button(
-        I18nMessage(MessageKey.to_transactions_menu), "to_transactions_menu")
+        I18nMessage(MessageKey.to_transactions_menu),
+        "to_transactions_menu")
     read_notifications = Button(
-        I18nMessage(MessageKey.read_notifications), "read_notifications")
+        I18nMessage(MessageKey.read_notifications),
+        "read_notifications")
 
 
 def main_menu_keyboard() -> list[Button]:

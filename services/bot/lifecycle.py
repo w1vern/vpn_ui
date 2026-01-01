@@ -14,17 +14,20 @@ from .service import Service
 logger = setup_logger(__name__)
 
 
-def register_lifecycle(dp: Dispatcher,
-                       bot: Bot
-                       ) -> None:
+def register_lifecycle(
+    dp: Dispatcher,
+    bot: Bot
+) -> None:
     @dp.startup()
     @inject
-    async def on_startup(ur: UserRepository = Depends(get_user_repo)
-                         ) -> None:
+    async def on_startup(
+        ur: UserRepository = Depends(get_user_repo)
+    ) -> None:
         @inject
-        async def _(user_info: UserInfo,
-                    service: Service = Depends(Service.depends)
-                    ) -> None:
+        async def _(
+            user_info: UserInfo,
+            service: Service = Depends(Service.depends)
+        ) -> None:
             logger.debug("on_startup")
             service.main_message.notifications.append(
                 Notification(I18nMessage(MessageKey.bot_started
@@ -34,18 +37,21 @@ def register_lifecycle(dp: Dispatcher,
             await update_message(service.output())
         users = await ur.get_all()
         for user in users:
-            await _(UserInfo(user.telegram_id,
-                             user.telegram_username,
-                             LanguageCodes(user.telegram_language_code)))
+            await _(UserInfo(
+                user.telegram_id,
+                user.telegram_username,
+                LanguageCodes(user.telegram_language_code)))
 
     @dp.shutdown()
     @inject
-    async def on_shutdown(ur: UserRepository = Depends(get_user_repo)
-                          ) -> None:
+    async def on_shutdown(
+        ur: UserRepository = Depends(get_user_repo)
+    ) -> None:
         @inject
-        async def _(user_info: UserInfo,
-                    service: Service = Depends(Service.depends)
-                    ) -> None:
+        async def _(
+            user_info: UserInfo,
+            service: Service = Depends(Service.depends)
+        ) -> None:
             service.main_message.notifications.append(
                 Notification(I18nMessage(MessageKey.bot_stopped
                                          ).render(service.user_info.lang_code)))

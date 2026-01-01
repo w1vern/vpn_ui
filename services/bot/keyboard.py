@@ -10,10 +10,11 @@ from .buttons import (
 )
 
 
-def create_keyboard(values: list[Button],
-                    lang_code: LanguageCodes,
-                    keyboard_size: GetKeyboardSizeFunction = get_keyboard_size,
-                    ) -> InlineKeyboardMarkup:
+def create_keyboard(
+    values: list[Button],
+    lang_code: LanguageCodes,
+    keyboard_size: GetKeyboardSizeFunction = get_keyboard_size,
+) -> InlineKeyboardMarkup:
     markup = keyboard_size(values)
     keyboard: list[list[InlineKeyboardButton]] = []
     index = 0

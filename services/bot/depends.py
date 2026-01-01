@@ -6,9 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (
     LanguageCodes,
-    PanelServerRepository,
+    ServerInboundRepository,
     ServerRepository,
-    ServerUserInboundRepository,
     TariffRepository,
     TransactionRepository,
     User,
@@ -30,39 +29,41 @@ from .redis import RedisType, get_redis_client
 logger = setup_logger(__name__)
 
 
-async def get_user_repo(session: AsyncSession = Depends(session_manager.session)
-                        ) -> UserRepository:
+async def get_user_repo(
+    session: AsyncSession = Depends(session_manager.session)
+) -> UserRepository:
     return UserRepository(session)
 
 
-async def get_tariff_repo(session: AsyncSession = Depends(session_manager.session)
-                          ) -> TariffRepository:
+async def get_tariff_repo(
+    session: AsyncSession = Depends(session_manager.session)
+) -> TariffRepository:
     return TariffRepository(session)
 
 
-async def get_server_repo(session: AsyncSession = Depends(session_manager.session)
-                          ) -> ServerRepository:
+async def get_server_repo(
+    session: AsyncSession = Depends(session_manager.session)
+) -> ServerRepository:
     return ServerRepository(session)
 
 
-async def get_panel_server_repo(session: AsyncSession = Depends(session_manager.session)
-                                ) -> PanelServerRepository:
-    return PanelServerRepository(session)
-
-async def get_server_user_inbound_repo(session: AsyncSession = Depends(session_manager.session)
-                                ) -> ServerUserInboundRepository:
-    return ServerUserInboundRepository(session)
+async def get_server_inbound_repo(
+    session: AsyncSession = Depends(session_manager.session)
+) -> ServerInboundRepository:
+    return ServerInboundRepository(session)
 
 
-async def get_transaction_repo(session: AsyncSession = Depends(session_manager.session)
-                               ) -> TransactionRepository:
+async def get_transaction_repo(
+    session: AsyncSession = Depends(session_manager.session)
+) -> TransactionRepository:
     return TransactionRepository(session)
 
 
-async def get_user_info(message: Message | None = None,
-                        callback_query: CallbackQuery | None = None,
-                        user_info: UserInfo | None = None
-                        ) -> UserInfo:
+async def get_user_info(
+    message: Message | None = None,
+    callback_query: CallbackQuery | None = None,
+    user_info: UserInfo | None = None
+) -> UserInfo:
     if user_info is not None:
         return user_info
     if message is not None:
@@ -86,9 +87,10 @@ async def get_user_info(message: Message | None = None,
                     lang_code)
 
 
-async def get_request_data(message: Message | None = None,
-                           callback_query: CallbackQuery | None = None
-                           ) -> str:
+async def get_request_data(
+    message: Message | None = None,
+    callback_query: CallbackQuery | None = None
+) -> str:
     if message is None:
         if not callback_query is None:
             data = callback_query.data
@@ -101,9 +103,10 @@ async def get_request_data(message: Message | None = None,
     return data
 
 
-async def get_user(user_info: UserInfo = Depends(get_user_info),
-                   ur: UserRepository = Depends(get_user_repo)
-                   ) -> User:
+async def get_user(
+    user_info: UserInfo = Depends(get_user_info),
+    ur: UserRepository = Depends(get_user_repo)
+) -> User:
     user = await ur.get_by_telegram_id(user_info.id)
     if user:
         if user.telegram_username != user_info.username:
@@ -114,9 +117,10 @@ async def get_user(user_info: UserInfo = Depends(get_user_info),
     raise UserNotFoundException()
 
 
-async def get_main_message(user_info: UserInfo = Depends(get_user_info),
-                           redis: Redis = Depends(get_redis_client)
-                           ) -> MainMessage:
+async def get_main_message(
+    user_info: UserInfo = Depends(get_user_info),
+    redis: Redis = Depends(get_redis_client)
+) -> MainMessage:
     main_message = await redis.get(f"{RedisType.main_message.value}:{user_info.id}")
     if main_message is None:
         main_message = MainMessage(text=[I18nMessage(MessageKey.main_menu).render(user_info.lang_code)],

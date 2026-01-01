@@ -63,6 +63,7 @@ class BackendSettings(BaseModel):
 
     secret: str = ""
     workers: int = 0
+    url: str = ""
 
 
 class Settings(BaseSettings):

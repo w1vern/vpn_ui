@@ -8,8 +8,11 @@ from uuid import UUID
 import httpx
 
 from shared.database import Server
+from shared.infrastructure import setup_logger
 
 from .exceptions import UnauthorizedException
+
+logger = setup_logger(__name__)
 
 
 class ServerSession():
@@ -21,34 +24,35 @@ class ServerSession():
         self.server = server
         self.client = client
 
-    async def __make_request(
+    async def _make_request(
         self,
         path: str,
         method: str,
         body: dict[str, Any] | None = None
     ) -> httpx.Response:
-        if not await self.__is_auth():
-            await self.__auth()
-        response = await self.client.request(method=method,
-                                             url=self.__get_api_path(path),
-                                             headers={
-                                                 "Content-Type": "application/json"},
-                                             json=body)
+        if not await self._is_auth():
+            await self._auth()
+        response = await self.client.request(
+            method=method,
+            url=self._get_api_path(path),
+            headers={
+                "Content-Type": "application/json"},
+            json=body)
         return response
 
-    def __get_api_path(
+    def _get_api_path(
         self,
         endpoint: str
     ) -> str:
         return self.server.panel_url + "panel/api/inbounds/" + endpoint
 
-    async def __is_auth(self) -> bool:
-        response = await self.client.get(self.__get_api_path("list"))
+    async def _is_auth(self) -> bool:
+        response = await self.client.get(self._get_api_path("list"))
         if response.status_code == 200:
             return True
         return False
 
-    async def __auth(
+    async def _auth(
         self
     ) -> None:
         resp = await self.client.post(
@@ -56,7 +60,7 @@ class ServerSession():
             json={"username": self.server.panel_login, "password": self.server.panel_password})
         resp.raise_for_status()
 
-    async def __get_dict(
+    async def _get_dict(
         self,
         response: httpx.Response
     ) -> dict[str, Any]:
@@ -73,13 +77,13 @@ class ServerSession():
         path: str,
         body: dict[str, Any] = {}
     ) -> httpx.Response:
-        return await self.__make_request(path, "POST", body)
+        return await self._make_request(path, "POST", body)
 
     async def get(
         self,
         path: str
     ) -> httpx.Response:
-        return await self.__make_request(path, "GET")
+        return await self._make_request(path, "GET")
 
     async def post_dict(
         self,
@@ -87,13 +91,13 @@ class ServerSession():
         body: dict[str, Any] = {}
     ) -> dict[str, object]:
         response = await self.post(path, body)
-        return await self.__get_dict(response)
+        return await self._get_dict(response)
 
     async def get_dict(
         self,
         path: str
     ) -> dict[str, Any]:
-        return await self.__get_dict(await self.get(path))
+        return await self._get_dict(await self.get(path))
 
 
 class ServerSessionManager:

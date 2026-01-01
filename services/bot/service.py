@@ -3,27 +3,18 @@ from collections.abc import Awaitable, Callable
 
 from fast_depends import Depends
 from redis.asyncio import Redis
-from shared._3x_ui_ import Service as PanelService
-from shared._3x_ui_ import server_session_manager
-from shared.proxy_interface import (
-    AccessConfig,
-    AccessType,
-    VpnConfig,
-    VpnType
-)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (
-    PanelServerRepository,
+    ServerInboundRepository,
     ServerRepository,
-    ServerUserInbound,
-    ServerUserInboundRepository,
     TariffRepository,
     TransactionRepository,
     UserRepository,
     session_manager
 )
-from shared.infrastructure import setup_logger
+from shared.infrastructure import env_config, setup_logger
+from shared.x_ui import server_session_manager
 
 from .buttons import (
     StaticButtons,
@@ -33,10 +24,9 @@ from .buttons import (
 )
 from .depends import (
     get_main_message,
-    get_panel_server_repo,
     get_request_data,
+    get_server_inbound_repo,
     get_server_repo,
-    get_server_user_inbound_repo,
     get_tariff_repo,
     get_transaction_repo,
     get_user_info,
@@ -51,49 +41,47 @@ logger = setup_logger(__name__)
 
 
 class Service():
-    def __init__(self,
-                 user_info: UserInfo,
-                 main_message: MainMessage,
-                 redis: Redis,
-                 session: AsyncSession,
-                 ur: UserRepository,
-                 sr: ServerRepository,
-                 suir: ServerUserInboundRepository,
-                 tfr: TariffRepository,
-                 psr: PanelServerRepository,
-                 tr: TransactionRepository,
-                 input: str
-                 ) -> None:
+    def __init__(
+        self,
+        user_info: UserInfo,
+        main_message: MainMessage,
+        redis: Redis,
+        session: AsyncSession,
+        ur: UserRepository,
+        sr: ServerRepository,
+        tfr: TariffRepository,
+        sir: ServerInboundRepository,
+        tr: TransactionRepository,
+        input: str
+    ) -> None:
         self.user_info = user_info
         self.main_message = main_message
         self.redis = redis
         self.session = session
         self.ur = ur
         self.sr = sr
-        self.suir = suir
         self.tfr = tfr
-        self.psr = psr
+        self.sir = sir
         self.tr = tr
         self.input = input
 
         self.notify = False
 
     @classmethod
-    def depends(cls,
-                user_info: UserInfo = Depends(get_user_info),
-                redis: Redis = Depends(get_redis_client),
-                main_message: MainMessage = Depends(get_main_message),
-                input: str = Depends(get_request_data),
-                session: AsyncSession = Depends(session_manager.session),
-                ur: UserRepository = Depends(get_user_repo),
-                tfr: TariffRepository = Depends(get_tariff_repo),
-                sr: ServerRepository = Depends(get_server_repo),
-                suir: ServerUserInboundRepository = Depends(
-                    get_server_user_inbound_repo),
-                psr: PanelServerRepository = Depends(get_panel_server_repo),
-                tr: TransactionRepository = Depends(get_transaction_repo)
-                ) -> 'Service':
-        return cls(user_info, main_message, redis, session, ur, sr, suir, tfr, psr, tr, input)
+    def depends(
+        cls,
+        user_info: UserInfo = Depends(get_user_info),
+        redis: Redis = Depends(get_redis_client),
+        main_message: MainMessage = Depends(get_main_message),
+        input: str = Depends(get_request_data),
+        session: AsyncSession = Depends(session_manager.session),
+        ur: UserRepository = Depends(get_user_repo),
+        tfr: TariffRepository = Depends(get_tariff_repo),
+        sr: ServerRepository = Depends(get_server_repo),
+        sir: ServerInboundRepository = Depends(get_server_inbound_repo),
+        tr: TransactionRepository = Depends(get_transaction_repo)
+    ) -> 'Service':
+        return cls(user_info, main_message, redis, session, ur, sr, tfr, sir, tr, input)
 
     async def keyboard_handler(self) -> Output:
         func = self.get_func()
@@ -107,12 +95,14 @@ class Service():
 
     async def start_handler(self) -> Output:
         if await self.ur.get_by_telegram_id(self.user_info.id) is None:
-            tariff = (await self.tfr.get_all())[0]
-            user = await self.ur.create(self.user_info.id,
-                                        self.user_info.username,
-                                        self.user_info.lang_code,
-                                        "",
-                                        tariff.id)
+            user = await self.ur.create(
+                telegram_id=self.user_info.id,
+                telegram_username=self.user_info.username,
+                telegram_language_code=self.user_info.lang_code,
+                description="",
+                tariff=None,
+                internal_id=str(self.user_info.id),
+            )
             self.main_message.notifications.append(Notification(
                 I18nMessage(MessageKey.welcome_message).render(self.user_info.lang_code)))
             await self.to_main_menu()
@@ -133,8 +123,9 @@ class Service():
         return Output(text, self.main_message.buttons, self.user_info, self.notify)
 
     async def save_main_message(self) -> None:
-        await self.redis.set(f"{RedisType.main_message.value}:{self.user_info.id}",
-                             self.main_message.to_str())
+        await self.redis.set(
+            f"{RedisType.main_message.value}:{self.user_info.id}",
+            self.main_message.to_str())
 
     def get_func(self) -> Callable[[], Awaitable[None]]:
         return getattr(self, self.input)
@@ -151,28 +142,12 @@ class Service():
         user = await self.ur.get_by_telegram_id(self.user_info.id)
         if user is None:
             raise SendFeedbackToAdminException()
-        pservers = await self.psr.get_all()
-        configs: list[AccessConfig] = []
-        for pserver in pservers:
-            server = pserver.server
-            if not server.is_available:
-                continue
-            # inbound = await self.suir.get_by_server_and_user(server, user)
-            # if len(inbound) == 0:
-            async with server_session_manager.get_session(pserver) as session:
-                service = PanelService(self.session, session)
-                config = await service.get_config(user, AccessType.VLESS_REALITY)
-                # logger.debug(config.security.__class__)
-                if config is None:
-                    logger.debug("config is None")
-                    continue
-            # else:
-                # inbound = inbound[0]
-            configs.append(config)
         self.main_message.text = [
-            f"```\n{config.create_string()}\n```" for config in configs]
-        self.main_message.text.append(I18nMessage(MessageKey.inbounds_menu
-                                                  ).render(self.user_info.lang_code))
+            f"`{env_config.backend.url}/sub/{user.id}`"
+        ]
+        self.main_message.text.append(I18nMessage(
+            MessageKey.inbounds_menu
+        ).render(self.user_info.lang_code))
         self.main_message.buttons = inbounds_keyboard()
 
     async def to_transactions_menu(self) -> None:

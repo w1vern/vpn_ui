@@ -57,7 +57,7 @@ class PanelRepository:
         server_inbound: ServerInbound
     ) -> bool:
         response = await self.server_session.get_dict(
-            path=f"getClient/{server_inbound.inbound_id}.{user.internal_id}")
+            path=f"getClientTraffics/{server_inbound.inbound_id}.{user.internal_id}")
         return response['success']
 
     @handle_exceptions
@@ -73,7 +73,7 @@ class PanelRepository:
                 "id": server_inbound.inbound_id,
                 "settings": json.dumps({
                     "clients": [{
-                        "id": user.id,
+                        "id": str(user.id),
                         "email": f"{server_inbound.inbound_id}.{user.internal_id}",
                     }]
                 })

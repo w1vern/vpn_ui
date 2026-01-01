@@ -1,12 +1,7 @@
 from uuid import UUID
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    Query,
-)
+from fastapi import APIRouter, Depends, Query
 
-from ..response import SuccessResponse
 from ..schemas import TransactionSchema
 from ..services import TransactionService
 

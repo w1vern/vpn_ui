@@ -4,15 +4,9 @@ from uuid import UUID
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import (
-    ServerInboundRepository,
-    ServerRepository,
-    Unset,
-    UserRepository
-)
+from shared.database import ServerRepository, Unset, UserRepository
 
 from ..depends import (
-    get_server_inbound_repo,
     get_server_repo,
     get_session,
     get_user,
@@ -36,13 +30,11 @@ class ServerService:
         session: AsyncSession,
         ur: UserRepository,
         sr: ServerRepository,
-        sir: ServerInboundRepository,
         user_schema: UserSchema
     ) -> None:
         self.session = session
         self.ur = ur
         self.sr = sr
-        self.sir = sir
         self.user_schema = user_schema
 
     @classmethod
@@ -51,10 +43,9 @@ class ServerService:
         session: AsyncSession = Depends(get_session),
         ur: UserRepository = Depends(get_user_repo),
         sr: ServerRepository = Depends(get_server_repo),
-        sir: ServerInboundRepository = Depends(get_server_inbound_repo),
         user_schema: UserSchema = Depends(get_user)
     ) -> 'ServerService':
-        return cls(session, ur, sr, sir, user_schema)
+        return cls(session, ur, sr, user_schema)
 
     async def all(
         self,
@@ -113,7 +104,6 @@ class ServerService:
         if not isinstance(server_to_edit.closing_date, Unset):
             server_to_edit.closing_date = server_to_edit.closing_date.replace(
                 tzinfo=None)
-
         await self.sr.edit(
             server,
             ip=server_to_edit.ip,

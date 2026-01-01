@@ -26,18 +26,20 @@ router = Router()
 
 @router.message(Command("start"))
 @inject
-async def cmd_start(message: Message,
-                    service: Service = Depends(Service.depends)
-                    ) -> None:
+async def cmd_start(
+    message: Message,
+    service: Service = Depends(Service.depends)
+) -> None:
     await message.delete()
     await update_message(await service.start_handler())
 
 
 @router.message()
 @inject
-async def handle_text(message: Message,
-                      service: Service = Depends(Service.depends)
-                      ) -> None:
+async def handle_text(
+    message: Message,
+    service: Service = Depends(Service.depends)
+) -> None:
     await message.delete()
     if message.text is None:
         raise MessageTextIsNoneException()
@@ -46,9 +48,10 @@ async def handle_text(message: Message,
 
 @router.callback_query()
 @inject
-async def handle_inline_button(callback_query: CallbackQuery,
-                               service: Service = Depends(Service.depends)
-                               ) -> None:
+async def handle_inline_button(
+    callback_query: CallbackQuery,
+    service: Service = Depends(Service.depends)
+) -> None:
     if callback_query.data is None:
         raise MessageTextIsNoneException()
     logger.debug(callback_query.data)
@@ -56,7 +59,9 @@ async def handle_inline_button(callback_query: CallbackQuery,
 
 
 # @router.errors()
-async def error_handler(event: ErrorEvent) -> None:
+async def error_handler(
+    event: ErrorEvent
+) -> None:
     exception = event.exception
     if event.update.message is None:
         if event.update.callback_query is None \
@@ -66,11 +71,12 @@ async def error_handler(event: ErrorEvent) -> None:
             raise SendFeedbackToAdminException()
         id = event.update.callback_query.from_user.id
         username = event.update.callback_query.from_user.username
-        lang_code = LanguageCodes(event.update.callback_query.from_user.language_code)
+        lang_code = LanguageCodes(
+            event.update.callback_query.from_user.language_code)
     else:
         if event.update.message.from_user is None \
-                or event.update.message.from_user.username is None\
-                    or event.update.message.from_user.language_code is None:
+            or event.update.message.from_user.username is None\
+                or event.update.message.from_user.language_code is None:
             raise SendFeedbackToAdminException()
         id = event.update.message.from_user.id
         username = event.update.message.from_user.username
@@ -86,7 +92,8 @@ async def error_handler(event: ErrorEvent) -> None:
     if isinstance(exception, BaseCustomException):
         new_state.text = exception.detail.render(lang_code)
     elif isinstance(exception, TelegramAPIError):
-        new_state.text = MyMessage(MessageKey.telegram_api_error).render(lang_code)
+        new_state.text = MyMessage(
+            MessageKey.telegram_api_error).render(lang_code)
     else:
         new_state.text = MyMessage(MessageKey.unknown_error).render(lang_code)
     await update_message(new_state)

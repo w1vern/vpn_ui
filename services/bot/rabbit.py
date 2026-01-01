@@ -21,14 +21,16 @@ broker = RabbitBroker(RABBIT_URL)
 app = FastStream(broker)
 
 
-async def handler(text: str,
-                  tg_info: TgInfo
-                  ) -> None:
+async def handler(
+    text: str,
+    tg_info: TgInfo
+) -> None:
     @inject
-    async def _(text: str,
-                user_info: UserInfo,
-                service: Service = Depends(Service.depends)
-                ) -> None:
+    async def _(
+        text: str,
+        user_info: UserInfo,
+        service: Service = Depends(Service.depends)
+    ) -> None:
         service.main_message.notifications.append(Notification(text))
         await service.save_main_message()
         service.notify = True
