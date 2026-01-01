@@ -66,7 +66,9 @@ async def get_subscriptions(
                 await pr.ensure_user_exists(user=user, server_inbound=inbd)
                 match inbd.protocol:
                     case "vless":
-                        string = inbd.template.format(user_id=user.id)
+                        string = inbd.template.format(
+                            user_id=user.id,
+                            comment=f"{inbd.name}-{inbd.description}")
                     case _:
                         string = inbd.template
                 result.append(f"{string}")
