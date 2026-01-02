@@ -10,12 +10,12 @@ router = APIRouter(prefix="/notifications", tags=["notifications"])
 @router.post(
     path="",
     summary="Create new notification",
-    description='scheme like: {"en": "text", "ru": "Текст"}',
+    description='scheme like: {"en": "text", "ru": "Текст"}'
 )
 async def create(
     notification: Notification,
     notification_service: NotificationService = Depends(
-        NotificationService.depends),
+        NotificationService.depends)
 ) -> SuccessResponse:
     await notification_service.send(notification)
     return SuccessResponse()

@@ -23,7 +23,7 @@ from .user import (
     EditUserSettingsSchema,
     UserRightsSchema,
     UserSchema,
-    UserSettingsSchema,
+    UserSettingsSchema
 )
 
 __all__ = [

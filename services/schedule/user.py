@@ -1,14 +1,8 @@
 
 
-from datetime import (
-    UTC,
-    datetime,
-)
+from datetime import UTC, datetime
 
-from shared._3x_ui_ import (
-    Service,
-    server_session_manager,
-)
+from shared._3x_ui_ import Service, server_session_manager
 
 from shared.database import (
     ActivePeriodRepository,
@@ -17,7 +11,7 @@ from shared.database import (
     TransactionRepository,
     TransactionType,
     UserRepository,
-    session_manager,
+    session_manager
 )
 
 

@@ -28,7 +28,6 @@ def register_lifecycle(
             user_info: UserInfo,
             service: Service = Depends(Service.depends)
         ) -> None:
-            logger.debug("on_startup")
             service.main_message.notifications.append(
                 Notification(I18nMessage(MessageKey.bot_started
                                          ).render(service.user_info.lang_code)))

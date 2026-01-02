@@ -16,7 +16,7 @@ from ..exceptions import (
     RefreshTokenExpiredException,
     RefreshTokenInvalidException,
     RefreshTokenMissingException,
-    UserNotFoundException,
+    UserNotFoundException
 )
 from ..rabbit import get_broker, send_tg_code
 from ..redis import RedisType, get_redis_client

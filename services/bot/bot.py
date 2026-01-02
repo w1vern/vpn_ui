@@ -27,18 +27,21 @@ async def edit_message(
     chat_id: int,
     message_id: int,
     new_text: str | None,
-    new_keyboard: InlineKeyboardMarkup | None,
+    new_keyboard: InlineKeyboardMarkup | None
 ) -> None:
-    if not new_text is None:
-        await bot.edit_message_text(new_text,
-                                    chat_id=chat_id,
-                                    message_id=message_id,
-                                    # parse_mode="MarkdownV2"
-                                    )
-    if not new_keyboard is None:
-        await bot.edit_message_reply_markup(chat_id=chat_id,
-                                            message_id=message_id,
-                                            reply_markup=new_keyboard)
+    if new_text is not None:
+        await bot.edit_message_text(
+            text=new_text,
+            chat_id=chat_id,
+            message_id=message_id,
+            parse_mode="MarkdownV2"
+        )
+    if new_keyboard is not None:
+        await bot.edit_message_reply_markup(
+            chat_id=chat_id,
+            message_id=message_id,
+            reply_markup=new_keyboard
+        )
 
 
 async def send_message(
@@ -48,13 +51,15 @@ async def send_message(
     text: str,
     keyboard: InlineKeyboardMarkup
 ) -> None:
-    message = await bot.send_message(chat_id=chat_id,
-                                     text=text,
-                                     reply_markup=keyboard,
-                                     # parse_mode="MarkdownV2"
-                                     )
-    await redis.set(f"{RedisType.main_message_id.value}:{chat_id}", message.message_id)
-    logger.debug(f"message_id: {message.message_id}")
+    message = await bot.send_message(
+        chat_id=chat_id,
+        text=text,
+        reply_markup=keyboard,
+        parse_mode="MarkdownV2"
+    )
+    await redis.set(
+        f"{RedisType.main_message_id.value}:{chat_id}",
+        message.message_id)
 
 
 @inject
@@ -63,34 +68,39 @@ async def update_message(
     redis: Redis = Depends(get_redis_client),
     bot: Bot = Depends(get_bot)
 ) -> None:
-    # if new_state.text is not None:
-    #    new_state.text.replace(".", "\\.")
     message_id: int | None = await redis.get(f"{RedisType.main_message_id.value}:{new_state.user_info.id}")
-    logger.debug(f"message_id: {message_id}")
     if not message_id is None:
         chat_id = new_state.user_info.id
         if not new_state.notify:
             await edit_message(
-                bot,
-                chat_id,
-                message_id,
-                new_state.text,
-                create_keyboard(
-                    new_state.buttons, new_state.user_info.lang_code)
-                if new_state.buttons is not None else None)
+                bot=bot,
+                chat_id=chat_id,
+                message_id=message_id,
+                new_text=new_state.text,
+                new_keyboard=create_keyboard(
+                    values=new_state.buttons,
+                    lang_code=new_state.user_info.lang_code
+                )
+                if new_state.buttons is not None else None
+            )
             return
         else:
             try:
                 await bot.delete_message(
                     chat_id=new_state.user_info.id,
-                    message_id=message_id)
+                    message_id=message_id
+                )
             except TelegramAPIError:
                 ...
     if new_state.text is None or new_state.buttons is None:
         raise SendFeedbackToAdminException()
     await send_message(
-        bot,
-        redis,
-        new_state.user_info.id,
-        new_state.text,
-        create_keyboard(new_state.buttons, new_state.user_info.lang_code))
+        bot=bot,
+        redis=redis,
+        chat_id=new_state.user_info.id,
+        text=new_state.text,
+        keyboard=create_keyboard(
+            values=new_state.buttons,
+            lang_code=new_state.user_info.lang_code
+        )
+    )

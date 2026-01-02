@@ -1,17 +1,10 @@
 
 from uuid import UUID
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    Query,
-)
+from fastapi import APIRouter, Depends, Query
 
 from ..response import SuccessResponse
-from ..schemas import (
-    EditUserSchema,
-    UserSchema,
-)
+from ..schemas import EditUserSchema, UserSchema
 from ..services import UserService
 
 router = APIRouter(prefix="/users", tags=["users"])

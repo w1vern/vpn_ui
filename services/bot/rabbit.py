@@ -45,5 +45,5 @@ async def handle_tg_code(data: CodeToTG) -> None:
 
 @broker.subscriber(notification_queue)
 async def handle_notification(data: NotificationToTG) -> None:
-    text = data.data.get(data.tg_info.lang_code, LanguageCodes.en.value)
+    text = data.data.get(data.tg_info.lang_code, LanguageCodes.en.value) # TODO: mb error
     await handler(text, data.tg_info)

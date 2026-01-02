@@ -14,10 +14,7 @@ from ..exceptions import (
     NotControlPanelUserException,
     SendFeedbackToAdminException
 )
-from ..redis import (
-    RedisType,
-    get_redis_client,
-)
+from ..redis import RedisType, get_redis_client
 from ..schemas import UserSchema
 from ..token import AccessToken
 

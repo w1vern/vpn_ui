@@ -4,9 +4,7 @@ from datetime import timedelta
 
 import aioschedule as schedule
 
-from .server import (
-    check_servers,
-)
+from .server import check_servers
 from .user import check_users
 
 

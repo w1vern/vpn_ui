@@ -87,7 +87,6 @@ class MainMessage():
         s: str
     ) -> "MainMessage":
         data = json.loads(s)
-        logger.debug(data)
         return cls(data["text"],
                    [Notification(notification["text"])
                     for notification in data["notifications"]],

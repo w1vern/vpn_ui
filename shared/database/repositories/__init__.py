@@ -18,5 +18,5 @@ __all__ = [
     'TelegramMessageRepository',
     'TicketRepository',
     'TransactionRepository',
-    'UserRepository',
+    'UserRepository'
 ]

@@ -1,10 +1,7 @@
 
 from uuid import UUID
 
-from fastapi import (
-    APIRouter,
-    Depends,
-)
+from fastapi import APIRouter, Depends
 
 from ..response import SuccessResponse
 from ..schemas import (

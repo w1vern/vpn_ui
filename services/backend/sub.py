@@ -20,7 +20,6 @@ async def get_subscriptions(
     user_id: UUID,
     session: AsyncSession
 ) -> tuple[str, int]:
-    logger.debug(user_id)
     result: list[str] = []
     ur = UserRepository(session)
     sr = ServerRepository(session)
@@ -46,8 +45,6 @@ async def get_subscriptions(
         return res
     inbds = await sir.get_all()
     regrouped_inbds = regroup_inbounds(inbds)
-    logger.debug(regrouped_inbds)
-    logger.debug(servers)
     for server in servers:
         server_inbds = regrouped_inbds[server.id]
         async with server_session_manager.get_session(server) as server_session:

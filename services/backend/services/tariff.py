@@ -12,11 +12,7 @@ from shared.database import (
     UserRepository
 )
 
-from ..depends import (
-    get_session,
-    get_tariff_repo,
-    get_user,
-)
+from ..depends import get_session, get_tariff_repo, get_user
 from ..exceptions import (
     NotTariffEditorException,
     TariffAlreadyExistsException,

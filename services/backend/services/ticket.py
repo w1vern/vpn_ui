@@ -9,7 +9,7 @@ from shared.database import (
     MessageTicketType,
     Ticket,
     TicketRepository,
-    UserRepository,
+    UserRepository
 )
 
 from ..depends import (

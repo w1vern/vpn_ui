@@ -1,20 +1,13 @@
 
 
-from datetime import (
-    UTC,
-    datetime,
-    timedelta,
-)
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 import jwt
 
 from shared.database import User
 
-from .config import (
-    SECRET,
-    Config,
-)
+from .config import SECRET, Config
 from .schemas import UserSchema
 
 

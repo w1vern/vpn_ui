@@ -54,7 +54,6 @@ async def handle_inline_button(
 ) -> None:
     if callback_query.data is None:
         raise MessageTextIsNoneException()
-    logger.debug(callback_query.data)
     await update_message(await service.keyboard_handler())
 
 

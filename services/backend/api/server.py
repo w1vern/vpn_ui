@@ -76,7 +76,7 @@ async def get_server_inbound(
 
 @router.patch(
     path="/inbounds/{server_inbound_id}",
-    summary="Update an existing server inbound",
+    summary="Update an existing server inbound"
 )
 async def edit_server_inbound(
     server_inbound_id: UUID,
@@ -129,7 +129,7 @@ async def get_server(
 
 @router.post(
     path="",
-    summary="Create a new server",
+    summary="Create a new server"
 )
 async def create_server(
     server_to_create: CreateServerSchema,
@@ -141,7 +141,7 @@ async def create_server(
 
 @router.patch(
     path="/{server_id}",
-    summary="Update an existing server",
+    summary="Update an existing server"
 )
 async def edit_server(
     server_id: UUID,

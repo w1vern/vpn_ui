@@ -10,7 +10,7 @@ from ..depends import (
     get_server_repo,
     get_session,
     get_user,
-    get_user_repo,
+    get_user_repo
 )
 from ..exceptions import (
     NotServerEditorException,

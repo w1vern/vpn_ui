@@ -14,13 +14,12 @@ from shared.database import (
     session_manager
 )
 from shared.infrastructure import env_config, setup_logger
-from shared.x_ui import server_session_manager
 
 from .buttons import (
     StaticButtons,
     inbounds_keyboard,
     main_menu_keyboard,
-    transactions_keyboard,
+    transactions_keyboard
 )
 from .depends import (
     get_main_message,
@@ -39,6 +38,11 @@ from .redis import RedisType, get_redis_client
 
 logger = setup_logger(__name__)
 
+def escape_markdown_v2(text: str) -> str:
+    special_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    for char in special_chars:
+        text = text.replace(char, f'\\{char}')
+    return text
 
 class Service():
     def __init__(
@@ -86,7 +90,6 @@ class Service():
     async def keyboard_handler(self) -> Output:
         func = self.get_func()
         await func()
-        logger.debug(self.input)
         await self.save_main_message()
         return self.output()
 
@@ -117,9 +120,9 @@ class Service():
         rows = [note.text for note in self.main_message.notifications]
         rows += self.main_message.text
         text = "\n".join(rows)
-        logger.debug(text)
         if len(self.main_message.notifications) > 0:
             self.main_message.buttons.append(StaticButtons.read_notifications)
+        
         return Output(text, self.main_message.buttons, self.user_info, self.notify)
 
     async def save_main_message(self) -> None:
@@ -152,7 +155,6 @@ class Service():
 
     async def to_transactions_menu(self) -> None:
         user = await self.ur.get_by_telegram_id(self.user_info.id)
-        logger.debug(f"{self.user_info.id} - user tg id")
         if user is None:
             raise SendFeedbackToAdminException()
         trns = await self.tr.get_by_user(user)

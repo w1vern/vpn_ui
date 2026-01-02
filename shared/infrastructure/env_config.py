@@ -3,10 +3,7 @@ import os
 from enum import Enum
 
 from pydantic import BaseModel
-from pydantic_settings import (
-    BaseSettings,
-    SettingsConfigDict,
-)
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class BootLevel(str, Enum):

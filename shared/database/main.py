@@ -6,12 +6,10 @@ from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncSession,
     async_sessionmaker,
-    create_async_engine,
+    create_async_engine
 )
 
-from shared.infrastructure import (
-    env_config,
-)
+from shared.infrastructure import env_config
 
 from .models.base import Base
 
