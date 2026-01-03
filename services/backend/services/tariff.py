@@ -107,7 +107,7 @@ class TariffService:
         self,
         tariff_id: UUID,
         edited_tariff: EditTariffSchema
-    ) -> None:
+    ) -> TariffSchema:
         if self.user_schema.rights.is_tariff_editor is False:
             raise NotTariffEditorException()
         tariff = await self.tr.get_by_id(tariff_id)
@@ -127,3 +127,4 @@ class TariffService:
             with_access=edited_tariff.with_access,
             is_special=edited_tariff.is_special
         )
+        return TariffSchema.from_db(tariff)

@@ -68,7 +68,7 @@ class UserService:
         self,
         user_id: UUID,
         edited_user: EditUserSchema
-    ) -> None:  # TODO: analyze: mb need to fix
+    ) -> UserSchema:  # TODO: analyze: mb need to fix
         user = await self.ur.get_by_id(user_id)
         if user is None:
             raise UserNotFoundException()
@@ -106,6 +106,8 @@ class UserService:
             if tariff is None:
                 raise TariffNotFoundException()
             await self.ur.update_tariff(user, tariff)
+
+        return UserSchema.from_db(user)
 
     async def get_self_info(self) -> UserSchema:
         return self.user_schema

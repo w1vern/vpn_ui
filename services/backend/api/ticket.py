@@ -57,6 +57,5 @@ async def close_ticket(
     ticket_id: UUID,
     ticket_service: TicketService = Depends(
         TicketService.depends)
-) -> SuccessResponse:
-    await ticket_service.close(ticket_id)
-    return SuccessResponse()
+) -> TicketSchema:
+    return await ticket_service.close(ticket_id)

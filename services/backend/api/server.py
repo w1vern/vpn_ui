@@ -17,6 +17,7 @@ from ..services import ServerInboundService, ServerService
 
 router = APIRouter(prefix="/servers", tags=["servers"])
 
+
 @router.get(
     path="/inbounds/protocols",
     summary="Get all server inbound protocols"
@@ -26,6 +27,7 @@ async def get_all_inbound_protocols(
         ServerInboundService.depends)
 ) -> ProtocolsSchema:
     return await server_inbound_service.protocols()
+
 
 @router.get(
     path="/inbounds",
@@ -93,9 +95,9 @@ async def edit_server_inbound(
     server_inbound_to_edit: EditServerInboundSchema,
     server_inbound_service: ServerInboundService = Depends(
         ServerInboundService.depends)
-) -> SuccessResponse:
-    await server_inbound_service.edit(server_inbound_id, server_inbound_to_edit)
-    return SuccessResponse()
+) -> ServerInboundSchema:
+    return await server_inbound_service.edit(server_inbound_id, server_inbound_to_edit)
+
 
 @router.delete(
     path="/inbounds/{server_inbound_id}",
@@ -170,6 +172,5 @@ async def edit_server(
     server_to_edit: EditServerSchema,
     server_service: ServerService = Depends(
         ServerService.depends)
-) -> SuccessResponse:
-    await server_service.edit(server_id, server_to_edit)
-    return SuccessResponse()
+) -> ServerSchema:
+    return await server_service.edit(server_id, server_to_edit)

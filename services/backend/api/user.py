@@ -43,9 +43,8 @@ async def edit_user(
     user_id: UUID,
     edited_user: EditUserSchema,
     user_service: UserService = Depends(UserService.depends)
-) -> SuccessResponse:
-    await user_service.edit(user_id, edited_user)
-    return SuccessResponse()
+) -> UserSchema:
+    return await user_service.edit(user_id, edited_user)
 
 
 @router.get(

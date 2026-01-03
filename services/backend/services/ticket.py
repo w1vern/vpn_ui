@@ -92,6 +92,7 @@ class TicketService:
     async def close(
         self,
         ticket_id: UUID
-    ) -> None:
+    ) -> TicketSchema:
         ticket = await self.get_ticket(ticket_id)
         await self.tr.close(ticket)
+        return TicketSchema.from_db(ticket)

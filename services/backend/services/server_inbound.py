@@ -106,7 +106,7 @@ class ServerInboundService:
         self,
         server_inbound_id: UUID,
         server_inbound_to_edit: EditServerInboundSchema
-    ) -> None:
+    ) -> ServerInboundSchema:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
         server_inbound = await self.sir.get_by_id(server_inbound_id)
@@ -120,6 +120,7 @@ class ServerInboundService:
             description=server_inbound_to_edit.description,
             is_available=server_inbound_to_edit.is_available
         )
+        return ServerInboundSchema.from_db(server_inbound)
 
     async def delete(
         self,

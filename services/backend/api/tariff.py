@@ -66,6 +66,5 @@ async def edit(
     tariff_id: UUID,
     edited_tariff: EditTariffSchema,
     tariff_service: TariffService = Depends(TariffService.depends)
-) -> SuccessResponse:
-    await tariff_service.edit(tariff_id, edited_tariff)
-    return SuccessResponse()
+) -> TariffSchema:
+    return await tariff_service.edit(tariff_id, edited_tariff)

@@ -92,7 +92,7 @@ class ServerService:
         self,
         server_id: UUID,
         server_to_edit: EditServerSchema
-    ) -> None:
+    ) -> ServerSchema:
         if self.user_schema.rights.is_server_editor is False:
             raise NotServerEditorException()
         server = await self.sr.get_by_id(server_id)
@@ -118,3 +118,4 @@ class ServerService:
             starting_date=server_to_edit.starting_date,
             closing_date=server_to_edit.closing_date
         )
+        return ServerSchema.from_db(server)
