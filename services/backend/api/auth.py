@@ -4,7 +4,7 @@ from fastapi import APIRouter, Cookie, Depends
 from ..config import SECURE_COOKIES, Config
 from ..response import SuccessResponse
 from ..schemas import TgAuth, TgId
-from ..services import AuthService
+from ..services import AuthService, UserService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -45,7 +45,8 @@ async def login(
         key="refresh_token",
         value=refresh,
         max_age=Config.refresh_token_lifetime,
-        httponly=True, samesite='strict',
+        httponly=True,
+        samesite='strict',
         secure=SECURE_COOKIES,
         path="/api/auth/refresh"
     )
@@ -67,8 +68,46 @@ async def login(
 )
 async def logout() -> SuccessResponse:
     response = SuccessResponse()
-    response.delete_cookie("refresh_token")
-    response.delete_cookie("access_token")
+    response.delete_cookie(
+        key="refresh_token",
+        httponly=True,
+        samesite='strict',
+        secure=SECURE_COOKIES,
+        path="/api/auth/refresh"
+    )
+    response.delete_cookie(
+        key="access_token",
+        httponly=True,
+        samesite='strict',
+        secure=SECURE_COOKIES,
+        path="/api"
+    )
+    return response
+
+
+@router.post(
+    path="/logout_all",
+    summary="Logout the user from all devices"
+)
+async def logout_all(
+    user_service: UserService = Depends(UserService.depends)
+) -> SuccessResponse:
+    await user_service.logout_all()
+    response = SuccessResponse()
+    response.delete_cookie(
+        key="refresh_token",
+        httponly=True,
+        samesite='strict',
+        secure=SECURE_COOKIES,
+        path="/api/auth/refresh"
+    )
+    response.delete_cookie(
+        key="access_token",
+        httponly=True,
+        samesite='strict',
+        secure=SECURE_COOKIES,
+        path="/api"
+    )
     return response
 
 

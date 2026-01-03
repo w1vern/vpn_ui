@@ -21,8 +21,9 @@ def create_keyboard(
     for i in range(len(markup)):
         keyboard.append([])
         for _ in range(markup[i]):
-            keyboard[i].append(InlineKeyboardButton(text=values[index].text.render(lang_code),
-                                                    callback_data=values[index].callback_data))
+            keyboard[i].append(InlineKeyboardButton(
+                text=values[index].text.render(lang_code),
+                callback_data=values[index].callback_data))
             index += 1
 
     return InlineKeyboardMarkup(inline_keyboard=keyboard)

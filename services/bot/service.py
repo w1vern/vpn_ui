@@ -1,11 +1,13 @@
 
 from collections.abc import Awaitable, Callable
+from uuid import UUID
 
 from fast_depends import Depends
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import (
+    DefaultTariffs,
     ServerInboundRepository,
     ServerRepository,
     TariffRepository,
@@ -38,7 +40,7 @@ from .redis import RedisType, get_redis_client
 
 logger = setup_logger(__name__)
 
-CPESIAL_CHARS = [
+SPECIAL_CHARS = [
     '_',
     '*',
     '[',
@@ -61,7 +63,7 @@ CPESIAL_CHARS = [
 
 
 def invert_escape(s: str) -> str:
-    special_chars = set(CPESIAL_CHARS)
+    special_chars = set(SPECIAL_CHARS)
     result = []
     i = 0
     while i < len(s):
@@ -148,12 +150,15 @@ class Service():
 
     async def start_handler(self) -> Output:
         if await self.ur.get_by_telegram_id(self.user_info.id) is None:
+            tariff = await self.tfr.get_by_id(UUID(int=DefaultTariffs.DEFAULT.value))
+            if tariff is None:
+                raise SendFeedbackToAdminException()
             user = await self.ur.create(
                 telegram_id=self.user_info.id,
                 telegram_username=self.user_info.username,
                 telegram_language_code=self.user_info.lang_code,
                 description="",
-                tariff=None,
+                tariff=tariff,
                 internal_id=str(self.user_info.id),
             )
             self.main_message.notifications.append(Notification(

@@ -4,7 +4,11 @@ from uuid import UUID
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shared.database import ServerInboundRepository, ServerRepository
+from shared.database import (
+    Protocols,
+    ServerInboundRepository,
+    ServerRepository
+)
 
 from ..depends import (
     get_server_inbound_repo,
@@ -20,6 +24,7 @@ from ..exceptions import (
 from ..schemas import (
     CreateServerInboundSchema,
     EditServerInboundSchema,
+    ProtocolsSchema,
     ServerInboundSchema,
     UserSchema
 )
@@ -126,3 +131,10 @@ class ServerInboundService:
         if server_inbound is None:
             raise ServerInboundNotFoundException()
         await self.sir.delete(server_inbound)
+
+    async def protocols(
+        self
+    ) -> ProtocolsSchema:
+        return ProtocolsSchema(data={
+            Protocols.vless: "vless://{user_id}@...#{comment}",
+        })

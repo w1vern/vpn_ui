@@ -2,9 +2,9 @@
 from uuid import UUID
 
 from fastapi import Depends
+from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from services.backend.api import tariff
 from shared.database import TariffRepository, Unset, UserRepository
 
 from ..depends import get_session, get_user, get_user_repo
@@ -15,6 +15,7 @@ from ..exceptions import (
     TariffNotFoundException,
     UserNotFoundException
 )
+from ..redis import RedisType, get_redis_client
 from ..schemas import EditUserSchema, UserSchema
 
 
@@ -23,20 +24,28 @@ class UserService:
         self,
         session: AsyncSession,
         ur: UserRepository,
-        user_schema: UserSchema
+        user_schema: UserSchema,
+        redis: Redis
     ) -> None:
         self.session = session
         self.ur = ur
         self.user_schema = user_schema
+        self.redis = redis
 
     @classmethod
     def depends(
         cls,
         session: AsyncSession = Depends(get_session),
         ur: UserRepository = Depends(get_user_repo),
-        user_schema: UserSchema = Depends(get_user)
+        user_schema: UserSchema = Depends(get_user),
+        redis: Redis = Depends(get_redis_client)
     ) -> 'UserService':
-        return cls(session, ur, user_schema)
+        return cls(
+            session=session,
+            ur=ur,
+            user_schema=user_schema,
+            redis=redis
+        )
 
     async def all(
         self,
@@ -66,14 +75,18 @@ class UserService:
         if not isinstance(edited_user.rights, Unset):
             if self.user_schema.rights.is_user_editor is False:
                 raise AdminRightsEditNotAllowedException()
-            if not isinstance(edited_user.rights.is_admin_rights_editor, Unset) or self.user_schema.rights.is_admin_rights_editor is False:
+            if (not isinstance(edited_user.rights.is_admin_rights_editor, Unset)
+                    or self.user_schema.rights.is_admin_rights_editor is False):
                 raise AdminRightsEditNotAllowedException()
-            if edited_user.rights.is_member_rights_editor is True or self.user_schema.rights.is_member_rights_editor is False:
+            if (edited_user.rights.is_member_rights_editor is True
+                    or self.user_schema.rights.is_member_rights_editor is False):
                 raise AdminRightsEditNotAllowedException()
+            await self.invalidate_access_token(user_id)
             await self.ur.update_rights(user, edited_user.rights.model_dump())
 
         if not isinstance(edited_user.settings, Unset):
-            if len(edited_user.settings.model_dump()) > 0 and self.user_schema.rights.is_user_editor is False:
+            if (len(edited_user.settings.model_dump()) > 0
+                    and self.user_schema.rights.is_user_editor is False):
                 raise MemberSettingsEditNotAllowedException()
             await self.ur.update_settings(user, edited_user.settings.model_dump())
 
@@ -89,13 +102,20 @@ class UserService:
             if self.user_schema.rights.is_user_editor is False:
                 raise MemberRightsEditNotAllowedException()
             tr = TariffRepository(self.session)
-            if edited_user.tariff_id is not None:
-                tariff = await tr.get_by_id(edited_user.tariff_id)
-                if tariff is None:
-                    raise TariffNotFoundException()
-            else:
-                tariff = None
+            tariff = await tr.get_by_id(edited_user.tariff_id)
+            if tariff is None:
+                raise TariffNotFoundException()
             await self.ur.update_tariff(user, tariff)
 
     async def get_self_info(self) -> UserSchema:
         return self.user_schema
+
+    async def logout_all(self) -> None:
+        user = await self.ur.get_by_id(self.user_schema.id)
+        if user is None:
+            raise UserNotFoundException()
+        await self.invalidate_access_token(user.id)
+        await self.ur.update_secret(user)
+
+    async def invalidate_access_token(self, id: UUID) -> None:
+        await self.redis.set(f"{RedisType.invalidated_access_token.value}:{id}", 1)

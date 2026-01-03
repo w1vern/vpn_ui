@@ -82,9 +82,11 @@ async def get_user_info(
         lang_code = LanguageCodes(tmp.from_user.language_code)
     else:
         lang_code = LanguageCodes.en
-    return UserInfo(tmp.from_user.id,
-                    username,
-                    lang_code)
+    return UserInfo(
+        id=tmp.from_user.id,
+        username=username,
+        lang_code=lang_code
+    )
 
 
 async def get_request_data(

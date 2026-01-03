@@ -4,7 +4,13 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from shared.database import UNSET, Server, ServerInbound, Unset
+from shared.database import (
+    UNSET,
+    Protocols,
+    Server,
+    ServerInbound,
+    Unset
+)
 
 
 class ServerSchema(BaseModel):
@@ -77,6 +83,7 @@ class CreateServerSchema(BaseModel):
 class ServerInboundSchema(BaseModel):
     id: UUID
     inbound_id: int
+    template: str
     protocol: str
     name: str
     description: str
@@ -90,6 +97,7 @@ class ServerInboundSchema(BaseModel):
         return ServerInboundSchema(
             id=server_inbound.id,
             inbound_id=server_inbound.inbound_id,
+            template=server_inbound.template,
             protocol=server_inbound.protocol,
             name=server_inbound.name,
             description=server_inbound.description,
@@ -113,3 +121,6 @@ class CreateServerInboundSchema(BaseModel):
     name: str
     description: str
     is_available: bool
+
+class ProtocolsSchema(BaseModel):
+    data: dict[Protocols, str]

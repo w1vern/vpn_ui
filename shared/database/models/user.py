@@ -1,6 +1,6 @@
 
 from secrets import token_urlsafe
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy import BigInteger, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -18,20 +18,18 @@ class User(Base):
         unique=True,
         index=True
     )
-    tariff_id: Mapped[UUID | None] = mapped_column(
-        ForeignKey("tariffs.id"),
-        nullable=True
-    )
+    tariff_id: Mapped[UUID] = mapped_column(ForeignKey("tariffs.id"))
     telegram_username: Mapped[str] = mapped_column()
     telegram_language_code: Mapped[str] = mapped_column()
     internal_id: Mapped[str] = mapped_column(unique=True)
+    panel_id: Mapped[UUID] = mapped_column()
     description: Mapped[str] = mapped_column()
     balance: Mapped[float] = mapped_column()
     rights: Mapped[int] = mapped_column()
     settings: Mapped[int] = mapped_column()
     secret: Mapped[str] = mapped_column(default=token_urlsafe)
 
-    tariff: Mapped[Tariff | None] = relationship(
+    tariff: Mapped[Tariff] = relationship(
         lazy="selectin", foreign_keys=[tariff_id])
 
     @property

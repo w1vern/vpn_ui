@@ -16,5 +16,6 @@ class Tariff(Base):
     price_of_traffic_reset: Mapped[float] = mapped_column()
     traffic: Mapped[int] = mapped_column()
     
-    with_unavalable_inbounds: Mapped[bool] = mapped_column()
+    with_access: Mapped[bool] = mapped_column()
+    with_unavailable_inbounds: Mapped[bool] = mapped_column()
     is_special: Mapped[bool] = mapped_column()

@@ -42,7 +42,7 @@ class UserSchema(BaseModel):
     rights: UserRightsSchema
     settings: UserSettingsSchema
 
-    tariff: TariffSchema | None
+    tariff: TariffSchema
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -52,8 +52,7 @@ class UserSchema(BaseModel):
         rights = UserRightsSchema.model_validate(user)
         return UserSchema(
             id=user.id,
-            tariff=TariffSchema.from_db(user.tariff)
-            if user.tariff is not None else None,
+            tariff=TariffSchema.from_db(user.tariff),
             telegram_id=user.telegram_id,
             telegram_username=user.telegram_username,
             telegram_language_code=LanguageCodes(user.telegram_language_code),
@@ -85,7 +84,7 @@ class EditUserRightsSchema(BaseModel):
 
 class EditUserSchema(BaseModel):
     telegram_id: int | Unset = UNSET
-    tariff_id: UUID | None | Unset = UNSET
+    tariff_id: UUID | Unset = UNSET
     description: str | Unset = UNSET
     rights: EditUserRightsSchema | Unset = UNSET
     settings: EditUserSettingsSchema | Unset = UNSET

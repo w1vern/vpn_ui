@@ -1,17 +1,18 @@
 """first migration
 
-Revision ID: fb6ed3e042dc
+Revision ID: 09e89a370c4a
 Revises: 
-Create Date: 2025-12-31 17:05:45.279100
+Create Date: 2026-01-03 19:29:23.682360
 
 """
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = 'fb6ed3e042dc'
+revision: str = '09e89a370c4a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -45,7 +46,8 @@ def upgrade() -> None:
     sa.Column('price', sa.Float(), nullable=False),
     sa.Column('price_of_traffic_reset', sa.Float(), nullable=False),
     sa.Column('traffic', sa.Integer(), nullable=False),
-    sa.Column('with_unavalable_inbounds', sa.Boolean(), nullable=False),
+    sa.Column('with_access', sa.Boolean(), nullable=False),
+    sa.Column('with_unavailable_inbounds', sa.Boolean(), nullable=False),
     sa.Column('is_special', sa.Boolean(), nullable=False),
     sa.Column('created_date', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('deleted_date', sa.DateTime(), nullable=True),
@@ -69,10 +71,11 @@ def upgrade() -> None:
     op.create_table('users',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('telegram_id', sa.BigInteger(), nullable=False),
-    sa.Column('tariff_id', sa.Uuid(), nullable=True),
+    sa.Column('tariff_id', sa.Uuid(), nullable=False),
     sa.Column('telegram_username', sa.String(), nullable=False),
     sa.Column('telegram_language_code', sa.String(), nullable=False),
     sa.Column('internal_id', sa.String(), nullable=False),
+    sa.Column('panel_id', sa.Uuid(), nullable=False),
     sa.Column('description', sa.String(), nullable=False),
     sa.Column('balance', sa.Float(), nullable=False),
     sa.Column('rights', sa.Integer(), nullable=False),

@@ -23,7 +23,8 @@ class TariffRepository(BaseRepository[Tariff]):
         price_of_traffic_reset: float,
         traffic: int,
         description: str,
-        with_unavalable_inbounds: bool,
+        with_access: bool,
+        with_unavailable_inbounds: bool,
         is_special: bool,
     ) -> Tariff:
         return await self._create(
@@ -33,7 +34,8 @@ class TariffRepository(BaseRepository[Tariff]):
             price=price,
             price_of_traffic_reset=price_of_traffic_reset,
             traffic=traffic,
-            with_unavalable_inbounds=with_unavalable_inbounds,
+            with_access=with_access,
+            with_unavailable_inbounds=with_unavailable_inbounds,
             is_special=is_special
         )
 
@@ -47,7 +49,8 @@ class TariffRepository(BaseRepository[Tariff]):
         price: float | Unset = UNSET,
         price_of_traffic_reset: float | Unset = UNSET,
         traffic: int | Unset = UNSET,
-        with_unavalable_inbounds: bool | Unset = UNSET,
+        with_access: bool | Unset = UNSET,
+        with_unavailable_inbounds: bool | Unset = UNSET,
         is_special: bool | Unset = UNSET
     ) -> None:
         await self._edit(
@@ -58,7 +61,8 @@ class TariffRepository(BaseRepository[Tariff]):
             price=price,
             price_of_traffic_reset=price_of_traffic_reset,
             traffic=traffic,
-            with_unavalable_inbounds=with_unavalable_inbounds,
+            with_access=with_access,
+            with_unavailable_inbounds=with_unavailable_inbounds,
             is_special=is_special
         )
 

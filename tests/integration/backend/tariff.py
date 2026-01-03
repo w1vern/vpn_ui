@@ -31,7 +31,8 @@ async def create(
         "price_of_traffic_reset": 50,
         "traffic": 1000,
         "is_special": False,
-        "with_unavalable_inbounds": False
+        "with_access": True,
+        "with_unavailable_inbounds": False
     }
     response = await httpx_client.post(base_url, json=tariff)
     check_response(base_url, "POST", response)

@@ -5,6 +5,7 @@ from .server import (
     CreateServerSchema,
     EditServerInboundSchema,
     EditServerSchema,
+    ProtocolsSchema,
     ServerInboundSchema,
     ServerSchema
 )
@@ -33,6 +34,7 @@ __all__ = [
     "ServerInboundSchema",
     "CreateServerInboundSchema",
     "EditServerInboundSchema",
+    "ProtocolsSchema",
 
     "TgAuth",
 

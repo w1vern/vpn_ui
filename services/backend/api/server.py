@@ -9,6 +9,7 @@ from ..schemas import (
     CreateServerSchema,
     EditServerInboundSchema,
     EditServerSchema,
+    ProtocolsSchema,
     ServerInboundSchema,
     ServerSchema
 )
@@ -16,6 +17,15 @@ from ..services import ServerInboundService, ServerService
 
 router = APIRouter(prefix="/servers", tags=["servers"])
 
+@router.get(
+    path="/inbounds/protocols",
+    summary="Get all server inbound protocols"
+)
+async def get_all_inbound_protocols(
+    server_inbound_service: ServerInboundService = Depends(
+        ServerInboundService.depends)
+) -> ProtocolsSchema:
+    return await server_inbound_service.protocols()
 
 @router.get(
     path="/inbounds",
@@ -31,10 +41,10 @@ async def get_all_inbounds(
         None,
         ge=1,
         description="Number of items to return"),
-    server_ibound_service: ServerInboundService = Depends(
+    server_inbound_service: ServerInboundService = Depends(
         ServerInboundService.depends)
 ) -> list[ServerInboundSchema]:
-    return await server_ibound_service.all(server_id, limit, offset)
+    return await server_inbound_service.all(server_id, limit, offset)
 
 
 @router.get(
@@ -43,10 +53,10 @@ async def get_all_inbounds(
 )
 async def count_inbounds(
     server_id: UUID | None = Query(None, description="Server ID"),
-    server_ibound_service: ServerInboundService = Depends(
+    server_inbound_service: ServerInboundService = Depends(
         ServerInboundService.depends)
 ) -> int:
-    return await server_ibound_service.count(server_id)
+    return await server_inbound_service.count(server_id)
 
 
 @router.post(
@@ -56,10 +66,10 @@ async def count_inbounds(
 async def create_server_inbound(
     server_id: UUID,
     server_inbound_to_create: CreateServerInboundSchema,
-    server_ibound_service: ServerInboundService = Depends(
+    server_inbound_service: ServerInboundService = Depends(
         ServerInboundService.depends)
 ) -> ServerInboundSchema:
-    return await server_ibound_service.create(server_id, server_inbound_to_create)
+    return await server_inbound_service.create(server_id, server_inbound_to_create)
 
 
 @router.get(
@@ -68,10 +78,10 @@ async def create_server_inbound(
 )
 async def get_server_inbound(
     server_inbound_id: UUID,
-    server_ibound_service: ServerInboundService = Depends(
+    server_inbound_service: ServerInboundService = Depends(
         ServerInboundService.depends)
 ) -> ServerInboundSchema:
-    return await server_ibound_service.get(server_inbound_id)
+    return await server_inbound_service.get(server_inbound_id)
 
 
 @router.patch(
@@ -81,10 +91,22 @@ async def get_server_inbound(
 async def edit_server_inbound(
     server_inbound_id: UUID,
     server_inbound_to_edit: EditServerInboundSchema,
-    server_ibound_service: ServerInboundService = Depends(
+    server_inbound_service: ServerInboundService = Depends(
         ServerInboundService.depends)
 ) -> SuccessResponse:
-    await server_ibound_service.edit(server_inbound_id, server_inbound_to_edit)
+    await server_inbound_service.edit(server_inbound_id, server_inbound_to_edit)
+    return SuccessResponse()
+
+@router.delete(
+    path="/inbounds/{server_inbound_id}",
+    summary="Delete an existing server inbound"
+)
+async def delete_server_inbound(
+    server_inbound_id: UUID,
+    server_inbound_service: ServerInboundService = Depends(
+        ServerInboundService.depends)
+) -> SuccessResponse:
+    await server_inbound_service.delete(server_inbound_id)
     return SuccessResponse()
 
 

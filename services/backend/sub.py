@@ -31,7 +31,7 @@ async def get_subscriptions(
     ap = await apr.get_latest_for_user(user)
     if ap is None:
         return "", 401
-    use_unawailable = ap.tariff.with_unavalable_inbounds
+    use_unavailable = ap.tariff.with_unavailable_inbounds
     servers = await sr.get_all()
 
     def regroup_inbounds(
@@ -50,7 +50,7 @@ async def get_subscriptions(
         async with server_session_manager.get_session(server) as server_session:
             pr = PanelRepository(server_session)
             for inbd in server_inbds:
-                if not (use_unawailable or inbd.is_available):
+                if not (use_unavailable or inbd.is_available):
                     continue
                 await pr.ensure_user_exists(user=user, server_inbound=inbd)
                 match inbd.protocol:

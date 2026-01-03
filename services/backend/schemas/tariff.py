@@ -14,7 +14,8 @@ class TariffSchema(BaseModel):
     price: float
     price_of_traffic_reset: float
     traffic: int
-    with_unavalable_inbounds: bool
+    with_access: bool
+    with_unavailable_inbounds: bool
     is_special: bool
 
     model_config = ConfigDict(from_attributes=True)
@@ -29,7 +30,8 @@ class TariffSchema(BaseModel):
             price=tariff.price,
             price_of_traffic_reset=tariff.price_of_traffic_reset,
             traffic=tariff.traffic,
-            with_unavalable_inbounds=tariff.with_unavalable_inbounds,
+            with_access=tariff.with_access,
+            with_unavailable_inbounds=tariff.with_unavailable_inbounds,
             is_special=tariff.is_special
         )
 
@@ -41,7 +43,8 @@ class CreateTariffSchema(BaseModel):
     price: float
     price_of_traffic_reset: float
     traffic: int
-    with_unavalable_inbounds: bool
+    with_access: bool
+    with_unavailable_inbounds: bool
     is_special: bool
 
 class EditTariffSchema(BaseModel):
@@ -51,5 +54,6 @@ class EditTariffSchema(BaseModel):
     price: float | Unset = UNSET
     price_of_traffic_reset: float | Unset = UNSET
     traffic: int | Unset = UNSET
-    with_unavalable_inbounds: bool | Unset = UNSET
+    with_access: bool | Unset = UNSET
+    with_unavailable_inbounds: bool | Unset = UNSET
     is_special: bool | Unset = UNSET

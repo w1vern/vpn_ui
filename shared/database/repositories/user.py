@@ -1,5 +1,6 @@
 
 import secrets
+from uuid import uuid4
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,7 +20,7 @@ class UserRepository(BaseRepository[User]):
         telegram_username: str,
         telegram_language_code: str,
         description: str,
-        tariff: Tariff | None,
+        tariff: Tariff,
         internal_id: str,
         balance: float = 0,
         rights: int = RightsType.member.value,
@@ -27,14 +28,16 @@ class UserRepository(BaseRepository[User]):
     ) -> User:
         return await self._create(
             telegram_id=telegram_id,
-            tariff_id=tariff.id if tariff is not None else None,
+            tariff_id=tariff.id,
             description=description,
             telegram_username=telegram_username,
             telegram_language_code=telegram_language_code,
             internal_id=internal_id,
+            panel_id=uuid4(),
             balance=balance,
             rights=rights,
-            settings=settings)
+            settings=settings
+        )
 
     async def get_by_telegram_id(
         self,
@@ -107,12 +110,19 @@ class UserRepository(BaseRepository[User]):
         user.secret = secrets.token_urlsafe()
         await self.session.flush()
 
+    async def update_panel_id(
+        self,
+        user: User
+    ) -> None:
+        user.panel_id = uuid4()
+        await self.session.flush()
+
     async def update_tariff(
         self,
         user: User,
-        new_tariff: Tariff | None
+        new_tariff: Tariff
     ) -> None:
-        user.tariff_id = new_tariff.id if new_tariff else None
+        user.tariff_id = new_tariff.id
         await self.session.flush()
 
     async def update_description(
@@ -122,7 +132,7 @@ class UserRepository(BaseRepository[User]):
     ) -> None:
         user.description = new_description
         await self.session.flush()
-        
+
     async def update_internal_id(
         self,
         user: User,

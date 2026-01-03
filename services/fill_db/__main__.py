@@ -1,11 +1,13 @@
 
 import asyncio
+from datetime import timedelta
 
 from sqlalchemy import text
 
 from shared.database import (
     RightsType,
     SettingsType,
+    TariffRepository,
     UserRepository,
     session_manager
 )
@@ -43,19 +45,31 @@ async def main() -> None:
     await wait_for_table("users")
     async with session_manager.context_session() as session:
         ur = UserRepository(session)
+        tr = TariffRepository(session)
         users = await ur.get_all()
         if len(users) > 0:
             logger.info("database is not empty")
             return
+        tariff = await tr.create(
+            name="__default_tariff__",
+            description="Default tariff. Equals to no tariff.",
+            price=0,
+            price_of_traffic_reset=0,
+            traffic=0,
+            duration=timedelta(seconds=0),
+            with_access=False,
+            with_unavailable_inbounds=False,
+            is_special=True
+        )
         await ur.create(
             telegram_id=env_config.bot.superuser,
             telegram_username="super-admin",
             telegram_language_code="en",
-            description="",
+            description="First user, super-admin",
             balance=0,
             rights=RightsType.super_admin.value,
             settings=SettingsType.default.value,
-            tariff=None,
+            tariff=tariff,
             internal_id="super-admin"
         )
         logger.info("database is filled")

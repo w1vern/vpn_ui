@@ -43,6 +43,13 @@ async def logout(
     response = await httpx_client.post(base_url + "/logout")
     check_response(base_url + "/logout", "POST", response)
 
+async def logout_all(
+    base_url: str,
+    httpx_client: AsyncClient
+) -> None:
+    response = await httpx_client.post(base_url + "/logout_all")
+    check_response(base_url + "/logout_all", "POST", response)
+
 
 async def refresh(
     base_url: str,
@@ -60,5 +67,7 @@ async def auth_test(
 ) -> None:
     await login(base_url, user_tg_id, redis, httpx_client)
     await logout(base_url, httpx_client)
+    await login(base_url, user_tg_id, redis, httpx_client)
+    await logout_all(base_url, httpx_client)
     await login(base_url, user_tg_id, redis, httpx_client)
     await refresh(base_url, httpx_client)
