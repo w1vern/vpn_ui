@@ -38,11 +38,45 @@ from .redis import RedisType, get_redis_client
 
 logger = setup_logger(__name__)
 
-def escape_markdown_v2(text: str) -> str:
-    special_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
-    for char in special_chars:
-        text = text.replace(char, f'\\{char}')
-    return text
+CPESIAL_CHARS = [
+    '_',
+    '*',
+    '[',
+    ']',
+    '(',
+    ')',
+    '~',
+    '`',
+    '>',
+    '#',
+    '+',
+    '-',
+    '=',
+    '|',
+    '{',
+    '}',
+    '.',
+    '!'
+]
+
+
+def invert_escape(s: str) -> str:
+    special_chars = set(CPESIAL_CHARS)
+    result = []
+    i = 0
+    while i < len(s):
+        if s[i] == '\\' and i + 1 < len(s) and s[i + 1] in special_chars:
+            result.append(s[i + 1])
+            i += 2
+        elif s[i] in special_chars:
+            result.append('\\')
+            result.append(s[i])
+            i += 1
+        else:
+            result.append(s[i])
+            i += 1
+    return ''.join(result)
+
 
 class Service():
     def __init__(
@@ -85,7 +119,18 @@ class Service():
         sir: ServerInboundRepository = Depends(get_server_inbound_repo),
         tr: TransactionRepository = Depends(get_transaction_repo)
     ) -> 'Service':
-        return cls(user_info, main_message, redis, session, ur, sr, tfr, sir, tr, input)
+        return cls(
+            user_info=user_info,
+            main_message=main_message,
+            redis=redis,
+            session=session,
+            ur=ur,
+            sr=sr,
+            tfr=tfr,
+            sir=sir,
+            tr=tr,
+            input=input
+        )
 
     async def keyboard_handler(self) -> Output:
         func = self.get_func()
@@ -94,7 +139,12 @@ class Service():
         return self.output()
 
     async def chat_handler(self) -> Output:
-        return Output(None, None, self.user_info)
+        return Output(
+            text=None,
+            buttons=None,
+            user_info=self.user_info,
+            notify=False
+        )
 
     async def start_handler(self) -> Output:
         if await self.ur.get_by_telegram_id(self.user_info.id) is None:
@@ -120,9 +170,10 @@ class Service():
         rows = [note.text for note in self.main_message.notifications]
         rows += self.main_message.text
         text = "\n".join(rows)
+        text = invert_escape(text)
         if len(self.main_message.notifications) > 0:
             self.main_message.buttons.append(StaticButtons.read_notifications)
-        
+
         return Output(text, self.main_message.buttons, self.user_info, self.notify)
 
     async def save_main_message(self) -> None:
@@ -146,7 +197,7 @@ class Service():
         if user is None:
             raise SendFeedbackToAdminException()
         self.main_message.text = [
-            f"`{env_config.backend.url}/sub/{user.id}`"
+            rf"\`{env_config.backend.url}/sub/{user.id}\`"
         ]
         self.main_message.text.append(I18nMessage(
             MessageKey.inbounds_menu
