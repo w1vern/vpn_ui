@@ -1,23 +1,23 @@
 {
     "to_main_menu": {
         "en": "To main menu",
-        "ru": "перейти в главное меню"
+        "ru": "Перейти в главное меню"
     },
     "to_settings_menu": {
         "en": "To settings menu",
-        "ru": "перейти в меню настроек"
+        "ru": "Перейти в меню настроек"
     },
     "to_inbounds_menu": {
         "en": "To inbounds menu",
-        "ru": "перейти в меню входящих"
+        "ru": "Перейти в меню входящих"
     },
     "to_tickets_menu": {
         "en": "To tickets menu",
-        "ru": "перейти в меню обращений"
+        "ru": "Перейти в меню обращений"
     },
     "to_transactions_menu": {
         "en": "To transactions menu",
-        "ru": "перейти в меню транзакции"
+        "ru": "Перейти в меню транзакции"
     },
     "hide_notifications": {
         "en": "Hide notifications",
@@ -51,63 +51,51 @@
         "en": "Interesting error occurred.\nPlease contact the administrator for assistance.\n\nAdditional information:\n{additional_info}",
         "ru": "Обнаружена странная ошибка.\nПожалуйста, свяжитесь с администратором для помощи.\n\nДополнительная информация:\n{additional_info}"
     },
-    "telegram_api_error":
-    {
+    "telegram_api_error": {
         "en": "Telegram API error",
         "ru": "Ошибка Telegram API"
     },
-    "unknown_error":
-    {
+    "unknown_error": {
         "en": "Unknown error",
         "ru": "Неизвестная ошибка"
     },
-    "bot_started":
-    {
+    "bot_started": {
         "en": "Bot started",
         "ru": "Бот запущен"
     },
-    "bot_stopped":
-    {
+    "bot_stopped": {
         "en": "Bot stopped",
         "ru": "Бот остановлен"
     },
-    "welcome_message":
-    {
-        "en": "Welcome to the bot",
-        "ru": "Добро пожаловать в бота"
+    "welcome_message": {
+        "en": "Welcome, <b>{username}</b>!",
+        "ru": "Добро пожаловать, <b>{username}</b>!"
     },
-    "dont_use_start_command":
-    {
+    "dont_use_start_command": {
         "en": "Don't use start command",
         "ru": "Не используйте команду start"
     },
-    "settings_menu":
-    {
+    "settings_menu": {
         "en": "Settings menu",
         "ru": "Меню настроек"
     },
-    "inbounds_menu":
-    {
+    "inbounds_menu": {
         "en": "Inbounds menu",
         "ru": "Меню подключений"
     },
-    "tickets_menu":
-    {
+    "tickets_menu": {
         "en": "Tickets menu",
         "ru": "Меню обращений"
     },
-    "transactions_menu":
-    {
+    "transactions_menu": {
         "en": "Transactions menu",
         "ru": "Меню транзакции"
     },
-    "main_menu":
-    {
+    "main_menu": {
         "en": "Main menu",
         "ru": "Главное меню"
     },
-    "balance":
-    {
+    "balance": {
         "en": "Balance",
         "ru": "Баланс"
     }

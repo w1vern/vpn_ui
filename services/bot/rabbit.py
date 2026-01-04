@@ -31,7 +31,8 @@ async def handler(
         user_info: UserInfo,
         service: Service = Depends(Service.depends)
     ) -> None:
-        service.main_message.notifications.append(Notification(text))
+        service.main_message.notifications.append(Notification(text)) # done
+        # service.main_message.notifications.append(Notification(html.escape(text))) # row
         await service.save_main_message()
         service.notify = True
         await update_message(service.output())

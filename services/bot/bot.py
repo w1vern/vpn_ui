@@ -4,6 +4,8 @@ from aiogram.exceptions import TelegramAPIError
 from aiogram.types import InlineKeyboardMarkup
 from fast_depends import Depends, inject
 from redis.asyncio import Redis
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 
 from shared.infrastructure import env_config, setup_logger
 
@@ -12,7 +14,10 @@ from .keyboard import create_keyboard
 from .models import Output
 from .redis import RedisType, get_redis_client
 
-bot = Bot(token=env_config.bot.token)
+bot = Bot(
+    token=env_config.bot.token,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
 dp = Dispatcher()
 
 logger = setup_logger(__name__)
@@ -33,8 +38,7 @@ async def edit_message(
         await bot.edit_message_text(
             text=new_text,
             chat_id=chat_id,
-            message_id=message_id,
-            parse_mode="MarkdownV2"
+            message_id=message_id
         )
     if new_keyboard is not None:
         await bot.edit_message_reply_markup(
@@ -54,8 +58,7 @@ async def send_message(
     message = await bot.send_message(
         chat_id=chat_id,
         text=text,
-        reply_markup=keyboard,
-        parse_mode="MarkdownV2"
+        reply_markup=keyboard
     )
     await redis.set(
         f"{RedisType.main_message_id.value}:{chat_id}",
@@ -68,7 +71,8 @@ async def update_message(
     redis: Redis = Depends(get_redis_client),
     bot: Bot = Depends(get_bot)
 ) -> None:
-    message_id: int | None = await redis.get(f"{RedisType.main_message_id.value}:{new_state.user_info.id}")
+    message_id: int | None = await redis.get(
+        name=f"{RedisType.main_message_id.value}:{new_state.user_info.id}")
     if not message_id is None:
         chat_id = new_state.user_info.id
         if not new_state.notify:

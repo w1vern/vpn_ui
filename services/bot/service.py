@@ -40,45 +40,6 @@ from .redis import RedisType, get_redis_client
 
 logger = setup_logger(__name__)
 
-SPECIAL_CHARS = [
-    '_',
-    '*',
-    '[',
-    ']',
-    '(',
-    ')',
-    '~',
-    '`',
-    '>',
-    '#',
-    '+',
-    '-',
-    '=',
-    '|',
-    '{',
-    '}',
-    '.',
-    '!'
-]
-
-
-def invert_escape(s: str) -> str:
-    special_chars = set(SPECIAL_CHARS)
-    result = []
-    i = 0
-    while i < len(s):
-        if s[i] == '\\' and i + 1 < len(s) and s[i + 1] in special_chars:
-            result.append(s[i + 1])
-            i += 2
-        elif s[i] in special_chars:
-            result.append('\\')
-            result.append(s[i])
-            i += 1
-        else:
-            result.append(s[i])
-            i += 1
-    return ''.join(result)
-
 
 class Service():
     def __init__(
@@ -153,7 +114,7 @@ class Service():
             tariff = await self.tfr.get_by_id(UUID(int=DefaultTariffs.DEFAULT.value))
             if tariff is None:
                 raise SendFeedbackToAdminException()
-            user = await self.ur.create(
+            await self.ur.create(
                 telegram_id=self.user_info.id,
                 telegram_username=self.user_info.username,
                 telegram_language_code=self.user_info.lang_code,
@@ -175,7 +136,6 @@ class Service():
         rows = [note.text for note in self.main_message.notifications]
         rows += self.main_message.text
         text = "\n".join(rows)
-        text = invert_escape(text)
         if len(self.main_message.notifications) > 0:
             self.main_message.buttons.append(StaticButtons.read_notifications)
 
@@ -202,7 +162,7 @@ class Service():
         if user is None:
             raise SendFeedbackToAdminException()
         self.main_message.text = [
-            rf"\`{env_config.backend.url}/sub/{user.id}\`"
+            f"<code>{env_config.backend.url}/sub/{user.id}</code>"
         ]
         self.main_message.text.append(I18nMessage(
             MessageKey.inbounds_menu
