@@ -5,9 +5,9 @@ x-service-base: &service-base
     - .env
   depends_on:
     alembic:
-      condition: service_started
+      condition: service_completed_successfully
     postgres:
-      condition: service_started
+      condition: service_healthy
     rabbitmq:
       condition: service_healthy
 
@@ -28,6 +28,12 @@ services:
       -c logging_collector=off
       -c client_min_messages=log
       -c log_error_verbosity=default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
 
   redis:

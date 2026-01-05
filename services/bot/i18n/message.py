@@ -1,13 +1,11 @@
 
+import html
 import json
 from importlib import resources
-
-import html
 
 from shared.database import LanguageCodes
 
 from .enums import MessageKey
-
 
 with (resources
       .files(__package__)

@@ -17,7 +17,7 @@ raising_message = "DatabaseSessionManager is not initialized"
 
 
 class DatabaseSessionManager:
-    def __init__(self, host: str, engine_kwargs: dict[str, object] = {}):
+    def __init__(self, host: str, engine_kwargs: dict[str, object] = {}) -> None:
         self._engine = create_async_engine(host, **engine_kwargs)
         self._sessionmaker = async_sessionmaker(
             autocommit=False, bind=self._engine, expire_on_commit=False)
@@ -61,7 +61,7 @@ class DatabaseSessionManager:
         async for session in self.session():
             yield session
 
-    async def create_db_and_tables(self):
+    async def create_db_and_tables(self) -> None:
         async with self.connect() as conn:
             await conn.run_sync(Base.metadata.create_all)
 
@@ -83,5 +83,7 @@ DATABASE_URL = get_db_url(
     env_config.db.name
 )
 
-session_manager = DatabaseSessionManager(DATABASE_URL,
-                                         {"echo": False})
+session_manager = DatabaseSessionManager(
+    host=DATABASE_URL,
+    engine_kwargs={"echo": False}
+)

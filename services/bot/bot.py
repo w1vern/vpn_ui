@@ -1,11 +1,11 @@
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from aiogram.exceptions import TelegramAPIError
 from aiogram.types import InlineKeyboardMarkup
 from fast_depends import Depends, inject
 from redis.asyncio import Redis
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
 
 from shared.infrastructure import env_config, setup_logger
 
