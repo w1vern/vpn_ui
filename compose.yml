@@ -1,15 +1,3 @@
-x-service-base: &service-base
-  build:
-    context: .
-  env_file:
-    - .env
-  depends_on:
-    alembic:
-      condition: service_completed_successfully
-    postgres:
-      condition: service_healthy
-    rabbitmq:
-      condition: service_healthy
 
 services:
   postgres:
@@ -40,6 +28,12 @@ services:
     image: redis:7
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     restart: unless-stopped
 
   rabbitmq:
@@ -55,11 +49,16 @@ services:
     restart: unless-stopped
 
   backend:
-    <<: *service-base
+    build:
+      context: .
+    env_file:
+      - .env
     command: python -m services.backend
     depends_on:
       redis:
-        condition: service_started
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
       fill_db:
         condition: service_completed_successfully
     healthcheck:
@@ -73,17 +72,30 @@ services:
     restart: unless-stopped
 
   bot:
-    <<: *service-base
+    build:
+      context: .
+    env_file:
+      - .env
     command: python -m services.bot
     depends_on:
       fill_db:
         condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     profiles:
       - with_bot
     restart: unless-stopped
 
   fill_db:
-    <<: *service-base
+    build:
+      context: .
+    env_file:
+      - .env
+    depends_on:
+      alembic:
+        condition: service_completed_successfully
     command: python -m services.fill_db
 
   alembic:
@@ -94,7 +106,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   frontend:
     build:
