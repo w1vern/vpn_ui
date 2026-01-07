@@ -8,6 +8,7 @@ SECURE_COOKIES = True if env_config.boot_level.value == BootLevel.RELEASE.value 
 
 
 class Config:
+    numbers_in_tg_code = 8
     tg_code_lifetime = 60 * 2
     access_token_lifetime = 60 * 10
     refresh_token_lifetime = 3600 * 24 * 30

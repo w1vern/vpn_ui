@@ -162,7 +162,7 @@ class Service():
         if user is None:
             raise SendFeedbackToAdminException()
         self.main_message.text = [
-            f"<code>{env_config.backend.url}/sub/{user.id}</code>"
+            f"<code>{env_config.backend.url}/sub/{user.panel_id}</code>"
         ]
         self.main_message.text.append(I18nMessage(
             MessageKey.inbounds_menu

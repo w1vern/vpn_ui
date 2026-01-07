@@ -23,6 +23,7 @@ from ..redis import RedisType, get_redis_client
 from ..schemas import TgAuth, TgId
 from ..token import AccessToken, RefreshToken
 from .anti_spam import AntiSpamService
+from ..config import Config
 
 
 class AuthService:
@@ -49,7 +50,8 @@ class AuthService:
         return cls(ur, redis, broker, anti_spam)
 
     def _create_code(self) -> str:
-        return f"{secrets.randbelow(1000000):06}"
+        n = 10**(Config.numbers_in_tg_code)-1
+        return f"{secrets.randbelow(9*n)+n}"
 
     async def login(
         self,
