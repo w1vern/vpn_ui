@@ -23,7 +23,6 @@ from ..redis import RedisType, get_redis_client
 from ..schemas import TgAuth, TgId
 from ..token import AccessToken, RefreshToken
 from .anti_spam import AntiSpamService
-from ..config import Config
 
 
 class AuthService:

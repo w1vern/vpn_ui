@@ -10,9 +10,6 @@ from .depends import get_session
 from .rabbit import router as faststream_router
 from .response import SuccessResponse
 from .sub import get_subscriptions
-#from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
-
-
 
 app = FastAPI(
     docs_url="/api/docs",
@@ -21,8 +18,6 @@ app = FastAPI(
     swagger_ui_parameters={
         "tryItOutEnabled": True,
     })
-
-#app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["172.18.0.0/16", "*"])
 
 
 @router.get("/health", include_in_schema=False)

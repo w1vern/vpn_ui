@@ -13,10 +13,11 @@ from ..redis import RedisType, get_redis_client
 
 
 class AntiSpamService:
-    def __init__(self,
-                 ip: str,
-                 redis: Redis
-                 ) -> None:
+    def __init__(
+        self,
+        ip: str,
+        redis: Redis
+    ) -> None:
         self.redis = redis
         self.ip = ip
 
@@ -28,7 +29,7 @@ class AntiSpamService:
     ) -> 'AntiSpamService':
         ip = cls._get_client_ip(request)
         return cls(ip, redis)
-    
+
     @staticmethod
     def _get_client_ip(request: Request) -> str:
         print(request.headers)
