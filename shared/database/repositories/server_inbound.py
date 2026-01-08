@@ -28,7 +28,7 @@ class ServerInboundRepository(BaseRepository[ServerInbound]):
             description=description,
             is_available=is_available
         )
-        
+
     async def edit(
         self,
         server_inbound: ServerInbound,

@@ -52,7 +52,7 @@ class BaseRepository(Generic[ModelType]):
     ) -> ModelType | None:
         stmt = select(self.model).where(
             self.model.id == id,
-            self.model.deleted_date == None
+            self.model.deleted_date is None
         ).limit(1)
         return await self.session.scalar(stmt)
 
@@ -62,7 +62,7 @@ class BaseRepository(Generic[ModelType]):
     ) -> list[BinaryExpression[bool]]:
         filters = [self.model.deleted_date.is_(None)]
         for field, value in kwargs.items():
-            if not value is None:
+            if value is not None:
                 if hasattr(self.model, field):
                     filters.append(getattr(self.model, field) == value)
                 else:

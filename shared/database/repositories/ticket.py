@@ -39,7 +39,7 @@ class TicketRepository(BaseRepository[Ticket]):
 
     async def get_all_opened(self
                              ) -> list[Ticket]:
-        stmt = select(Ticket).where(Ticket.is_open == True)
+        stmt = select(Ticket).where(Ticket.is_open)
         return list((await self.session.scalars(stmt)).all())
 
     async def close(self,

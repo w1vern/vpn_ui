@@ -35,3 +35,8 @@ class MessageKey(str, Enum):
     main_menu = "main_menu"
 
     balance = "balance"
+    
+    telegram_code = "telegram_code"
+    
+    notifications = "notifications"
+    menu = "menu"

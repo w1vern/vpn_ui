@@ -57,7 +57,7 @@ class ActivePeriodRepository(BaseRepository):
     ) -> ActivePeriod | None:
         stmt = (select(ActivePeriod)
                 .where(ActivePeriod.user_id == user.id)
-                .where(ActivePeriod.opened == True)
+                .where(ActivePeriod.opened)
                 .limit(1))
         return await self.session.scalar(stmt)
 

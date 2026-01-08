@@ -11,6 +11,7 @@ from .user import UserService
 __all__ = [
     'AuthService',
     'ServerService',
+    'ServerInboundService',
     'TicketService',
     'TransactionService',
     'UserService',

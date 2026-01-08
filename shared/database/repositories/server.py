@@ -42,7 +42,7 @@ class ServerRepository(BaseRepository[Server]):
             starting_date=starting_date,
             closing_date=closing_date
         )
-        
+
     async def edit(
         self,
         server: Server,

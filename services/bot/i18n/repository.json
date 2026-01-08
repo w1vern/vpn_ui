@@ -98,5 +98,18 @@
     "balance": {
         "en": "Balance",
         "ru": "Баланс"
+    },
+    "tg_code": {
+        "en": "Login code <code>{code}</code>",
+        "ru": "Код для входа <code>{code}</code>"
+    },
+    "notifications":
+    {
+        "en": "<b>📢 Notifications:</b>",
+        "ru": "<b>📢 Уведомления:</b>"
+    },
+    "menu": {
+        "en": "<b>Menu:</b>",
+        "ru": "<b>Меню:</b>"
     }
 }

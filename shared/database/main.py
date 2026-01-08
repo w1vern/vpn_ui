@@ -17,12 +17,16 @@ raising_message = "DatabaseSessionManager is not initialized"
 
 
 class DatabaseSessionManager:
-    def __init__(self, host: str, engine_kwargs: dict[str, object] = {}) -> None:
+    def __init__(
+        self,
+        host: str,
+        engine_kwargs: dict[str, object] = {}
+    ) -> None:
         self._engine = create_async_engine(host, **engine_kwargs)
         self._sessionmaker = async_sessionmaker(
             autocommit=False, bind=self._engine, expire_on_commit=False)
 
-    async def close(self):
+    async def close(self) -> None:
         if self._engine is None:
             raise Exception(raising_message)
         await self._engine.dispose()
@@ -66,12 +70,13 @@ class DatabaseSessionManager:
             await conn.run_sync(Base.metadata.create_all)
 
 
-def get_db_url(user: str,
-               password: str,
-               ip: str,
-               port: int,
-               name: str
-               ) -> str:
+def get_db_url(
+    user: str,
+    password: str,
+    ip: str,
+    port: int,
+    name: str
+) -> str:
     return f"postgresql+asyncpg://{user}:{password}@{ip}:{port}/{name}"
 
 

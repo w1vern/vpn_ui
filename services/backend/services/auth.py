@@ -22,7 +22,8 @@ from ..rabbit import get_broker, send_tg_code
 from ..redis import RedisType, get_redis_client
 from ..schemas import TgAuth, TgId
 from ..token import AccessToken, RefreshToken
-from .anti_spam import AntiSpamService
+
+#from .anti_spam import AntiSpamService
 
 
 class AuthService:
@@ -31,12 +32,12 @@ class AuthService:
         ur: UserRepository,
         redis: Redis,
         broker: RabbitBroker,
-        anti_spam: AntiSpamService
+        #anti_spam: AntiSpamService
     ) -> None:
         self.ur = ur
         self.redis = redis
         self.broker = broker
-        self.anti_spam = anti_spam
+        #self.anti_spam = anti_spam
 
     @classmethod
     def depends(
@@ -44,9 +45,14 @@ class AuthService:
         ur: UserRepository = Depends(get_user_repo),
         redis: Redis = Depends(get_redis_client),
         broker: RabbitBroker = Depends(get_broker),
-        anti_spam: AntiSpamService = Depends(AntiSpamService.depends)
+        #anti_spam: AntiSpamService = Depends(AntiSpamService.depends)
     ) -> 'AuthService':
-        return cls(ur, redis, broker, anti_spam)
+        return cls(
+            ur=ur,
+            redis=redis,
+            broker=broker,
+            #anti_spam=anti_spam
+        )
 
     def _create_code(self) -> str:
         n = 10**(Config.numbers_in_tg_code)-1
@@ -57,8 +63,8 @@ class AuthService:
         tg_auth: TgAuth
     ) -> tuple[str, str]:
 
-        await self.anti_spam.increment_ip_attempts()
-        await self.anti_spam.check_login_lock(tg_auth.tg_id)
+        #await self.anti_spam.increment_ip_attempts()
+        #await self.anti_spam.check_login_lock(tg_auth.tg_id)
 
         tg_code = await self.redis.get(f"{RedisType.tg_code.value}:{tg_auth.tg_id}")
         if tg_code is None:
@@ -104,13 +110,13 @@ class AuthService:
         self,
         tg_id: TgId,
     ) -> None:
-        await self.anti_spam.increment_ip_attempts()
+        #await self.anti_spam.increment_ip_attempts()
 
         user = await self.ur.get_by_telegram_id(tg_id.tg_id)
         if user is None:
             raise UserNotFoundException()
 
-        await self.anti_spam.check_tg_code_gap(user.telegram_id)
+        #await self.anti_spam.check_tg_code_gap(user.telegram_id)
 
         code = self._create_code()
         await self.redis.set(f"{RedisType.tg_code.value}:{user.telegram_id}",

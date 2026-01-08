@@ -101,7 +101,7 @@ class Service():
         await self.save_main_message()
         return self.output()
 
-    async def chat_handler(self) -> Output:
+    async def chat_handler(self) -> Output:  # TODO:
         return Output(
             text=None,
             buttons=None,
@@ -133,23 +133,32 @@ class Service():
         return self.output()
 
     def output(self) -> Output:
-        rows = [note.text for note in self.main_message.notifications]
+        rows: list[str] = []
+        if len(self.main_message.notifications):
+            rows.append(I18nMessage(MessageKey.notifications).render(self.user_info.lang_code))
+        rows += [note.text for note in self.main_message.notifications]
+        rows.append(I18nMessage(MessageKey.menu).render(self.user_info.lang_code))
         rows += self.main_message.text
         text = "\n".join(rows)
         if len(self.main_message.notifications) > 0:
             self.main_message.buttons.append(StaticButtons.read_notifications)
-
-        return Output(text, self.main_message.buttons, self.user_info, self.notify)
+        return Output(
+            text=text,
+            buttons=self.main_message.buttons,
+            user_info=self.user_info,
+            notify=self.notify
+        )
 
     async def save_main_message(self) -> None:
         await self.redis.set(
             f"{RedisType.main_message.value}:{self.user_info.id}",
-            self.main_message.to_str())
+            self.main_message.to_str()
+        )
 
     def get_func(self) -> Callable[[], Awaitable[None]]:
         return getattr(self, self.input)
 
-    async def incorrect_input(self) -> None:
+    async def incorrect_input(self) -> None:  # TODO:
         pass
 
     async def to_main_menu(self) -> None:
