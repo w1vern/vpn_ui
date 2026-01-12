@@ -99,7 +99,7 @@
         "en": "Balance",
         "ru": "Баланс"
     },
-    "tg_code": {
+    "telegram_code": {
         "en": "Login code <code>{code}</code>",
         "ru": "Код для входа <code>{code}</code>"
     },

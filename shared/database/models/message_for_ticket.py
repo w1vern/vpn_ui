@@ -5,11 +5,11 @@ from uuid import UUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base
+from .base import BaseModel
 from .ticket import Ticket
 
 
-class MessageForTicket(Base):
+class MessageForTicket(BaseModel):
     __tablename__ = "ticket_messages"
 
     text: Mapped[str] = mapped_column()

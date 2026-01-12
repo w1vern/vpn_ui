@@ -73,7 +73,7 @@ class UserService:
         if user is None:
             raise UserNotFoundException()
         if not isinstance(edited_user.rights, Unset):
-            if self.user_schema.rights.is_user_editor is False:
+            if self.user_schema.rights.is_users_editor is False:
                 raise AdminRightsEditNotAllowedException()
             if (not isinstance(edited_user.rights.is_admin_rights_editor, Unset)
                     or self.user_schema.rights.is_admin_rights_editor is False):
@@ -82,24 +82,40 @@ class UserService:
                     or self.user_schema.rights.is_member_rights_editor is False):
                 raise AdminRightsEditNotAllowedException()
             await self.invalidate_access_token(user_id)
-            await self.ur.update_rights(user, edited_user.rights.model_dump())
+            await self.ur.update_rights(
+                user=user,
+                is_admin_rights_editor=edited_user.rights.is_admin_rights_editor,
+                is_member_rights_editor=edited_user.rights.is_member_rights_editor,
+                is_users_editor=edited_user.rights.is_users_editor,
+                is_servers_editor=edited_user.rights.is_servers_editor,
+                is_control_panel_user=edited_user.rights.is_control_panel_user,
+                is_verified=edited_user.rights.is_verified,
+                is_transactions_editor=edited_user.rights.is_transactions_editor,
+                is_tariffs_editor=edited_user.rights.is_tariffs_editor
+            )
 
         if not isinstance(edited_user.settings, Unset):
             if (len(edited_user.settings.model_dump()) > 0
-                    and self.user_schema.rights.is_user_editor is False):
+                    and self.user_schema.rights.is_users_editor is False):
                 raise MemberSettingsEditNotAllowedException()
-            await self.ur.update_settings(user, edited_user.settings.model_dump())
+            await self.ur.update_settings(
+                user=user,
+                get_traffic_notifications=edited_user.settings.get_traffic_notifications,
+                auto_pay=edited_user.settings.auto_pay,
+                is_active=edited_user.settings.is_active,
+                language_code=edited_user.settings.language_code
+            )
 
         if not isinstance(edited_user.telegram_id, Unset):
-            if self.user_schema.rights.is_user_editor is False:
+            if self.user_schema.rights.is_users_editor is False:
                 raise MemberRightsEditNotAllowedException()
             await self.ur.update_telegram_id(user, edited_user.telegram_id)
         if not isinstance(edited_user.description, Unset):
-            if self.user_schema.rights.is_user_editor is False:
+            if self.user_schema.rights.is_users_editor is False:
                 raise MemberRightsEditNotAllowedException()
             await self.ur.update_description(user, edited_user.description)
         if not isinstance(edited_user.tariff_id, Unset):
-            if self.user_schema.rights.is_user_editor is False:
+            if self.user_schema.rights.is_users_editor is False:
                 raise MemberRightsEditNotAllowedException()
             tr = TariffRepository(self.session)
             tariff = await tr.get_by_id(edited_user.tariff_id)

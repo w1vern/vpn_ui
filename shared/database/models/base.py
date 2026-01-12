@@ -45,8 +45,11 @@ class Unset:
 
 UNSET = Unset()
 
-
 class Base(DeclarativeBase):
+    ...
+
+class BaseModel(Base):
+    __abstract__ = True
     id: Mapped[UUID] = mapped_column(
         primary_key=True,
         default=uuid4,

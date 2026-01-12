@@ -16,7 +16,7 @@ app = FastAPI(
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
     swagger_ui_parameters={
-        "tryItOutEnabled": True,
+        "tryItOutEnabled": True
     })
 
 

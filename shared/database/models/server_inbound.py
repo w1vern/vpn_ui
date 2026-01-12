@@ -4,11 +4,11 @@ from uuid import UUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base
+from .base import BaseModel
 from .server import Server
 
 
-class ServerInbound(Base):
+class ServerInbound(BaseModel):
     __tablename__ = "server_inbounds"
 
     inbound_id: Mapped[int]

@@ -3,10 +3,10 @@ from datetime import datetime
 
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .base import Base
+from .base import BaseModel
 
 
-class Server(Base):
+class Server(BaseModel):
     __tablename__ = "servers"
 
     ip: Mapped[str] = mapped_column(unique=True)

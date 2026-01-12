@@ -37,9 +37,10 @@ def register_lifecycle(
         users = await ur.get_all()
         for user in users:
             await _(UserInfo(
-                user.telegram_id,
-                user.telegram_username,
-                LanguageCodes(user.telegram_language_code)))
+                id=user.telegram_id,
+                username=user.telegram_username,
+                lang_code=LanguageCodes(user.settings.language_code)
+            ))
 
     @dp.shutdown()
     @inject
@@ -51,14 +52,19 @@ def register_lifecycle(
             user_info: UserInfo,
             service: Service = Depends(Service.depends)
         ) -> None:
-            service.main_message.notifications.append(
-                Notification(I18nMessage(MessageKey.bot_stopped
-                                         ).render(service.user_info.lang_code)))
+            text = I18nMessage(MessageKey.bot_stopped).render(
+                service.user_info.lang_code)
+            service.main_message.notifications.append(Notification(text))
             await service.save_main_message()
             service.notify = True
-            await update_message(service.output())
+            output = service.output()
+            output.buttons = []
+            output.text = text
+            await update_message(output)
         users = await ur.get_all()
         for user in users:
-            await _(UserInfo(user.telegram_id,
-                             user.telegram_username,
-                             LanguageCodes(user.telegram_language_code)))
+            await _(UserInfo(
+                id=user.telegram_id,
+                username=user.telegram_username,
+                lang_code=LanguageCodes(user.settings.language_code)
+            ))

@@ -1,5 +1,4 @@
 
-from .notification import Notification
 from .server import (
     CreateServerInboundSchema,
     CreateServerSchema,
@@ -55,7 +54,5 @@ __all__ = [
 
     "TariffSchema",
     "CreateTariffSchema",
-    "EditTariffSchema",
-
-    "Notification"
+    "EditTariffSchema"
 ]

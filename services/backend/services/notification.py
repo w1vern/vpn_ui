@@ -1,11 +1,12 @@
 
-
 from fastapi import Depends
 from faststream.rabbit import RabbitBroker
 
+from shared.infrastructure import NotificationToTG
+
 from ..depends import get_user
 from ..rabbit import get_broker, send_tg_notification
-from ..schemas import Notification, UserSchema
+from ..schemas import UserSchema
 
 
 class NotificationService:
@@ -27,6 +28,6 @@ class NotificationService:
 
     async def send(
         self,
-        notification: Notification
+        notification: NotificationToTG
     ) -> None:
-        await send_tg_notification(notification.data, self.user_schema, self.broker)
+        await send_tg_notification(notification, self.broker)

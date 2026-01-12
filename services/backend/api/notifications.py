@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 
+from shared.infrastructure import NotificationToTG
+
 from ..response import SuccessResponse
-from ..schemas import Notification
 from ..services import NotificationService
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/notifications", tags=["notifications"])
     description='scheme like: {"en": "text", "ru": "Текст"}'
 )
 async def create(
-    notification: Notification,
+    notification: NotificationToTG,
     notification_service: NotificationService = Depends(
         NotificationService.depends)
 ) -> SuccessResponse:

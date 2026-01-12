@@ -1,6 +1,6 @@
 
 from .active_period import ActivePeriod
-from .base import UNSET, Base, Unset
+from .base import UNSET, Base, BaseModel, Unset
 from .message_for_ticket import MessageForTicket
 from .server import Server
 from .server_inbound import ServerInbound
@@ -8,11 +8,12 @@ from .tariff import Tariff
 from .telegram_message import TelegramMessage
 from .ticket import Ticket
 from .transaction import Transaction
-from .user import User
+from .user import User, UserRights, UserSettings
 
 __all__ = [
-    'Base',
+    'BaseModel',
     'Unset',
+    'Base',
     'UNSET',
     'ActivePeriod',
     'MessageForTicket',
@@ -22,5 +23,7 @@ __all__ = [
     'TelegramMessage',
     'Ticket',
     'Transaction',
-    'User'
+    'User',
+    'UserRights',
+    'UserSettings'
 ]

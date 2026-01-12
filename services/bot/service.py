@@ -13,7 +13,8 @@ from shared.database import (
     TariffRepository,
     TransactionRepository,
     UserRepository,
-    session_manager
+    UserRights,
+    UserSettings
 )
 from shared.infrastructure import env_config, setup_logger
 
@@ -28,6 +29,7 @@ from .depends import (
     get_request_data,
     get_server_inbound_repo,
     get_server_repo,
+    get_session,
     get_tariff_repo,
     get_transaction_repo,
     get_user_info,
@@ -44,6 +46,7 @@ logger = setup_logger(__name__)
 class Service():
     def __init__(
         self,
+        *,
         user_info: UserInfo,
         main_message: MainMessage,
         redis: Redis,
@@ -71,11 +74,12 @@ class Service():
     @classmethod
     def depends(
         cls,
+        *,
         user_info: UserInfo = Depends(get_user_info),
         redis: Redis = Depends(get_redis_client),
         main_message: MainMessage = Depends(get_main_message),
         input: str = Depends(get_request_data),
-        session: AsyncSession = Depends(session_manager.session),
+        session: AsyncSession = Depends(get_session),
         ur: UserRepository = Depends(get_user_repo),
         tfr: TariffRepository = Depends(get_tariff_repo),
         sr: ServerRepository = Depends(get_server_repo),
@@ -117,10 +121,12 @@ class Service():
             await self.ur.create(
                 telegram_id=self.user_info.id,
                 telegram_username=self.user_info.username,
-                telegram_language_code=self.user_info.lang_code,
                 description="",
                 tariff=tariff,
                 internal_id=str(self.user_info.id),
+                balance=0,
+                rights=UserRights(),
+                settings=UserSettings()
             )
             self.main_message.notifications.append(Notification(
                 I18nMessage(MessageKey.welcome_message).render(self.user_info.lang_code)))
@@ -135,9 +141,11 @@ class Service():
     def output(self) -> Output:
         rows: list[str] = []
         if len(self.main_message.notifications):
-            rows.append(I18nMessage(MessageKey.notifications).render(self.user_info.lang_code))
+            rows.append(I18nMessage(MessageKey.notifications).render(
+                self.user_info.lang_code))
         rows += [note.text for note in self.main_message.notifications]
-        rows.append(I18nMessage(MessageKey.menu).render(self.user_info.lang_code))
+        rows.append(I18nMessage(MessageKey.menu).render(
+            self.user_info.lang_code))
         rows += self.main_message.text
         text = "\n".join(rows)
         if len(self.main_message.notifications) > 0:

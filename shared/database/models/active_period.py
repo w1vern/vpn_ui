@@ -5,13 +5,13 @@ from uuid import UUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base
+from .base import BaseModel
 from .tariff import Tariff
 from .transaction import Transaction
 from .user import User
 
 
-class ActivePeriod(Base):
+class ActivePeriod(BaseModel):
     __tablename__ = "active_periods"
 
     user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"))

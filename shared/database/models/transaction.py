@@ -5,11 +5,11 @@ from uuid import UUID
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base
+from .base import BaseModel
 from .user import User
 
 
-class Transaction(Base):
+class Transaction(BaseModel):
     __tablename__ = "transactions"
 
     amount: Mapped[float] = mapped_column()

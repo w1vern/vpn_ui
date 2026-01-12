@@ -5,7 +5,6 @@ from .rabbit import (
     RABBIT_URL,
     CodeToTG,
     NotificationToTG,
-    TgInfo,
     notification_queue,
     tg_code_queue
 )
@@ -17,7 +16,6 @@ __all__ = [
     'tg_code_queue',
     'notification_queue',
     'NotificationToTG',
-    'TgInfo',
 
     'get_redis_client',
 

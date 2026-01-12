@@ -5,10 +5,10 @@ from datetime import timedelta
 from sqlalchemy import text
 
 from shared.database import (
-    RightsType,
-    SettingsType,
     TariffRepository,
     UserRepository,
+    UserRights,
+    UserSettings,
     session_manager
 )
 from shared.infrastructure import env_config, setup_logger
@@ -61,16 +61,26 @@ async def main() -> None:
             with_unavailable_inbounds=False,
             is_special=True
         )
-        await ur.create(
+        user = await ur.create(
             telegram_id=env_config.bot.superuser,
             telegram_username="super-admin",
-            telegram_language_code="en",
             description="First user, super-admin",
             balance=0,
-            rights=RightsType.super_admin.value,
-            settings=SettingsType.default.value,
             tariff=tariff,
+            rights=UserRights(),
+            settings=UserSettings(),
             internal_id="super-admin"
+        )
+        await ur.update_rights(
+            user=user,
+            is_admin_rights_editor=True,
+            is_member_rights_editor=True,
+            is_users_editor=True,
+            is_servers_editor=True,
+            is_control_panel_user=True,
+            is_transactions_editor=True,
+            is_verified=True,
+            is_tariffs_editor=True
         )
         logger.info("database is filled")
 

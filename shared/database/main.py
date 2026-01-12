@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import (
 
 from shared.infrastructure import env_config
 
-from .models.base import Base
+from .models.base import BaseModel
 
 raising_message = "DatabaseSessionManager is not initialized"
 
@@ -67,7 +67,7 @@ class DatabaseSessionManager:
 
     async def create_db_and_tables(self) -> None:
         async with self.connect() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+            await conn.run_sync(BaseModel.metadata.create_all)
 
 
 def get_db_url(

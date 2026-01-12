@@ -2,19 +2,11 @@
 from .language_code import LanguageCodes
 from .message_ticket_type import MessageTicketType
 from .protocols import Protocols
-from .rights import Rights
-from .rights_type import RightsType
-from .settings import Settings
-from .settings_type import SettingsType
 from .tariffs import DefaultTariffs
 from .transaction_type import TransactionType
 
 __all__ = [
     "MessageTicketType",
-    "Rights",
-    "RightsType",
-    "Settings",
-    "SettingsType",
     "TransactionType",
     "LanguageCodes",
     "Protocols",

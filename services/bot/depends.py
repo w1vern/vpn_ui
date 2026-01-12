@@ -29,37 +29,47 @@ from .redis import RedisType, get_redis_client
 logger = setup_logger(__name__)
 
 
-async def get_user_repo(
-    session: AsyncSession = Depends(session_manager.session)
+async def get_session(
+    session: AsyncSession | None = None
+) -> AsyncSession:
+    logger.debug('get_session called')
+    if session is None:
+        return await session_manager.session().__anext__()
+    return session
+
+
+def get_user_repo(
+    session: AsyncSession = Depends(get_session)
 ) -> UserRepository:
+    logger.debug('get_user_repo called')
     return UserRepository(session)
 
 
-async def get_tariff_repo(
-    session: AsyncSession = Depends(session_manager.session)
+def get_tariff_repo(
+    session: AsyncSession = Depends(get_session)
 ) -> TariffRepository:
     return TariffRepository(session)
 
 
-async def get_server_repo(
-    session: AsyncSession = Depends(session_manager.session)
+def get_server_repo(
+    session: AsyncSession = Depends(get_session)
 ) -> ServerRepository:
     return ServerRepository(session)
 
 
-async def get_server_inbound_repo(
-    session: AsyncSession = Depends(session_manager.session)
+def get_server_inbound_repo(
+    session: AsyncSession = Depends(get_session)
 ) -> ServerInboundRepository:
     return ServerInboundRepository(session)
 
 
-async def get_transaction_repo(
-    session: AsyncSession = Depends(session_manager.session)
+def get_transaction_repo(
+    session: AsyncSession = Depends(get_session)
 ) -> TransactionRepository:
     return TransactionRepository(session)
 
 
-async def get_user_info(
+def get_user_info(
     message: Message | None = None,
     callback_query: CallbackQuery | None = None,
     user_info: UserInfo | None = None
@@ -89,7 +99,7 @@ async def get_user_info(
     )
 
 
-async def get_request_data(
+def get_request_data(
     message: Message | None = None,
     callback_query: CallbackQuery | None = None
 ) -> str:
@@ -113,8 +123,6 @@ async def get_user(
     if user:
         if user.telegram_username != user_info.username:
             await ur.update_telegram_username(user, user_info.username)
-        if user.telegram_language_code != user_info.lang_code:
-            await ur.update_telegram_language_code(user, user_info.lang_code)
         return user
     raise UserNotFoundException()
 
@@ -125,9 +133,15 @@ async def get_main_message(
 ) -> MainMessage:
     main_message = await redis.get(f"{RedisType.main_message.value}:{user_info.id}")
     if main_message is None:
-        main_message = MainMessage(text=[I18nMessage(MessageKey.main_menu).render(user_info.lang_code)],
-                                   notifications=[],
-                                   buttons=main_menu_keyboard())
-        await redis.set(f"{RedisType.main_message.value}:{user_info.id}", main_message.to_str())
+        main_message = MainMessage(
+            text=[I18nMessage(MessageKey.main_menu).render(
+                user_info.lang_code)],
+            notifications=[],
+            buttons=main_menu_keyboard()
+        )
+        await redis.set(
+            name=f"{RedisType.main_message.value}:{user_info.id}",
+            value=main_message.to_str()
+        )
         return main_message
     return MainMessage.from_str(main_message)

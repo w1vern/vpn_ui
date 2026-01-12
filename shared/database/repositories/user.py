@@ -5,8 +5,16 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..enums import Rights, RightsType, Settings, SettingsType
-from ..models import Tariff, Unset, User
+from shared.database.enums import language_code
+
+from ..models import (
+    UNSET,
+    Tariff,
+    Unset,
+    User,
+    UserRights,
+    UserSettings
+)
 from .base import BaseRepository
 
 
@@ -16,27 +24,27 @@ class UserRepository(BaseRepository[User]):
 
     async def create(
         self,
+        *,
         telegram_id: int,
         telegram_username: str,
-        telegram_language_code: str,
         description: str,
         tariff: Tariff,
         internal_id: str,
-        balance: float = 0,
-        rights: int = RightsType.member.value,
-        settings: int = SettingsType.default.value,
+        balance: int,
+        rights: UserRights,
+        settings: UserSettings
     ) -> User:
         return await self._create(
             telegram_id=telegram_id,
             tariff_id=tariff.id,
             description=description,
             telegram_username=telegram_username,
-            telegram_language_code=telegram_language_code,
             internal_id=internal_id,
             panel_id=uuid4(),
             balance=balance,
             rights=rights,
-            settings=settings
+            settings=settings,
+            secret=secrets.token_urlsafe(),
         )
 
     async def get_by_telegram_id(
@@ -55,14 +63,6 @@ class UserRepository(BaseRepository[User]):
         user.telegram_username = new_tg_username
         await self.session.flush()
 
-    async def update_telegram_language_code(
-        self,
-        user: User,
-        new_tg_language_code: str
-    ) -> None:
-        user.telegram_language_code = new_tg_language_code
-        await self.session.flush()
-
     async def update_telegram_id(
         self,
         user: User,
@@ -74,7 +74,7 @@ class UserRepository(BaseRepository[User]):
     async def update_balance(
         self,
         user: User,
-        diff: float
+        diff: int
     ) -> None:
         user.balance += diff
         await self.session.flush()
@@ -82,26 +82,44 @@ class UserRepository(BaseRepository[User]):
     async def update_rights(
         self,
         user: User,
-        updated_rights: dict[str, bool | Unset]
+        *,
+        is_admin_rights_editor: bool | Unset = UNSET,
+        is_member_rights_editor: bool | Unset = UNSET,
+        is_users_editor: bool | Unset = UNSET,
+        is_servers_editor: bool | Unset = UNSET,
+        is_control_panel_user: bool | Unset = UNSET,
+        is_verified: bool | Unset = UNSET,
+        is_transactions_editor: bool | Unset = UNSET,
+        is_tariffs_editor: bool | Unset = UNSET
     ) -> None:
-        for right, value in updated_rights.items():
-            if isinstance(value, Unset):
-                continue
-            if getattr(user, right) != value:
-                user.rights ^= Rights[right].value
-        await self.session.flush()
+        await self._super_edit(
+            obj=user.rights,
+            is_admin_rights_editor=is_admin_rights_editor,
+            is_member_rights_editor=is_member_rights_editor,
+            is_users_editor=is_users_editor,
+            is_servers_editor=is_servers_editor,
+            is_control_panel_user=is_control_panel_user,
+            is_verified=is_verified,
+            is_transactions_editor=is_transactions_editor,
+            is_tariffs_editor=is_tariffs_editor
+        )
 
     async def update_settings(
         self,
         user: User,
-        updated_settings: dict[str, bool]
+        *,
+        get_traffic_notifications: bool | Unset = UNSET,
+        auto_pay: bool | Unset = UNSET,
+        is_active: bool | Unset = UNSET,
+        language_code: str | Unset = UNSET
     ) -> None:
-        for setting, value in updated_settings.items():
-            if isinstance(value, Unset):
-                continue
-            if getattr(user, setting) != value:
-                user.settings ^= Settings[setting].value
-        await self.session.flush()
+        await self._super_edit(
+            obj=user.settings,
+            get_traffic_notifications=get_traffic_notifications,
+            auto_pay=auto_pay,
+            is_active=is_active,
+            language_code=language_code
+        )
 
     async def update_secret(
         self,

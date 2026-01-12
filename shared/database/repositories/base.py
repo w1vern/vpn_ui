@@ -7,9 +7,10 @@ from sqlalchemy import BinaryExpression, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import and_
 
-from ..models import UNSET, Base
+from ..models import UNSET, BaseModel, Unset
 
-ModelType = TypeVar("ModelType", bound=Base)
+ModelType = TypeVar("ModelType", bound=BaseModel)
+
 
 
 class BaseRepository(Generic[ModelType]):
@@ -23,7 +24,7 @@ class BaseRepository(Generic[ModelType]):
 
     async def _create(
         self,
-        **kwargs: Any
+        **kwargs: object
     ) -> ModelType:
         model = self.model(**kwargs)
         self.session.add(model)
@@ -32,19 +33,26 @@ class BaseRepository(Generic[ModelType]):
         if model is None:
             raise Exception("Model not created")
         return model
+    
+    async def _super_edit(
+        self,
+        obj: object,
+        **kwargs: object | Unset 
+    ) -> None:
+        for field, value in kwargs.items():
+            if value is not UNSET:
+                if not hasattr(obj, field):
+                    raise ValueError(
+                        f"{self.model.__name__} has no attribute {field}")
+                setattr(obj, field, value)
+        await self.session.flush()
 
     async def _edit(
         self,
         instance: ModelType,
-        **kwargs: Any
+        **kwargs: object | Unset
     ) -> None:
-        for field, value in kwargs.items():
-            if value is not UNSET:
-                if not hasattr(instance, field):
-                    raise ValueError(
-                        f"{self.model.__name__} has no attribute {field}")
-                setattr(instance, field, value)
-        await self.session.flush()
+        await self._super_edit(instance, **kwargs)
 
     async def get_by_id(
         self,
@@ -52,13 +60,13 @@ class BaseRepository(Generic[ModelType]):
     ) -> ModelType | None:
         stmt = select(self.model).where(
             self.model.id == id,
-            self.model.deleted_date is None
+            self.model.deleted_date.is_(None)
         ).limit(1)
         return await self.session.scalar(stmt)
 
     def __build_filters(
         self,
-        **kwargs: Any
+        **kwargs: Any | None
     ) -> list[BinaryExpression[bool]]:
         filters = [self.model.deleted_date.is_(None)]
         for field, value in kwargs.items():
@@ -75,7 +83,7 @@ class BaseRepository(Generic[ModelType]):
         limit: int | None = None,
         offset: int | None = None,
         /,
-        **kwargs: Any | None
+        **kwargs: object | None
     ) -> list[ModelType]:
         stmt = (
             select(self.model)
@@ -88,7 +96,7 @@ class BaseRepository(Generic[ModelType]):
 
     async def count(
         self,
-        **kwargs: Any | None
+        **kwargs: object | None
     ) -> int:
         stmt = (
             select(func.count())
