@@ -1,10 +1,12 @@
 
 import asyncio
 from datetime import timedelta
+from uuid import UUID
 
 from sqlalchemy import text
 
 from shared.database import (
+    DefaultTariffs,
     TariffRepository,
     UserRepository,
     UserRights,
@@ -51,6 +53,7 @@ async def main() -> None:
             logger.info("database is not empty")
             return
         tariff = await tr.create(
+            id=UUID(int=DefaultTariffs.DEFAULT.value),
             name="__default_tariff__",
             description="Default tariff. Equals to no tariff.",
             price=0,

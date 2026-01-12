@@ -9,7 +9,7 @@ from shared.database import Transaction, TransactionType
 
 class TransactionSchema(BaseModel):
     user_id: UUID
-    amount: float
+    amount: int
     description: str
     transaction_type: TransactionType
     date: datetime | None = None

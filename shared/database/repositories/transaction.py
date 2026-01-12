@@ -15,7 +15,7 @@ class TransactionRepository(BaseRepository[Transaction]):
 
     async def create(self,
                      user: User,
-                     amount: float,
+                     amount: int,
                      description: str,
                      date: datetime | None = None,
                      transaction_type: str = TransactionType.withdrawal.value

@@ -1,5 +1,6 @@
 
 from datetime import timedelta
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,14 +20,16 @@ class TariffRepository(BaseRepository[Tariff]):
         self,
         name: str,
         duration: timedelta,
-        price: float,
-        price_of_traffic_reset: float,
+        price: int,
+        price_of_traffic_reset: int,
         traffic: int,
         description: str,
         with_access: bool,
         with_unavailable_inbounds: bool,
         is_special: bool,
+        id: UUID | None = None
     ) -> Tariff:
+        id_kwarg = {"id": id} if id is not None else {}
         return await self._create(
             name=name,
             duration=duration,
@@ -36,7 +39,8 @@ class TariffRepository(BaseRepository[Tariff]):
             traffic=traffic,
             with_access=with_access,
             with_unavailable_inbounds=with_unavailable_inbounds,
-            is_special=is_special
+            is_special=is_special,
+            **id_kwarg
         )
 
     async def edit(
@@ -46,8 +50,8 @@ class TariffRepository(BaseRepository[Tariff]):
         name: str | Unset = UNSET,
         description: str | Unset = UNSET,
         duration: timedelta | Unset = UNSET,
-        price: float | Unset = UNSET,
-        price_of_traffic_reset: float | Unset = UNSET,
+        price: int | Unset = UNSET,
+        price_of_traffic_reset: int | Unset = UNSET,
         traffic: int | Unset = UNSET,
         with_access: bool | Unset = UNSET,
         with_unavailable_inbounds: bool | Unset = UNSET,

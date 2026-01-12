@@ -12,7 +12,7 @@ from .user import User
 class Transaction(BaseModel):
     __tablename__ = "transactions"
 
-    amount: Mapped[float] = mapped_column()
+    amount: Mapped[int] = mapped_column()
     date: Mapped[datetime] = mapped_column()
     transaction_type: Mapped[str] = mapped_column()
     user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"))

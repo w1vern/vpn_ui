@@ -86,7 +86,7 @@ class ServerInboundService:
         server_id: UUID,
         inbound_to_create: CreateServerInboundSchema
     ) -> ServerInboundSchema:
-        if self.user_schema.rights.is_server_editor is False:
+        if self.user_schema.rights.is_servers_editor is False:
             raise NotServerEditorException()
         server = await self.sr.get_by_id(server_id)
         if server is None:
@@ -107,7 +107,7 @@ class ServerInboundService:
         server_inbound_id: UUID,
         server_inbound_to_edit: EditServerInboundSchema
     ) -> ServerInboundSchema:
-        if self.user_schema.rights.is_server_editor is False:
+        if self.user_schema.rights.is_servers_editor is False:
             raise NotServerEditorException()
         server_inbound = await self.sir.get_by_id(server_inbound_id)
         if server_inbound is None:
@@ -126,7 +126,7 @@ class ServerInboundService:
         self,
         server_inbound_id: UUID
     ) -> None:
-        if self.user_schema.rights.is_server_editor is False:
+        if self.user_schema.rights.is_servers_editor is False:
             raise NotServerEditorException()
         server_inbound = await self.sir.get_by_id(server_inbound_id)
         if server_inbound is None:

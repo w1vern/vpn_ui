@@ -17,7 +17,7 @@ class CodeToTG(BaseModel):
 
 class NotificationToTG(BaseModel):
     data: dict[LanguageCodes, str]
-    notify: bool
+    notify: bool = False
 
 
 tg_code_queue = RabbitQueue(name="tg_code")

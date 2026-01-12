@@ -71,7 +71,7 @@ class ServerService:
         self,
         server_to_create: CreateServerSchema
     ) -> ServerSchema:
-        if self.user_schema.rights.is_server_editor is False:
+        if self.user_schema.rights.is_servers_editor is False:
             raise NotServerEditorException()
         server = await self.sr.create(
             ip=server_to_create.ip,
@@ -93,7 +93,7 @@ class ServerService:
         server_id: UUID,
         server_to_edit: EditServerSchema
     ) -> ServerSchema:
-        if self.user_schema.rights.is_server_editor is False:
+        if self.user_schema.rights.is_servers_editor is False:
             raise NotServerEditorException()
         server = await self.sr.get_by_id(server_id)
         if server is None:

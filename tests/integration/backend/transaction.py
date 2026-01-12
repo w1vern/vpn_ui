@@ -34,7 +34,7 @@ async def create(
 ) -> None:
     transaction = {
         "user_id": str(user_id),
-        "amount": 100.5,
+        "amount": 100,
         "description": "new transaction",
         "transaction_type": "withdrawal",
         "date": datetime.now(UTC).replace(tzinfo=None).isoformat()

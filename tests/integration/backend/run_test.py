@@ -20,7 +20,7 @@ logger = setup_logger(__name__)
 
 async def run_backend_test() -> None:
     redis = get_redis_client(db=env_config.redis.backend)
-    url = 'http://backend:8000'
+    url = 'http://backend:8000/api/'
     async with httpx.AsyncClient() as httpx_client:
         await auth_test(url + "auth", env_config.bot.superuser, redis, httpx_client)
         logger.info("auth test complete")

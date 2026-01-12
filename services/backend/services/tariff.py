@@ -64,7 +64,7 @@ class TariffService:
         self,
         create_tariff_schema: CreateTariffSchema
     ) -> TariffSchema:
-        if self.user_schema.rights.is_tariff_editor is False:
+        if self.user_schema.rights.is_tariffs_editor is False:
             raise NotTariffEditorException()
         if create_tariff_schema.name.startswith("archive."):
             raise TariffAlreadyExistsException()
@@ -88,7 +88,7 @@ class TariffService:
         self,
         tariff_id: UUID
     ) -> None:
-        if self.user_schema.rights.is_tariff_editor is False:
+        if self.user_schema.rights.is_tariffs_editor is False:
             raise NotTariffEditorException()
         tariff = await self.tr.get_by_id(tariff_id)
         if tariff is None:
@@ -108,7 +108,7 @@ class TariffService:
         tariff_id: UUID,
         edited_tariff: EditTariffSchema
     ) -> TariffSchema:
-        if self.user_schema.rights.is_tariff_editor is False:
+        if self.user_schema.rights.is_tariffs_editor is False:
             raise NotTariffEditorException()
         tariff = await self.tr.get_by_id(tariff_id)
         if tariff is None:

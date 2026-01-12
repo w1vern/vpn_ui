@@ -12,7 +12,9 @@ async def create(
         "data": {
             "en": "en text",
             "ru": "ru text"
-        }}
+        },
+        "notify": True
+    }
     response = await httpx_client.post(base_url, json=payload)
     check_response(base_url, "POST", response)
 

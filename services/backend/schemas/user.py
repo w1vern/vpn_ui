@@ -61,7 +61,7 @@ class UserSchema(BaseModel):
     telegram_id: int
     telegram_username: str
     description: str
-    balance: float
+    balance: int
     created_date: datetime
     rights: UserRightsSchema
     settings: UserSettingsSchema

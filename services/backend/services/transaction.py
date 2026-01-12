@@ -51,7 +51,7 @@ class TransactionService:
         self,
         transaction_to_create: TransactionSchema
     ) -> TransactionSchema:
-        if self.user_schema.rights.is_transaction_editor is False:
+        if self.user_schema.rights.is_transactions_editor is False:
             raise UserNotTransactionEditorException
         tr_user = await self.ur.get_by_id(transaction_to_create.user_id)
         if tr_user is None:

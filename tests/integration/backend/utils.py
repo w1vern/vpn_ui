@@ -11,4 +11,4 @@ def check_response(
 ) -> None:
     if response.status_code != good_status_code or raise_anyway:
         raise Exception(
-            f"{request_type} {path} failed. response: {response}")
+            f"{request_type} {path} failed. response: {response.json()}")

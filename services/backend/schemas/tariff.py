@@ -11,8 +11,8 @@ class TariffSchema(BaseModel):
     name: str
     description: str
     duration: int
-    price: float
-    price_of_traffic_reset: float
+    price: int
+    price_of_traffic_reset: int
     traffic: int
     with_access: bool
     with_unavailable_inbounds: bool
@@ -40,8 +40,8 @@ class CreateTariffSchema(BaseModel):
     name: str
     duration: int
     description: str
-    price: float
-    price_of_traffic_reset: float
+    price: int
+    price_of_traffic_reset: int
     traffic: int
     with_access: bool
     with_unavailable_inbounds: bool
@@ -51,8 +51,8 @@ class EditTariffSchema(BaseModel):
     name: str | Unset = UNSET
     description: str | Unset = UNSET
     duration: int | Unset = UNSET
-    price: float | Unset = UNSET
-    price_of_traffic_reset: float | Unset = UNSET
+    price: int | Unset = UNSET
+    price_of_traffic_reset: int | Unset = UNSET
     traffic: int | Unset = UNSET
     with_access: bool | Unset = UNSET
     with_unavailable_inbounds: bool | Unset = UNSET
