@@ -111,5 +111,34 @@
     "menu": {
         "en": "<b>Menu:</b>",
         "ru": "<b>Меню:</b>"
+    },
+    "reset_key": {
+
+    },
+    "switch_language": {
+        "en": "Change language",
+        "ru": "Изменить язык"
+    },
+    "pick_language": {
+        "en": "Pick language {language_code}",
+        "ru": "Выбрать язык {language_code}"
+    },
+    "toggle_auto_pay":
+    {
+        "en": "Toggle auto pay",
+        "ru": "Переключить автоплатеж"
+    },
+    "toggle_get_traffic_notifications":
+    {
+        "en": "Toggle get traffic notifications",
+        "ru": "Переключить получение уведомлений о трафике"
+    },
+    "return_back": {
+        "en": "Back",
+        "ru": "Назад"
+    },
+    "change_tariff": {
+        "en": "Change tariff to {tariff_name}",
+        "ru": "Изменить тариф на {tariff_name}"
     }
 }

@@ -9,6 +9,7 @@ class MessageKey(str, Enum):
     to_inbounds_menu = "to_inbounds_menu"
     to_tickets_menu = "to_tickets_menu"
     to_transactions_menu = "to_transactions_menu"
+    to_tariffs_menu = "to_tariffs_menu"
 
     read_notifications = "read_notifications"
 
@@ -40,3 +41,15 @@ class MessageKey(str, Enum):
     
     notifications = "notifications"
     menu = "menu"
+    
+    
+    switch_language = "switch_language"
+    pick_language = "pick_language"
+    
+    reset_key = "reset_key"
+    toggle_auto_pay = "toggle_auto_pay"
+    toggle_get_traffic_notifications = "toggle_get_traffic_notifications"
+    
+    return_back = "return_back"
+    change_tariff = "change_tariff"
+    

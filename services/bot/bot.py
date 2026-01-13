@@ -72,7 +72,8 @@ async def update_message(
     bot: Bot = Depends(get_bot)
 ) -> None:
     message_id: int | None = await redis.get(
-        name=f"{RedisType.main_message_id.value}:{new_state.user_info.id}")
+        name=f"{RedisType.main_message_id.value}:{new_state.user_info.id}"
+    )
     if not message_id is None:
         chat_id = new_state.user_info.id
         if not new_state.notify:
