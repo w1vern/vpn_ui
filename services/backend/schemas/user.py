@@ -60,6 +60,7 @@ class UserSchema(BaseModel):
     id: UUID
     telegram_id: int
     telegram_username: str
+    internal_id: str
     description: str
     balance: int
     created_date: datetime
@@ -75,6 +76,7 @@ class UserSchema(BaseModel):
             tariff=TariffSchema.from_db(user.tariff),
             telegram_id=user.telegram_id,
             telegram_username=user.telegram_username,
+            internal_id=user.internal_id,
             balance=user.balance,
             created_date=user.created_date,
             description=user.description,
