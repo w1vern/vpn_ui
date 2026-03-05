@@ -2,7 +2,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from shared.database import (
     UNSET,
@@ -108,5 +108,17 @@ class EditUserSchema(BaseModel):
     tariff_id: UUID | Unset = UNSET
     description: str | Unset = UNSET
     internal_id: str | Unset = UNSET
-    rights: EditUserRightsSchema
-    settings: EditUserSettingsSchema
+    rights: EditUserRightsSchema | Unset = UNSET
+    settings: EditUserSettingsSchema | Unset = UNSET
+
+    @field_validator('rights', mode='before')
+    def parse_rights(cls, value: dict | EditUserRightsSchema | Unset) -> EditUserRightsSchema | Unset:
+        if isinstance(value, dict):
+            return EditUserRightsSchema.model_validate(value)
+        return value
+
+    @field_validator('settings', mode='before')
+    def parse_settings(cls, value: dict | EditUserSettingsSchema | Unset) -> EditUserSettingsSchema | Unset:
+        if isinstance(value, dict):
+            return EditUserSettingsSchema.model_validate(value)
+        return value

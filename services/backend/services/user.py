@@ -6,6 +6,7 @@ from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shared.database import TariffRepository, Unset, UserRepository
+from shared.infrastructure import setup_logger
 
 from ..depends import get_session, get_user, get_user_repo
 from ..exceptions import (
@@ -17,6 +18,8 @@ from ..exceptions import (
 )
 from ..redis import RedisType, get_redis_client
 from ..schemas import EditUserSchema, UserSchema
+
+logger = setup_logger(__name__)
 
 
 class UserService:
