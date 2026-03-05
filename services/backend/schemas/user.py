@@ -108,5 +108,5 @@ class EditUserSchema(BaseModel):
     tariff_id: UUID | Unset = UNSET
     description: str | Unset = UNSET
     internal_id: str | Unset = UNSET
-    rights: EditUserRightsSchema | Unset = UNSET
-    settings: EditUserSettingsSchema | Unset = UNSET
+    rights: EditUserRightsSchema
+    settings: EditUserSettingsSchema
