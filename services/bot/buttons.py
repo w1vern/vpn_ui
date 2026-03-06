@@ -76,8 +76,8 @@ def main_menu_keyboard() -> list[Button]:
     values: list[Button] = []
     values.append(StaticButtons.to_inbounds_menu)
     values.append(StaticButtons.to_transactions_menu)
-    values.append(StaticButtons.to_settings_menu)
-    values.append(StaticButtons.to_tariffs_menu)
+    #values.append(StaticButtons.to_settings_menu)
+    #values.append(StaticButtons.to_tariffs_menu)
     return values
 
 
