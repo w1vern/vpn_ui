@@ -71,8 +71,8 @@ class ServerInboundService:
         return [ServerInboundSchema.from_db(inbound)
                 for inbound in
                 await self.sir.get_all(
-                    limit=limit,
-                    offset=offset,
+                    limit,
+                    offset,
                     server_id=server_id)]
 
     async def count(
